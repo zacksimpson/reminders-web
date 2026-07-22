@@ -3,7 +3,7 @@ import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
 // Firebase web config is not a secret (access is enforced by Firestore
-// security rules + Firebase Auth, not by hiding this) — but it still comes
+// security rules + Firebase Auth, not by hiding this), but it still comes
 // from env vars so each deployment points at its own Firebase project rather
 // than whoever built this repo sharing one project's quota. See .env.example.
 const firebaseConfig = {

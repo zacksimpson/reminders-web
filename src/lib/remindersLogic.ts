@@ -1,4 +1,4 @@
-// Ported from the RN app's contexts/RemindersContext.tsx — the pure
+// Ported from the RN app's contexts/RemindersContext.tsx, the pure
 // recurrence-math functions only (no framework/storage dependencies).
 // generateId is swapped for a real UUID: the RN app's original
 // `${Date.now()}-${random}` scheme isn't collision-safe across devices,

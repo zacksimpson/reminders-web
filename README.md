@@ -1,8 +1,8 @@
-# Reminders — Web
+# Reminders - Web
 
-A standalone browser companion for [Reminders](https://github.com/zacksimpson/reminders-tool), the Light Phone III reminders app. Same black/white, no-gray, no-clutter design language, laid out as a resizable multi-pane desktop app instead of the phone's tab bar.
+A standalone browser companion for [Reminders](https://github.com/zacksimpson/reminders-tool), the Light Phone III reminders app. Laid out as a resizable multi-pane desktop app instead of the phone's tab bar.
 
-This is **not** currently synced with the phone app — it's a separate Firebase-backed account, with its own sign-in and its own tasks. Phone sync is a possible future phase, not implemented yet.
+This is **not** currently synced with the phone app, it's a separate Firebase-backed account, with its own sign-in and its own tasks. Phone sync is a possible future phase, not implemented yet.
 
 ## Stack
 
@@ -11,7 +11,7 @@ This is **not** currently synced with the phone app — it's a separate Firebase
 
 ## Running it yourself
 
-This repo doesn't ship with a working backend — each person who runs it needs their own Firebase project, so your usage never touches anyone else's quota (and vice versa).
+This repo doesn't ship with a working backend, so each person who runs it needs their own Firebase project. That way your usage never touches anyone else's quota (and vice versa).
 
 1. Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com) (Spark/free plan is enough).
 2. Enable **Authentication → Email/Password**.
@@ -42,4 +42,4 @@ This repo doesn't ship with a working backend — each person who runs it needs 
    npm run dev
    ```
 
-`.env` is gitignored — your Firebase config stays local to your machine.
+`.env` is gitignored, so your Firebase config stays local to your machine.

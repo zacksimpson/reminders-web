@@ -1,4 +1,4 @@
-// Exact path data pulled from the app's real icon resources — no invented
+// Exact path data pulled from the app's real icon resources, no invented
 // shapes. See light-sdk's LightIcons.LIST/ALARM/SETTINGS and the app's own
 // ic_checkbox_ring / ic_overdue_asterisk / ic_plus / ic_plus_circle / ic_delete.
 
@@ -77,7 +77,7 @@ export function PlusCircleIcon({ size = 20 }: { size?: number }) {
   );
 }
 
-/** Ring + X — matches LightIcons.DELETE, used for clearing Date/Time/Recurring. */
+/** Ring + X, matches LightIcons.DELETE, used for clearing Date/Time/Recurring. */
 export function ClearFieldIcon({ size = 17 }: { size?: number }) {
   return (
     <svg width={size} height={size * (31.34 / 30.81)} viewBox="0 0 30.81 31.34">
@@ -89,7 +89,7 @@ export function ClearFieldIcon({ size = 17 }: { size?: number }) {
   );
 }
 
-/** Plain X, no ring — matches ic_delete, used for subtask row deletion. */
+/** Plain X, no ring, matches ic_delete, used for subtask row deletion. */
 export function DeleteIcon({ size = 14 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32">
@@ -99,7 +99,7 @@ export function DeleteIcon({ size = 14 }: { size?: number }) {
   );
 }
 
-/** Matches the phone app's Header — MaterialIcons "arrow-back-ios" (Material Icons arrow_back_ios glyph), used for the mobile back button. */
+/** Matches the phone app's Header, MaterialIcons "arrow-back-ios" (Material Icons arrow_back_ios glyph), used for the mobile back button. */
 export function BackChevronIcon({ size = 22 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 24 24">

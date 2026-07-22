@@ -1,7 +1,7 @@
-// Ported near-verbatim from the RN app's utils/dateTime.ts — pure, zero
+// Ported near-verbatim from the RN app's utils/dateTime.ts, pure, zero
 // framework dependencies, so no changes needed for the browser. Omitted
 // formatDisplayTime/digitsToTime/timeToDisplayParts: those exist only to
-// drive RN's custom numpad time picker, which this app doesn't have — we use
+// drive RN's custom numpad time picker, which this app doesn't have, we use
 // native <input type="time">, which already gives/takes "HH:MM" directly.
 
 const MONTHS = [
