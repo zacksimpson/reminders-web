@@ -97,3 +97,12 @@ export function DeleteIcon({ size = 14 }: { size?: number }) {
     </svg>
   );
 }
+
+/** Left chevron — matches the phone app's Header (MaterialIcons arrow-back-ios), used for the mobile back button. */
+export function BackChevronIcon({ size = 22 }: { size?: number }) {
+  return (
+    <svg width={size} height={size * (27 / 16)} viewBox="0 0 16 27">
+      <path d="M14,1 L14,4.4 L5.6,13.5 L14,22.6 L14,26 L2,13.5 Z" fill="#fff" />
+    </svg>
+  );
+}

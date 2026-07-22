@@ -42,3 +42,10 @@ input {
   border: none;
   outline: none;
 }
+
+/* Browser UA stylesheets dim placeholder text by default — override to match
+   the no-gray rule (placeholders use textColor, not dimColor). */
+input::placeholder {
+  color: var(--fg);
+  opacity: 1;
+}

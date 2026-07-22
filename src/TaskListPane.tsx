@@ -3,6 +3,7 @@ import type { ReminderList, Task } from "./lib/models";
 import { compareTasksByDateTime, formatDate, formatTime, isOverdue } from "./lib/dateTime";
 import { formatRecurrence } from "./lib/remindersLogic";
 import { toggleTask } from "./lib/store";
+import { BackButton } from "./BackButton";
 import { CheckboxIcon, OverdueAsteriskIcon, PlusIcon } from "./icons";
 
 const styles = {
@@ -13,6 +14,7 @@ const styles = {
     marginBottom: 26,
     position: "relative" as const,
   },
+  backButton: { position: "absolute" as const, left: 0, top: 3 },
   addButton: { position: "absolute" as const, right: 0, top: 3 },
   row: {
     display: "flex",
@@ -36,6 +38,7 @@ export function TaskListPane({
   selectedTaskId,
   onSelectTask,
   onAddTask,
+  onBack,
 }: {
   uid: string;
   list: ReminderList | null;
@@ -43,6 +46,7 @@ export function TaskListPane({
   selectedTaskId: string | null;
   onSelectTask: (id: string) => void;
   onAddTask: () => void;
+  onBack?: () => void;
 }) {
   const [showCompleted, setShowCompleted] = useState(false);
 
@@ -58,6 +62,7 @@ export function TaskListPane({
   return (
     <div style={styles.pane}>
       <div style={styles.header}>
+        {onBack && <BackButton onBack={onBack} style={styles.backButton} />}
         {list.title}
         <button type="button" style={styles.addButton} aria-label="Add task" onClick={onAddTask}>
           <PlusIcon size={22} />
