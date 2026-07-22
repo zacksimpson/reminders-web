@@ -2,7 +2,7 @@
 // shapes. See light-sdk's LightIcons.LIST/ALARM/SETTINGS and the app's own
 // ic_checkbox_ring / ic_overdue_asterisk / ic_plus / ic_plus_circle / ic_delete.
 
-export function ListIcon({ size = 18 }: { size?: number }) {
+export function ListIcon({ size = 20 }: { size?: number }) {
   return (
     <svg width={size} height={size * (18.4 / 36.5)} viewBox="0 0 36.5 18.4">
       <path d="M8.1,3.2h26.8c0.883,0,1.6-0.717,1.6-1.6C36.5,0.717,35.783,0,34.9,0H8.1C7.216,0,6.5,0.717,6.5,1.6C6.5,2.483,7.216,3.2,8.1,3.2z" fill="#fff" />
@@ -15,7 +15,7 @@ export function ListIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-export function TodayIcon({ size = 18 }: { size?: number }) {
+export function TodayIcon({ size = 20 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 93 92">
       <g transform="translate(5,5)">
@@ -28,7 +28,7 @@ export function TodayIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-export function SettingsIcon({ size = 18 }: { size?: number }) {
+export function SettingsIcon({ size = 20 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 40 40">
       <path d="M34.9,20c0,8.4-6.8,15.1-15.1,15.1S4.6,28.3,4.6,20S11.4,4.8,19.8,4.8S34.9,11.6,34.9,20z M19.9,10.8c-5.2,0-9.4,4.2-9.4,9.4s4.2,9.4,9.4,9.4s9.4-4.2,9.4-9.4S25.1,10.8,19.9,10.8z" fill="#fff" />
@@ -44,7 +44,7 @@ export function SettingsIcon({ size = 18 }: { size?: number }) {
   );
 }
 
-export function CheckboxIcon({ checked, size = 16 }: { checked: boolean; size?: number }) {
+export function CheckboxIcon({ checked, size = 18 }: { checked: boolean; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 84 84">
       <path d="M42.0068 0.5C64.8971 0.500151 83.5 19.1215 83.5 42.0098C83.5 64.8984 64.8935 83.4998 42.0068 83.5C19.1203 83.5 0.5 64.8987 0.5 42.0098C0.500041 19.1212 19.12 0.5 42.0068 0.5ZM42.0068 6.625C22.4399 6.625 6.62797 22.4411 6.62793 42.0098C6.62793 61.5749 22.4396 77.375 42.0068 77.375C61.5705 77.3749 77.3682 61.5783 77.3682 42.0098C77.3681 22.4433 61.5733 6.62515 42.0068 6.625Z" fill="#fff" />
@@ -53,7 +53,7 @@ export function CheckboxIcon({ checked, size = 16 }: { checked: boolean; size?: 
   );
 }
 
-export function OverdueAsteriskIcon({ size = 16 }: { size?: number }) {
+export function OverdueAsteriskIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size * (37 / 39)} viewBox="0 0 39 37">
       <path d="M24.288 20.7L33.856 32.568L27.692 36.984L19.412 24.196L11.224 36.984L5.06 32.384L14.628 20.7L0 16.928L2.392 9.66L16.468 15.18L15.732 0H23.368L22.448 15.18L36.616 9.66L38.916 16.928L24.288 20.7Z" fill="#fff" />
@@ -61,7 +61,7 @@ export function OverdueAsteriskIcon({ size = 16 }: { size?: number }) {
   );
 }
 
-export function PlusIcon({ size = 14 }: { size?: number }) {
+export function PlusIcon({ size = 15 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 27 27">
       <path d="M14.8519 0H11.9409V11.9409H0V14.8519H11.9409V26.7928H14.8519V14.8519H26.7928V11.9409H14.8519V0Z" fill="#fff" />
@@ -69,7 +69,7 @@ export function PlusIcon({ size = 14 }: { size?: number }) {
   );
 }
 
-export function PlusCircleIcon({ size = 16 }: { size?: number }) {
+export function PlusCircleIcon({ size = 18 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 84 84">
       <path d="M42.0068 0.5C64.8971 0.500151 83.5 19.1215 83.5 42.0098C83.5 64.8984 64.8935 83.4998 42.0068 83.5C19.1203 83.5 0.5 64.8987 0.5 42.0098C0.500041 19.1212 19.12 0.5 42.0068 0.5ZM42.0068 6.625C22.4399 6.625 6.62797 22.4411 6.62793 42.0098C6.62793 61.5749 22.4396 77.375 42.0068 77.375C61.5705 77.3749 77.3682 61.5783 77.3682 42.0098C77.3681 22.4433 61.5733 6.62515 42.0068 6.625ZM45.0654 38.9375H60.1494C60.8631 38.9348 61.5518 39.1833 62.0986 39.6289L62.3242 39.832L62.3252 39.834C62.9032 40.4122 63.2244 41.1966 63.2207 42.0117C63.2169 42.8232 62.8916 43.5996 62.3184 44.1729L62.3164 44.1758C61.7403 44.7443 60.9612 45.0646 60.1494 45.0615V45.0625H45.0654V60.1514C45.0693 60.9643 44.7472 61.745 44.1738 62.3223C43.6004 62.8996 42.8236 63.2253 42.0078 63.2256L42.0088 63.2266C41.1924 63.2304 40.4082 62.9043 39.834 62.3301C39.2568 61.7528 38.9307 60.9683 38.9346 60.1514V45.0625H23.8516V45.0615C23.0395 45.0648 22.2599 44.7445 21.6836 44.1758L21.6816 44.1729C21.1084 43.5996 20.7831 42.8232 20.7793 42.0117C20.7756 41.1965 21.0966 40.4112 21.6748 39.833L21.6758 39.832C22.2521 39.2595 23.0355 38.9342 23.8516 38.9375H38.9346V23.8506C38.9384 23.0363 39.2635 22.26 39.8369 21.6865L39.8379 21.6855C40.4146 21.1126 41.1947 20.7897 42.0068 20.793C43.6947 20.7968 45.0615 22.1638 45.0654 23.8516V38.9375Z" fill="#fff" />
@@ -78,7 +78,7 @@ export function PlusCircleIcon({ size = 16 }: { size?: number }) {
 }
 
 /** Ring + X — matches LightIcons.DELETE, used for clearing Date/Time/Recurring. */
-export function ClearFieldIcon({ size = 14 }: { size?: number }) {
+export function ClearFieldIcon({ size = 15 }: { size?: number }) {
   return (
     <svg width={size} height={size * (31.34 / 30.81)} viewBox="0 0 30.81 31.34">
       <path d="M 22.17,9.18 L 20.76,7.76 L 14.97,13.55 L 9.18,7.76 L 7.76,9.18 L 13.55,14.97 L 7.76,20.76 L 9.18,22.17 L 14.97,16.38 L 20.76,22.17 L 22.17,20.76 L 16.38,14.97 L 22.17,9.18 Z" fill="#fff" />
@@ -90,7 +90,7 @@ export function ClearFieldIcon({ size = 14 }: { size?: number }) {
 }
 
 /** Plain X, no ring — matches ic_delete, used for subtask row deletion. */
-export function DeleteIcon({ size = 11 }: { size?: number }) {
+export function DeleteIcon({ size = 12 }: { size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 32 32">
       <path fillRule="evenodd" clipRule="evenodd" d="M15.5859 13.3828L3.46875 1.26562L1.26562 3.46875L13.3828 15.5859L1.26562 27.7031L3.46875 29.9063L15.5859 17.7891L27.7031 29.9063L29.9063 27.7031L17.7891 15.5859L29.9063 3.46875L27.7031 1.26562L15.5859 13.3828Z" fill="#fff" />
