@@ -12,9 +12,12 @@ dist
 dist-ssr
 *.local
 
-# Firebase config — each deployment supplies its own project, never commit real values
+# Firebase config, each deployment supplies its own project, never commit real values
 .env
 !.env.example
+
+# Firebase CLI deploy cache
+.firebase
 
 # Editor directories and files
 .vscode/*
