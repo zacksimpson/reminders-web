@@ -1,4 +1,4 @@
-// Data model — matches the RN app's contexts/RemindersContext.tsx and the
+// Data model, matches the RN app's contexts/RemindersContext.tsx and the
 // native Kotlin app's data/Models.kt shapes, plus updatedAt/deleted fields
 // seeded now so Phase 2 (real phone sync) won't need a schema migration
 // later (see the project plan's Phase 2 notes).

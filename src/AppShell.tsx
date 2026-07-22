@@ -16,8 +16,8 @@ import { PaneResizer } from "./PaneResizer";
 
 export type DetailMode = { kind: "none" } | { kind: "new" } | { kind: "edit"; taskId: string };
 
-// Below the breakpoint, panes stack and are navigated one at a time —
-// mirrors the phone app's own tab-root → pushed-screen → pushed-screen model.
+// Below the breakpoint, panes stack and are navigated one at a time,
+// mirroring the phone app's own tab-root -> pushed-screen -> pushed-screen model.
 type MobileStage = "lists" | "tasks" | "detail";
 
 export function AppShell({ user }: { user: User }) {

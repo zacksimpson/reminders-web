@@ -1,4 +1,4 @@
-// Firestore data access — mirrors the shape of the native app's
+// Firestore data access, mirrors the shape of the native app's
 // RemindersRepository, but as one document per row (not one JSON blob per
 // collection) since that's the natural Firestore model.
 
