@@ -4,31 +4,31 @@ import { addList } from "./lib/store";
 import { ListIcon, PlusIcon, SettingsIcon, TodayIcon } from "./icons";
 
 const styles = {
-  pane: { padding: "26px 16px" },
+  pane: { padding: "28px 18px" },
+  navGroup: { marginBottom: 64 },
   navRow: {
     display: "flex",
     alignItems: "center",
-    gap: 10,
-    padding: "8px 0",
+    gap: 11,
+    padding: "9px 0",
   },
-  navLabel: { fontSize: 15 },
+  navLabel: { fontSize: 17 },
   sectionHeader: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginTop: 16,
-    marginBottom: 14,
+    marginBottom: 15,
   },
-  sectionTitle: { fontSize: 12 },
+  sectionTitle: { fontSize: 13 },
   addButton: { display: "flex" },
   listRow: {
-    fontSize: 18,
-    padding: "5px 0",
+    fontSize: 20,
+    padding: "6px 0",
     width: "100%",
     textAlign: "left" as const,
   },
   newListInput: {
-    fontSize: 18,
+    fontSize: 20,
     width: "100%",
     borderBottom: "2px solid #fff",
     paddingBottom: 2,
@@ -66,19 +66,21 @@ export function ListsPane({
 
   return (
     <div style={styles.pane}>
-      <div style={styles.navRow}>
-        <ListIcon />
-        <span style={{ ...styles.navLabel, textDecoration: "underline", textUnderlineOffset: 3 }}>
-          Lists
-        </span>
-      </div>
-      <div style={styles.navRow}>
-        <TodayIcon />
-        <span style={styles.navLabel}>Today</span>
-      </div>
-      <div style={styles.navRow}>
-        <SettingsIcon />
-        <span style={styles.navLabel}>Settings</span>
+      <div style={styles.navGroup}>
+        <div style={styles.navRow}>
+          <ListIcon />
+          <span style={{ ...styles.navLabel, textDecoration: "underline", textUnderlineOffset: 3 }}>
+            Lists
+          </span>
+        </div>
+        <div style={styles.navRow}>
+          <TodayIcon />
+          <span style={styles.navLabel}>Today</span>
+        </div>
+        <div style={styles.navRow}>
+          <SettingsIcon />
+          <span style={styles.navLabel}>Settings</span>
+        </div>
       </div>
 
       <div style={styles.sectionHeader}>
