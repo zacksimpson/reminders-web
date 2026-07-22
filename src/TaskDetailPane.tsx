@@ -10,10 +10,12 @@ import {
   toggleSubtask,
   updateTask,
 } from "./lib/store";
+import { BackButton } from "./BackButton";
 import { CheckboxIcon, ClearFieldIcon, DeleteIcon, PlusCircleIcon } from "./icons";
 
 const styles = {
   pane: { padding: "30px 37px", maxWidth: 720 },
+  backRow: { marginBottom: 20 },
   title: {
     fontSize: 37,
     width: "100%",
@@ -51,6 +53,7 @@ export function TaskDetailPane({
   defaultListId,
   onTaskCreated,
   onClose,
+  onBack,
 }: {
   uid: string;
   lists: ReminderList[];
@@ -60,6 +63,7 @@ export function TaskDetailPane({
   defaultListId: string;
   onTaskCreated: (taskId: string) => void;
   onClose: () => void;
+  onBack?: () => void;
 }) {
   if (detail.kind === "none") {
     return <div style={styles.pane} />;
@@ -72,13 +76,14 @@ export function TaskDetailPane({
         settings={settings}
         defaultListId={defaultListId}
         onCreated={onTaskCreated}
+        onBack={onBack}
       />
     );
   }
   if (!task) {
     return <div style={styles.pane} />;
   }
-  return <EditTaskForm uid={uid} lists={lists} task={task} onDeleted={onClose} />;
+  return <EditTaskForm uid={uid} lists={lists} task={task} onDeleted={onClose} onBack={onBack} />;
 }
 
 function NewTaskForm({
@@ -87,12 +92,14 @@ function NewTaskForm({
   settings,
   defaultListId,
   onCreated,
+  onBack,
 }: {
   uid: string;
   lists: ReminderList[];
   settings: Settings;
   defaultListId: string;
   onCreated: (taskId: string) => void;
+  onBack?: () => void;
 }) {
   const [title, setTitle] = useState("");
 
@@ -109,6 +116,11 @@ function NewTaskForm({
 
   return (
     <div style={styles.pane}>
+      {onBack && (
+        <div style={styles.backRow}>
+          <BackButton onBack={onBack} />
+        </div>
+      )}
       <input
         style={styles.title}
         autoFocus
@@ -131,11 +143,13 @@ function EditTaskForm({
   lists,
   task,
   onDeleted,
+  onBack,
 }: {
   uid: string;
   lists: ReminderList[];
   task: Task;
   onDeleted: () => void;
+  onBack?: () => void;
 }) {
   const [title, setTitle] = useState(task.title);
   const [newSubtask, setNewSubtask] = useState("");
@@ -167,6 +181,11 @@ function EditTaskForm({
 
   return (
     <div style={styles.pane}>
+      {onBack && (
+        <div style={styles.backRow}>
+          <BackButton onBack={onBack} />
+        </div>
+      )}
       <input
         style={styles.title}
         value={title}
