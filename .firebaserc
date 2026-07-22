@@ -1,5 +1,18 @@
 {
   "projects": {
     "default": "reminders-web-zs2026"
-  }
+  },
+  "targets": {
+    "reminders-web-zs2026": {
+      "hosting": {
+        "web": [
+          "reminders-tool"
+        ],
+        "legacy": [
+          "reminders-web-zs2026"
+        ]
+      }
+    }
+  },
+  "etags": {}
 }
