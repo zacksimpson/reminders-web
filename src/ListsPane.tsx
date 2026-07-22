@@ -4,31 +4,31 @@ import { addList } from "./lib/store";
 import { ListIcon, PlusIcon, SettingsIcon, TodayIcon } from "./icons";
 
 const styles = {
-  pane: { padding: "28px 18px" },
-  navGroup: { marginBottom: 64 },
+  pane: { padding: "30px 20px" },
+  navGroup: { marginBottom: 72 },
   navRow: {
     display: "flex",
     alignItems: "center",
-    gap: 11,
-    padding: "9px 0",
+    gap: 12,
+    padding: "10px 0",
   },
-  navLabel: { fontSize: 17 },
+  navLabel: { fontSize: 19 },
   sectionHeader: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "center",
-    marginBottom: 15,
+    marginBottom: 16,
   },
-  sectionTitle: { fontSize: 13 },
+  sectionTitle: { fontSize: 15 },
   addButton: { display: "flex" },
   listRow: {
-    fontSize: 20,
-    padding: "6px 0",
+    fontSize: 23,
+    padding: "7px 0",
     width: "100%",
     textAlign: "left" as const,
   },
   newListInput: {
-    fontSize: 20,
+    fontSize: 23,
     width: "100%",
     borderBottom: "2px solid #fff",
     paddingBottom: 2,

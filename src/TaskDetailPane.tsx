@@ -13,32 +13,32 @@ import {
 import { CheckboxIcon, ClearFieldIcon, DeleteIcon, PlusCircleIcon } from "./icons";
 
 const styles = {
-  pane: { padding: "28px 34px", maxWidth: 680 },
+  pane: { padding: "30px 37px", maxWidth: 720 },
   title: {
-    fontSize: 33,
+    fontSize: 37,
     width: "100%",
     borderBottom: "2px solid #fff",
-    paddingBottom: 9,
-    marginBottom: 24,
+    paddingBottom: 10,
+    marginBottom: 26,
   },
   field: {
     display: "flex",
     justifyContent: "space-between",
     alignItems: "flex-start",
-    padding: "12px 0",
+    padding: "13px 0",
   },
-  label: { fontSize: 13, marginBottom: 3 },
-  value: { fontSize: 20 },
-  select: { fontSize: 20, background: "none", border: "none" },
-  clearButton: { marginTop: 7, flexShrink: 0 },
-  subtasksHeader: { fontSize: 13, marginTop: 22, marginBottom: 10 },
-  subtaskRow: { display: "flex", gap: 11, padding: "8px 0", alignItems: "center" },
-  subtaskTitle: { fontSize: 17, flex: 1, textAlign: "left" as const },
-  addSubtaskInput: { fontSize: 17, borderBottom: "2px solid #fff", flex: 1 },
+  label: { fontSize: 15, marginBottom: 3 },
+  value: { fontSize: 23 },
+  select: { fontSize: 23, background: "none", border: "none" },
+  clearButton: { marginTop: 8, flexShrink: 0 },
+  subtasksHeader: { fontSize: 15, marginTop: 24, marginBottom: 11 },
+  subtaskRow: { display: "flex", gap: 12, padding: "9px 0", alignItems: "center" },
+  subtaskTitle: { fontSize: 19, flex: 1, textAlign: "left" as const },
+  addSubtaskInput: { fontSize: 19, borderBottom: "2px solid #fff", flex: 1 },
   deleteTaskAction: {
-    fontSize: 16,
+    fontSize: 18,
     letterSpacing: "0.1em",
-    marginTop: 32,
+    marginTop: 34,
   },
 };
 
@@ -317,7 +317,7 @@ function EditTaskForm({
       {task.subtasks.map((s) => (
         <div key={s.id} style={styles.subtaskRow}>
           <button type="button" onClick={() => toggleSubtask(uid, task, s.id)} aria-label="Toggle subtask">
-            <CheckboxIcon checked={s.completed} size={15} />
+            <CheckboxIcon checked={s.completed} size={17} />
           </button>
           <div style={{ ...styles.subtaskTitle, opacity: s.completed ? 0.4 : 1 }}>{s.title}</div>
           <button type="button" onClick={() => deleteSubtask(uid, task, s.id)} aria-label="Delete subtask">
@@ -342,7 +342,7 @@ function EditTaskForm({
       ) : (
         <div style={styles.subtaskRow}>
           <button type="button" onClick={() => setAddingSubtask(true)} aria-label="Add subtask">
-            <PlusCircleIcon size={15} />
+            <PlusCircleIcon size={17} />
           </button>
           <button type="button" style={styles.subtaskTitle} onClick={() => setAddingSubtask(true)}>
             Add subtask…

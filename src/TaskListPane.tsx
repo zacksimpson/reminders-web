@@ -6,27 +6,27 @@ import { toggleTask } from "./lib/store";
 import { CheckboxIcon, OverdueAsteriskIcon, PlusIcon } from "./icons";
 
 const styles = {
-  pane: { padding: "28px 22px" },
+  pane: { padding: "30px 24px" },
   header: {
     textAlign: "center" as const,
-    fontSize: 20,
-    marginBottom: 24,
+    fontSize: 23,
+    marginBottom: 26,
     position: "relative" as const,
   },
   addButton: { position: "absolute" as const, right: 0, top: 3 },
   row: {
     display: "flex",
-    gap: 11,
-    padding: "10px 0",
+    gap: 12,
+    padding: "11px 0",
     width: "100%",
     textAlign: "left" as const,
     alignItems: "flex-start",
   },
   checkboxButton: { marginTop: 2, flexShrink: 0 },
-  title: { fontSize: 18 },
-  meta: { fontSize: 13, marginTop: 2 },
-  completedHeader: { fontSize: 15, opacity: 0.5, padding: "17px 0 11px", width: "100%", textAlign: "left" as const },
-  empty: { fontSize: 17, marginTop: 40, textAlign: "center" as const },
+  title: { fontSize: 21 },
+  meta: { fontSize: 15, marginTop: 2 },
+  completedHeader: { fontSize: 17, opacity: 0.5, padding: "18px 0 12px", width: "100%", textAlign: "left" as const },
+  empty: { fontSize: 19, marginTop: 40, textAlign: "center" as const },
 };
 
 export function TaskListPane({
@@ -60,7 +60,7 @@ export function TaskListPane({
       <div style={styles.header}>
         {list.title}
         <button type="button" style={styles.addButton} aria-label="Add task" onClick={onAddTask}>
-          <PlusIcon size={19} />
+          <PlusIcon size={22} />
         </button>
       </div>
 

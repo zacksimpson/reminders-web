@@ -14,32 +14,32 @@ const styles = {
     maxWidth: 420,
   },
   title: {
-    fontSize: 34,
-    margin: "0 0 42px",
+    fontSize: 38,
+    margin: "0 0 46px",
     fontWeight: 400,
   },
   label: {
-    fontSize: 13,
+    fontSize: 15,
     marginBottom: 4,
   },
   field: {
-    marginBottom: 30,
+    marginBottom: 33,
   },
   input: {
     width: "100%",
-    fontSize: 24,
+    fontSize: 27,
     paddingBottom: 8,
     borderBottom: "2px solid #fff",
   },
   action: {
-    fontSize: 22,
+    fontSize: 25,
     fontWeight: 400,
     letterSpacing: "0.15em",
     marginTop: 8,
     textAlign: "left" as const,
   },
   toggle: {
-    fontSize: 16,
+    fontSize: 18,
     marginTop: 32,
   },
   toggleLink: {
@@ -47,7 +47,7 @@ const styles = {
     textUnderlineOffset: 3,
   },
   error: {
-    fontSize: 15,
+    fontSize: 17,
     marginTop: -12,
     marginBottom: 24,
   },
