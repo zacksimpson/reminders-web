@@ -3,9 +3,11 @@
 // seeded now so Phase 2 (real phone sync) won't need a schema migration
 // later (see the project plan's Phase 2 notes).
 
+export type RecurrenceUnit = "day" | "week" | "month" | "year";
+
 export interface Recurrence {
   interval: number; // 1–30
-  unit: "day" | "week" | "month" | "year";
+  unit: RecurrenceUnit;
 }
 
 export interface Subtask {
