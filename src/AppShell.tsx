@@ -11,6 +11,8 @@ import { ListsPane } from "./ListsPane";
 import { TaskListPane } from "./TaskListPane";
 import { TaskDetailPane } from "./TaskDetailPane";
 import { useIsNarrow } from "./useIsNarrow";
+import { useResizablePanes } from "./useResizablePanes";
+import { PaneResizer } from "./PaneResizer";
 
 export type DetailMode = { kind: "none" } | { kind: "new" } | { kind: "edit"; taskId: string };
 
@@ -26,6 +28,7 @@ export function AppShell({ user }: { user: User }) {
   const [detail, setDetail] = useState<DetailMode>({ kind: "none" });
   const [mobileStage, setMobileStage] = useState<MobileStage>("lists");
   const isNarrow = useIsNarrow();
+  const { widths, startDrag } = useResizablePanes();
 
   useEffect(() => {
     ensureInboxList(user.uid);
@@ -116,16 +119,20 @@ export function AppShell({ user }: { user: User }) {
   }
 
   return (
-    <div
-      style={{
-        display: "grid",
-        gridTemplateColumns: "180px 300px 1fr",
-        minHeight: "100vh",
-      }}
-    >
-      {listsPane}
-      {taskListPane}
-      {taskDetailPane}
+    <div style={{ position: "relative", minHeight: "100vh" }}>
+      <div
+        style={{
+          display: "grid",
+          gridTemplateColumns: `${widths.lists}px ${widths.tasks}px 1fr`,
+          minHeight: "100vh",
+        }}
+      >
+        {listsPane}
+        {taskListPane}
+        {taskDetailPane}
+      </div>
+      <PaneResizer left={widths.lists} onMouseDown={startDrag("lists")} />
+      <PaneResizer left={widths.lists + widths.tasks} onMouseDown={startDrag("tasks")} />
     </div>
   );
 }
