@@ -1,4 +1,4 @@
-# Reminders - Web
+# Reminders Web
 
 A standalone browser companion for [Reminders](https://github.com/zacksimpson/reminders-tool), the Light Phone III reminders app. Laid out as a resizable multi-pane desktop app instead of the phone's tab bar.
 
