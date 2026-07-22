@@ -12,6 +12,10 @@ dist
 dist-ssr
 *.local
 
+# Firebase config — each deployment supplies its own project, never commit real values
+.env
+!.env.example
+
 # Editor directories and files
 .vscode/*
 !.vscode/extensions.json

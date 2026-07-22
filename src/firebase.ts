@@ -2,16 +2,24 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getFirestore } from "firebase/firestore";
 
-// Public web config — safe to embed in client code (not a secret; access is
-// enforced by Firestore security rules + Firebase Auth, not by hiding this).
+// Firebase web config is not a secret (access is enforced by Firestore
+// security rules + Firebase Auth, not by hiding this) — but it still comes
+// from env vars so each deployment points at its own Firebase project rather
+// than whoever built this repo sharing one project's quota. See .env.example.
 const firebaseConfig = {
-  apiKey: "AIzaSyBHpynggk2UlUeBGVCJaw-yaXEzzz6payY",
-  authDomain: "reminders-web-zs2026.firebaseapp.com",
-  projectId: "reminders-web-zs2026",
-  storageBucket: "reminders-web-zs2026.firebasestorage.app",
-  messagingSenderId: "1055613872869",
-  appId: "1:1055613872869:web:5d1911c7d04e6819e5020c",
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
+
+if (!firebaseConfig.apiKey) {
+  throw new Error(
+    "Missing Firebase config. Copy .env.example to .env and fill in your own Firebase project's values."
+  );
+}
 
 export const app = initializeApp(firebaseConfig);
 export const auth = getAuth(app);

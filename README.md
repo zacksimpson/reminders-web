@@ -1,32 +1,45 @@
-# React + TypeScript + Vite
+# Reminders — Web
 
-This template provides a minimal setup to get React working in Vite with HMR and some Oxlint rules.
+A standalone browser companion for [Reminders](https://github.com/zacksimpson/reminders-tool), the Light Phone III reminders app. Same black/white, no-gray, no-clutter design language, laid out as a resizable multi-pane desktop app instead of the phone's tab bar.
 
-Currently, two official plugins are available:
+This is **not** currently synced with the phone app — it's a separate Firebase-backed account, with its own sign-in and its own tasks. Phone sync is a possible future phase, not implemented yet.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react) uses [Oxc](https://oxc.rs)
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react-swc) uses [SWC](https://swc.rs/)
+## Stack
 
-## React Compiler
+- React + TypeScript + Vite
+- Firebase (Auth + Firestore) on the free Spark plan
 
-The React Compiler is not enabled on this template because of its impact on dev & build performances. To add it, see [this documentation](https://react.dev/learn/react-compiler/installation).
+## Running it yourself
 
-## Expanding the Oxlint configuration
+This repo doesn't ship with a working backend — each person who runs it needs their own Firebase project, so your usage never touches anyone else's quota (and vice versa).
 
-If you are developing a production application, we recommend enabling type-aware lint rules by installing `oxlint-tsgolint` and editing `.oxlintrc.json`:
+1. Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com) (Spark/free plan is enough).
+2. Enable **Authentication → Email/Password**.
+3. Enable **Firestore**, and set rules so each user can only read/write their own data:
 
-```json
-{
-  "$schema": "./node_modules/oxlint/configuration_schema.json",
-  "plugins": ["react", "typescript", "oxc"],
-  "options": {
-    "typeAware": true
-  },
-  "rules": {
-    "react/rules-of-hooks": "error",
-    "react/only-export-components": ["warn", { "allowConstantExport": true }]
-  }
-}
-```
+   ```
+   rules_version = '2';
+   service cloud.firestore {
+     match /databases/{database}/documents {
+       match /users/{uid}/{document=**} {
+         allow read, write: if request.auth != null && request.auth.uid == uid;
+       }
+     }
+   }
+   ```
 
-See the [Oxlint rules documentation](https://oxc.rs/docs/guide/usage/linter/rules) for the full list of rules and categories.
+4. In the Firebase console, add a Web App to your project and copy its config values.
+5. Copy `.env.example` to `.env` and fill in those values:
+
+   ```bash
+   cp .env.example .env
+   ```
+
+6. Install and run:
+
+   ```bash
+   npm install
+   npm run dev
+   ```
+
+`.env` is gitignored — your Firebase config stays local to your machine.
