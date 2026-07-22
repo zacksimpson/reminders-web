@@ -18,12 +18,8 @@ body,
 body {
   background: var(--bg);
   color: var(--fg);
-  font-family:
-    "Helvetica Neue",
-    -apple-system,
-    system-ui,
-    Arial,
-    sans-serif;
+  font-family: "Public Sans", -apple-system, system-ui, Arial, sans-serif;
+  font-weight: 400;
 }
 
 button,
