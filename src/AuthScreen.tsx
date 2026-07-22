@@ -33,7 +33,7 @@ const styles = {
   },
   action: {
     fontSize: 20,
-    fontWeight: 500,
+    fontWeight: 400,
     letterSpacing: "0.15em",
     marginTop: 8,
     textAlign: "left" as const,
