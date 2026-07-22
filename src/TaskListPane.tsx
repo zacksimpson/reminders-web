@@ -1,0 +1,149 @@
+import { useState } from "react";
+import type { ReminderList, Task } from "./lib/models";
+import { compareTasksByDateTime, formatDate, formatTime, isOverdue } from "./lib/dateTime";
+import { formatRecurrence } from "./lib/remindersLogic";
+import { toggleTask } from "./lib/store";
+import { CheckboxIcon, OverdueAsteriskIcon, PlusIcon } from "./icons";
+
+const styles = {
+  pane: { padding: "26px 20px" },
+  header: {
+    textAlign: "center" as const,
+    fontSize: 18,
+    marginBottom: 22,
+    position: "relative" as const,
+  },
+  addButton: { position: "absolute" as const, right: 0, top: 2 },
+  row: {
+    display: "flex",
+    gap: 10,
+    padding: "9px 0",
+    width: "100%",
+    textAlign: "left" as const,
+    alignItems: "flex-start",
+  },
+  checkboxButton: { marginTop: 2, flexShrink: 0 },
+  title: { fontSize: 16 },
+  meta: { fontSize: 12, marginTop: 2 },
+  completedHeader: { fontSize: 14, opacity: 0.5, padding: "16px 0 10px", width: "100%", textAlign: "left" as const },
+  empty: { fontSize: 16, opacity: 0.6, marginTop: 40, textAlign: "center" as const },
+};
+
+export function TaskListPane({
+  uid,
+  list,
+  tasks,
+  selectedTaskId,
+  onSelectTask,
+  onAddTask,
+}: {
+  uid: string;
+  list: ReminderList | null;
+  tasks: Task[];
+  selectedTaskId: string | null;
+  onSelectTask: (id: string) => void;
+  onAddTask: () => void;
+}) {
+  const [showCompleted, setShowCompleted] = useState(false);
+
+  const active = tasks.filter((t) => !t.completed).sort(compareTasksByDateTime);
+  const completed = tasks
+    .filter((t) => t.completed)
+    .sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
+
+  if (!list) {
+    return <div style={styles.pane} />;
+  }
+
+  return (
+    <div style={styles.pane}>
+      <div style={styles.header}>
+        {list.title}
+        <button type="button" style={styles.addButton} aria-label="Add task" onClick={onAddTask}>
+          <PlusIcon size={17} />
+        </button>
+      </div>
+
+      {tasks.length === 0 && <div style={styles.empty}>No tasks</div>}
+
+      {active.map((task) => (
+        <TaskRow
+          key={task.id}
+          uid={uid}
+          task={task}
+          list={list}
+          selected={task.id === selectedTaskId}
+          onSelect={() => onSelectTask(task.id)}
+        />
+      ))}
+
+      {completed.length > 0 && (
+        <>
+          <button
+            type="button"
+            style={styles.completedHeader}
+            onClick={() => setShowCompleted((v) => !v)}
+          >
+            Completed ({completed.length})
+          </button>
+          {showCompleted &&
+            completed.map((task) => (
+              <TaskRow
+                key={task.id}
+                uid={uid}
+                task={task}
+                list={list}
+                selected={task.id === selectedTaskId}
+                onSelect={() => onSelectTask(task.id)}
+                dimmed
+              />
+            ))}
+        </>
+      )}
+    </div>
+  );
+}
+
+function TaskRow({
+  uid,
+  task,
+  list,
+  selected,
+  onSelect,
+  dimmed,
+}: {
+  uid: string;
+  task: Task;
+  list: ReminderList;
+  selected: boolean;
+  onSelect: () => void;
+  dimmed?: boolean;
+}) {
+  const overdue = isOverdue(task) && !task.completed;
+  const metaParts = [
+    list.title,
+    task.date ? formatDate(task.date) : null,
+    task.time ? formatTime(task.time) : null,
+    task.subtasks.length ? `${task.subtasks.length} Subtask${task.subtasks.length === 1 ? "" : "s"}` : null,
+  ].filter(Boolean);
+
+  return (
+    <div style={{ ...styles.row, opacity: dimmed ? 0.4 : 1 }}>
+      <button
+        type="button"
+        style={styles.checkboxButton}
+        aria-label={task.completed ? "Mark incomplete" : "Mark complete"}
+        onClick={() => toggleTask(uid, task)}
+      >
+        {overdue ? <OverdueAsteriskIcon /> : <CheckboxIcon checked={task.completed} />}
+      </button>
+      <button type="button" style={{ flex: 1, textAlign: "left" }} onClick={onSelect}>
+        <div style={{ ...styles.title, textDecoration: selected ? "underline" : "none", textUnderlineOffset: 3 }}>
+          {task.title}
+        </div>
+        <div style={styles.meta}>{metaParts.join(" · ")}</div>
+        {task.recurrence && <div style={styles.meta}>{formatRecurrence(task.recurrence)}</div>}
+      </button>
+    </div>
+  );
+}

@@ -1,5 +1,6 @@
 import { onAuthStateChanged, type User } from "firebase/auth";
 import { useEffect, useState } from "react";
+import { AppShell } from "./AppShell";
 import { AuthScreen } from "./AuthScreen";
 import { auth } from "./firebase";
 
@@ -16,7 +17,7 @@ function App() {
     return <AuthScreen />;
   }
 
-  return <div style={{ padding: 22 }}>Signed in as {user.email}</div>;
+  return <AppShell user={user} />;
 }
 
 export default App;
