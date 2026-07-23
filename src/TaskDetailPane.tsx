@@ -25,16 +25,16 @@ const styles = {
     paddingBottom: 10,
     marginBottom: 26,
   },
-  field: {
+  field: { padding: "13px 0" },
+  fieldRow: {
     display: "flex",
     justifyContent: "space-between",
-    alignItems: "flex-start",
-    padding: "13px 0",
+    alignItems: "center",
   },
   label: { fontSize: 15, marginBottom: 3 },
   value: { fontSize: 23 },
   select: { fontSize: 23, background: "none", border: "none" },
-  clearButton: { marginTop: 8, flexShrink: 0 },
+  clearButton: { flexShrink: 0 },
   subtasksHeader: { fontSize: 15, marginTop: 24, marginBottom: 11 },
   subtaskRow: { display: "flex", gap: 12, padding: "9px 0", alignItems: "center" },
   subtaskTitle: { fontSize: 19, flex: 1, textAlign: "left" as const },
@@ -293,8 +293,8 @@ function EditTaskForm({
       </div>
 
       <div style={styles.field}>
-        <div>
-          <div style={styles.label}>Date</div>
+        <div style={styles.label}>Date</div>
+        <div style={styles.fieldRow}>
           {task.date ? (
             <div style={styles.value}>
               <input
@@ -313,24 +313,24 @@ function EditTaskForm({
               None
             </button>
           )}
+          {task.date && (
+            <button
+              type="button"
+              style={styles.clearButton}
+              aria-label="Clear date"
+              onClick={() => clearTaskField(uid, task.id, "date")}
+            >
+              <ClearFieldIcon />
+            </button>
+          )}
         </div>
-        {task.date && (
-          <button
-            type="button"
-            style={styles.clearButton}
-            aria-label="Clear date"
-            onClick={() => clearTaskField(uid, task.id, "date")}
-          >
-            <ClearFieldIcon />
-          </button>
-        )}
       </div>
 
       {task.date && (
         <>
           <div style={styles.field}>
-            <div>
-              <div style={styles.label}>Time</div>
+            <div style={styles.label}>Time</div>
+            <div style={styles.fieldRow}>
               {task.time ? (
                 <input
                   type="time"
@@ -343,22 +343,22 @@ function EditTaskForm({
                   None
                 </button>
               )}
+              {task.time && (
+                <button
+                  type="button"
+                  style={styles.clearButton}
+                  aria-label="Clear time"
+                  onClick={() => clearTaskField(uid, task.id, "time")}
+                >
+                  <ClearFieldIcon />
+                </button>
+              )}
             </div>
-            {task.time && (
-              <button
-                type="button"
-                style={styles.clearButton}
-                aria-label="Clear time"
-                onClick={() => clearTaskField(uid, task.id, "time")}
-              >
-                <ClearFieldIcon />
-              </button>
-            )}
           </div>
 
           <div style={styles.field}>
-            <div>
-              <div style={styles.label}>Recurring</div>
+            <div style={styles.label}>Recurring</div>
+            <div style={styles.fieldRow}>
               {task.recurrence ? (
                 <div style={{ display: "flex", gap: 8, alignItems: "center" }}>
                   <span style={styles.value}>Every</span>
@@ -398,17 +398,17 @@ function EditTaskForm({
                   None
                 </button>
               )}
+              {task.recurrence && (
+                <button
+                  type="button"
+                  style={styles.clearButton}
+                  aria-label="Clear recurrence"
+                  onClick={() => clearTaskField(uid, task.id, "recurrence")}
+                >
+                  <ClearFieldIcon />
+                </button>
+              )}
             </div>
-            {task.recurrence && (
-              <button
-                type="button"
-                style={styles.clearButton}
-                aria-label="Clear recurrence"
-                onClick={() => clearTaskField(uid, task.id, "recurrence")}
-              >
-                <ClearFieldIcon />
-              </button>
-            )}
           </div>
         </>
       )}
