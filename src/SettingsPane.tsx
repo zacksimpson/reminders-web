@@ -4,13 +4,8 @@ import { ScrollPane } from "./ScrollPane";
 
 const styles = {
   pane: { padding: "30px 24px" },
-  header: {
-    textAlign: "center" as const,
-    fontSize: 23,
-    marginBottom: 26,
-    position: "relative" as const,
-  },
-  backButton: { position: "absolute" as const, left: 0, top: 3 },
+  backRow: { marginBottom: 20 },
+  headerTitle: { fontSize: 32, fontWeight: 400, marginBottom: 26 },
   row: {
     width: "100%",
     textAlign: "left" as const,
@@ -49,10 +44,12 @@ export function SettingsPane({
 
   return (
     <ScrollPane style={styles.pane}>
-      <div style={styles.header}>
-        {onBack && <BackButton onBack={onBack} style={styles.backButton} />}
-        Settings
-      </div>
+      {onBack && (
+        <div style={styles.backRow}>
+          <BackButton onBack={onBack} />
+        </div>
+      )}
+      <div style={styles.headerTitle}>Settings</div>
 
       <button
         type="button"
