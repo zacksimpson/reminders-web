@@ -1,12 +1,21 @@
 import { type KeyboardEvent, useState } from "react";
 import type { ReminderList } from "./lib/models";
 import { addList } from "./lib/store";
-import { ListIcon, PlusIcon, SettingsIcon, TodayIcon } from "./icons";
+import { AccountIcon, ListIcon, PlusIcon, SettingsIcon, TodayIcon } from "./icons";
 import { ScrollPane } from "./ScrollPane";
 
+const SIDE_PADDING = { paddingLeft: 20, paddingRight: 28 };
+const NAV_GAP = 72;
+
 const styles = {
-  pane: { padding: "30px 28px 30px 20px" },
-  navGroup: { marginBottom: 72 },
+  pane: {
+    height: "100%",
+    minHeight: 0,
+    display: "flex",
+    flexDirection: "column" as const,
+    padding: "30px 0",
+  },
+  navZone: { ...SIDE_PADDING, flexShrink: 0, marginBottom: NAV_GAP },
   navRow: {
     display: "flex",
     alignItems: "center",
@@ -16,6 +25,8 @@ const styles = {
     textAlign: "left" as const,
   },
   navLabel: { fontSize: 19 },
+  scrollZoneOuter: { flex: 1, minHeight: 0 },
+  scrollZoneInner: SIDE_PADDING,
   sectionHeader: {
     position: "relative" as const,
     marginBottom: 16,
@@ -34,7 +45,10 @@ const styles = {
     borderBottom: "2px solid #fff",
     paddingBottom: 2,
   },
+  accountZone: { ...SIDE_PADDING, flexShrink: 0, marginTop: NAV_GAP },
 };
+
+type Section = "lists" | "today" | "settings" | "account";
 
 export function ListsPane({
   lists,
@@ -47,8 +61,8 @@ export function ListsPane({
   lists: ReminderList[];
   selectedListId: string | null;
   onSelectList: (id: string) => void;
-  section: "lists" | "today" | "settings";
-  onSelectSection: (section: "lists" | "today" | "settings") => void;
+  section: Section;
+  onSelectSection: (section: Section) => void;
   uid: string;
 }) {
   const [adding, setAdding] = useState(false);
@@ -70,8 +84,8 @@ export function ListsPane({
   }
 
   return (
-    <ScrollPane style={styles.pane}>
-      <div style={styles.navGroup}>
+    <div style={styles.pane}>
+      <div style={styles.navZone}>
         <button type="button" style={styles.navRow} onClick={() => onSelectSection("lists")}>
           <ListIcon />
           <span
@@ -110,46 +124,63 @@ export function ListsPane({
         </button>
       </div>
 
-      <div style={styles.sectionHeader}>
-        <span style={styles.sectionTitle}>Your lists</span>
-        <button
-          type="button"
-          style={styles.addButton}
-          aria-label="Add list"
-          onClick={() => setAdding(true)}
-        >
-          <PlusIcon size={13} />
+      <ScrollPane style={styles.scrollZoneInner} outerStyle={styles.scrollZoneOuter}>
+        <div style={styles.sectionHeader}>
+          <span style={styles.sectionTitle}>Your lists</span>
+          <button
+            type="button"
+            style={styles.addButton}
+            aria-label="Add list"
+            onClick={() => setAdding(true)}
+          >
+            <PlusIcon size={13} />
+          </button>
+        </div>
+
+        {lists.map((list) => (
+          <button
+            key={list.id}
+            type="button"
+            style={{
+              ...styles.listRow,
+              textDecoration: section === "lists" && list.id === selectedListId ? "underline" : "none",
+              textUnderlineOffset: 4,
+            }}
+            onClick={() => onSelectList(list.id)}
+          >
+            {list.title}
+          </button>
+        ))}
+
+        {adding && (
+          <input
+            style={styles.newListInput}
+            autoFocus
+            value={newTitle}
+            onChange={(e) => setNewTitle(e.target.value)}
+            onKeyDown={submitNewList}
+            onBlur={() => {
+              setAdding(false);
+              setNewTitle("");
+            }}
+          />
+        )}
+      </ScrollPane>
+
+      <div style={styles.accountZone}>
+        <button type="button" style={styles.navRow} onClick={() => onSelectSection("account")}>
+          <AccountIcon />
+          <span
+            style={{
+              ...styles.navLabel,
+              textDecoration: section === "account" ? "underline" : "none",
+              textUnderlineOffset: 3,
+            }}
+          >
+            Account
+          </span>
         </button>
       </div>
-
-      {lists.map((list) => (
-        <button
-          key={list.id}
-          type="button"
-          style={{
-            ...styles.listRow,
-            textDecoration: section === "lists" && list.id === selectedListId ? "underline" : "none",
-            textUnderlineOffset: 4,
-          }}
-          onClick={() => onSelectList(list.id)}
-        >
-          {list.title}
-        </button>
-      ))}
-
-      {adding && (
-        <input
-          style={styles.newListInput}
-          autoFocus
-          value={newTitle}
-          onChange={(e) => setNewTitle(e.target.value)}
-          onKeyDown={submitNewList}
-          onBlur={() => {
-            setAdding(false);
-            setNewTitle("");
-          }}
-        />
-      )}
-    </ScrollPane>
+    </div>
   );
 }
