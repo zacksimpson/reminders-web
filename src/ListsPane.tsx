@@ -52,6 +52,9 @@ const styles = {
 };
 
 type Section = "lists" | "today" | "settings" | "account" | "add";
+// Every nav button here selects a fixed section directly (never "lists" —
+// that only happens by picking an actual list, via onSelectList instead).
+type SelectableSection = Exclude<Section, "lists">;
 
 export function ListsPane({
   lists,
@@ -65,7 +68,7 @@ export function ListsPane({
   selectedListId: string | null;
   onSelectList: (id: string) => void;
   section: Section;
-  onSelectSection: (section: Section) => void;
+  onSelectSection: (section: SelectableSection) => void;
   uid: string;
 }) {
   const [adding, setAdding] = useState(false);

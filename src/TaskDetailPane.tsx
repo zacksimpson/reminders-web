@@ -1,5 +1,5 @@
 import { type KeyboardEvent, useEffect, useState } from "react";
-import type { DetailMode } from "./AppShell";
+import type { DetailMode } from "./appNav";
 import type { ReminderList, RecurrenceUnit, Settings, Task } from "./lib/models";
 import {
   addSubtask,

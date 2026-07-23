@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useReducer, useState } from "react";
 import type { User } from "firebase/auth";
 import type { ReminderList, Settings, Task } from "./lib/models";
 import { getTodayStr } from "./lib/dateTime";
@@ -8,55 +8,38 @@ import {
   subscribeToSettings,
   subscribeToTasks,
 } from "./lib/store";
+import { appNavReducer, initialAppNavState, isShowingDetail } from "./appNav";
 import { ListsPane } from "./ListsPane";
 import { ListOptionsPane } from "./ListOptionsPane";
 import { AddTaskPane } from "./AddTaskPane";
 import { TaskListPane } from "./TaskListPane";
 import { TaskDetailPane } from "./TaskDetailPane";
 import { TodayPane } from "./TodayPane";
-import { SettingsPane, type SettingKey, type SettingsView } from "./SettingsPane";
+import { SettingsPane } from "./SettingsPane";
 import { SettingsDetailPane } from "./SettingsDetailPane";
-import { AccountPane, type AccountKey } from "./AccountPane";
+import { AccountPane } from "./AccountPane";
 import { AccountDetailPane } from "./AccountDetailPane";
 import { useLayoutTier } from "./useLayoutTier";
 import { useResizablePanes } from "./useResizablePanes";
 import { useBrowserNotifications } from "./useBrowserNotifications";
 import { PaneResizer } from "./PaneResizer";
 
-export type DetailMode =
-  | { kind: "none" }
-  | { kind: "new" }
-  | { kind: "edit"; taskId: string }
-  | { kind: "list-options" };
-
-type Section = "lists" | "today" | "settings" | "account" | "add";
-
-// Below the desktop breakpoint, panes stack and are navigated one screen at a
-// time, mirroring the phone app's own tab-root -> pushed-screen model. At the
-// tablet tier, Lists + middle content stay paired and only the detail pane
-// pushes in as its own screen; at the mobile tier every pane is its own screen.
-type MobileStage = "lists" | "tasks" | "detail";
-
 export function AppShell({ user }: { user: User }) {
   const [lists, setLists] = useState<ReminderList[]>([]);
   const [tasks, setTasks] = useState<Task[]>([]);
   const [settings, setSettings] = useState<Settings | null>(null);
-  const [selectedListId, setSelectedListId] = useState<string | null>(null);
-  const [section, setSection] = useState<Section>("lists");
-  const [activeSetting, setActiveSetting] = useState<SettingKey | null>(null);
-  const [settingsView, setSettingsView] = useState<SettingsView>("root");
-  const [activeAccountAction, setActiveAccountAction] = useState<AccountKey | null>(null);
-  const [detail, setDetail] = useState<DetailMode>({ kind: "none" });
-  const [mobileStage, setMobileStage] = useState<MobileStage>("lists");
+  const [nav, dispatch] = useReducer(appNavReducer, initialAppNavState);
   const tier = useLayoutTier();
   const { widths, startDrag } = useResizablePanes();
   const notifications = useBrowserNotifications(tasks, lists);
+
+  const { selectedListId, mobileStage, screen } = nav;
 
   useEffect(() => {
     ensureInboxList(user.uid);
     const unsubLists = subscribeToLists(user.uid, (l) => {
       setLists(l);
-      setSelectedListId((current) => current ?? l[0]?.id ?? null);
+      dispatch({ type: "LISTS_LOADED", firstListId: l[0]?.id ?? null });
     });
     const unsubTasks = subscribeToTasks(user.uid, setTasks);
     const unsubSettings = subscribeToSettings(user.uid, setSettings);
@@ -71,45 +54,29 @@ export function AppShell({ user }: { user: User }) {
     return null;
   }
 
-  const showingDetail =
-    detail.kind !== "none" ||
-    (section === "settings" && activeSetting !== null) ||
-    (section === "account" && activeAccountAction !== null);
-
-  function selectSection(next: Section) {
-    setSection(next);
-    setDetail({ kind: "none" });
-    setActiveSetting(null);
-    setSettingsView("root");
-    setActiveAccountAction(null);
-    setMobileStage(next === "lists" ? "lists" : "tasks");
-  }
-
-  function goBackFromDetail() {
-    setDetail({ kind: "none" });
-    setActiveSetting(null);
-    setActiveAccountAction(null);
-    setMobileStage("tasks");
-  }
+  const showingDetail = isShowingDetail(screen);
 
   // Lists stays visible alongside the middle content at both desktop and
   // tablet tiers, so the middle pane's own back arrow is mobile-only.
-  const middleBack = tier === "mobile" ? () => setMobileStage("lists") : undefined;
+  const middleBack = tier === "mobile" ? () => dispatch({ type: "GO_TO_MOBILE_LISTS" }) : undefined;
   // The detail pane pushes in as its own screen at both tablet and mobile.
-  const detailBack = tier !== "desktop" ? goBackFromDetail : undefined;
+  const detailBack = tier !== "desktop" ? () => dispatch({ type: "GO_BACK_FROM_DETAIL" }) : undefined;
+
+  // Convenience accessors mirroring the old flat variables, derived from the
+  // discriminated screen union so the rest of this render body barely changed.
+  const detail =
+    screen.section === "lists" || screen.section === "today" ? screen.detail : { kind: "none" as const };
+  const activeSetting = screen.section === "settings" ? screen.activeSetting : null;
+  const settingsView = screen.section === "settings" ? screen.settingsView : "root";
+  const activeAccountAction = screen.section === "account" ? screen.activeAccountAction : null;
 
   const listsPane = (
     <ListsPane
       lists={lists}
       selectedListId={selectedListId}
-      section={section}
-      onSelectSection={selectSection}
-      onSelectList={(id) => {
-        setSelectedListId(id);
-        setSection("lists");
-        setDetail({ kind: "none" });
-        setMobileStage("tasks");
-      }}
+      section={screen.section}
+      onSelectSection={(section) => dispatch({ type: "SELECT_SECTION", section })}
+      onSelectList={(id) => dispatch({ type: "SELECT_LIST", listId: id })}
       uid={user.uid}
     />
   );
@@ -120,18 +87,9 @@ export function AppShell({ user }: { user: User }) {
       list={lists.find((l) => l.id === selectedListId) ?? null}
       tasks={tasks.filter((t) => t.listId === selectedListId)}
       selectedTaskId={detail.kind === "edit" ? detail.taskId : null}
-      onSelectTask={(taskId) => {
-        setDetail({ kind: "edit", taskId });
-        setMobileStage("detail");
-      }}
-      onAddTask={() => {
-        setDetail({ kind: "new" });
-        setMobileStage("detail");
-      }}
-      onOpenListOptions={() => {
-        setDetail({ kind: "list-options" });
-        setMobileStage("detail");
-      }}
+      onSelectTask={(taskId) => dispatch({ type: "OPEN_TASK", taskId })}
+      onAddTask={() => dispatch({ type: "OPEN_NEW_TASK" })}
+      onOpenListOptions={() => dispatch({ type: "OPEN_LIST_OPTIONS" })}
       onBack={middleBack}
     />
   );
@@ -143,14 +101,8 @@ export function AppShell({ user }: { user: User }) {
       tasks={tasks}
       showOverdue={settings.showOverdue}
       selectedTaskId={detail.kind === "edit" ? detail.taskId : null}
-      onSelectTask={(taskId) => {
-        setDetail({ kind: "edit", taskId });
-        setMobileStage("detail");
-      }}
-      onAddTask={() => {
-        setDetail({ kind: "new" });
-        setMobileStage("detail");
-      }}
+      onSelectTask={(taskId) => dispatch({ type: "OPEN_TASK", taskId })}
+      onAddTask={() => dispatch({ type: "OPEN_NEW_TASK" })}
       onBack={middleBack}
     />
   );
@@ -161,12 +113,9 @@ export function AppShell({ user }: { user: User }) {
       settings={settings}
       activeSetting={activeSetting}
       settingsView={settingsView}
-      onSelectSetting={(key) => {
-        setActiveSetting(key);
-        setMobileStage("detail");
-      }}
-      onOpenTaskBehaviors={() => setSettingsView("task-behaviors")}
-      onBackToSettingsRoot={() => setSettingsView("root")}
+      onSelectSetting={(key) => dispatch({ type: "OPEN_SETTING", key })}
+      onOpenTaskBehaviors={() => dispatch({ type: "OPEN_TASK_BEHAVIORS" })}
+      onBackToSettingsRoot={() => dispatch({ type: "BACK_TO_SETTINGS_ROOT" })}
       onBack={middleBack}
     />
   );
@@ -174,10 +123,7 @@ export function AppShell({ user }: { user: User }) {
   const accountPane = (
     <AccountPane
       activeAccountAction={activeAccountAction}
-      onSelectAccountAction={(key) => {
-        setActiveAccountAction(key);
-        setMobileStage("detail");
-      }}
+      onSelectAccountAction={(key) => dispatch({ type: "OPEN_ACCOUNT_ACTION", key })}
       onBack={middleBack}
     />
   );
@@ -188,27 +134,19 @@ export function AppShell({ user }: { user: User }) {
       lists={lists}
       settings={settings}
       onBack={middleBack}
-      onCreated={(_taskId, listId) => {
-        setSelectedListId(listId);
-        setSection("lists");
-        setMobileStage("tasks");
-      }}
-      onCancel={() => {
-        setSelectedListId(settings.defaultListId);
-        setSection("lists");
-        setMobileStage("tasks");
-      }}
+      onCreated={(_taskId, listId) => dispatch({ type: "ADD_TASK_SAVED", listId })}
+      onCancel={() => dispatch({ type: "CANCEL_ADD_TASK", defaultListId: settings.defaultListId })}
     />
   );
 
   const middlePane =
-    section === "today"
+    screen.section === "today"
       ? todayPane
-      : section === "settings"
+      : screen.section === "settings"
         ? settingsPane
-        : section === "account"
+        : screen.section === "account"
           ? accountPane
-          : section === "add"
+          : screen.section === "add"
             ? addTaskPane
             : taskListPane;
 
@@ -218,15 +156,13 @@ export function AppShell({ user }: { user: User }) {
       lists={lists}
       settings={settings}
       detail={detail}
-      task={
-        detail.kind === "edit"
-          ? tasks.find((t) => t.id === detail.taskId) ?? null
-          : null
+      task={detail.kind === "edit" ? tasks.find((t) => t.id === detail.taskId) ?? null : null}
+      defaultListId={
+        screen.section === "today" ? settings.defaultListId : selectedListId ?? lists[0]?.id ?? "inbox"
       }
-      defaultListId={section === "today" ? settings.defaultListId : selectedListId ?? lists[0]?.id ?? "inbox"}
-      defaultDate={section === "today" ? getTodayStr() : undefined}
-      onTaskCreated={(taskId) => setDetail({ kind: "edit", taskId })}
-      onClose={goBackFromDetail}
+      defaultDate={screen.section === "today" ? getTodayStr() : undefined}
+      onTaskCreated={(taskId) => dispatch({ type: "TASK_CREATED", taskId })}
+      onClose={() => dispatch({ type: "GO_BACK_FROM_DETAIL" })}
       onBack={detailBack}
     />
   );
@@ -252,19 +188,16 @@ export function AppShell({ user }: { user: User }) {
       uid={user.uid}
       list={currentList}
       onBack={detailBack}
-      onDeleted={() => {
-        setSelectedListId(settings.defaultListId);
-        goBackFromDetail();
-      }}
+      onDeleted={() => dispatch({ type: "LIST_DELETED", defaultListId: settings.defaultListId })}
     />
   );
 
   const detailPane =
-    section === "settings"
+    screen.section === "settings"
       ? settingsDetailPane
-      : section === "account"
+      : screen.section === "account"
         ? accountDetailPane
-        : section === "lists" && detail.kind === "list-options"
+        : screen.section === "lists" && detail.kind === "list-options"
           ? listOptionsPane
           : taskDetailPane;
 
