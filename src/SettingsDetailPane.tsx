@@ -5,6 +5,7 @@ import { ToggleSwitch } from "./ToggleSwitch";
 import { BackButton } from "./BackButton";
 import { ScrollPane } from "./ScrollPane";
 import type { SettingKey } from "./SettingsPane";
+import type { BrowserNotificationsApi } from "./useBrowserNotifications";
 
 const styles = {
   pane: { padding: "30px 37px", maxWidth: 720 },
@@ -35,6 +36,9 @@ const styles = {
     fontSize: 16,
     marginTop: 24,
   },
+  field: { marginTop: 26 },
+  fieldLabel: { fontSize: 15, marginBottom: 4 },
+  timeInput: { fontSize: 23, borderBottom: "2px solid #fff", paddingBottom: 8 },
 };
 
 export function SettingsDetailPane({
@@ -42,12 +46,14 @@ export function SettingsDetailPane({
   lists,
   settings,
   activeSetting,
+  notifications,
   onBack,
 }: {
   uid: string;
   lists: ReminderList[];
   settings: Settings;
   activeSetting: SettingKey | null;
+  notifications: BrowserNotificationsApi;
   onBack?: () => void;
 }) {
   if (activeSetting === null) {
@@ -154,12 +160,77 @@ export function SettingsDetailPane({
     );
   }
 
+  if (activeSetting === "notifications") {
+    return (
+      <ScrollPane style={styles.pane}>
+        {backRow}
+        <div style={styles.title}>Notifications</div>
+        <NotificationsSection notifications={notifications} />
+      </ScrollPane>
+    );
+  }
+
   return (
     <ScrollPane style={styles.pane}>
       {backRow}
       <div style={styles.title}>Import Backup</div>
       <ImportBackupSection uid={uid} />
     </ScrollPane>
+  );
+}
+
+function NotificationsSection({ notifications }: { notifications: BrowserNotificationsApi }) {
+  const {
+    enabled,
+    todaysTasksEnabled,
+    todaysTasksTime,
+    permissionDenied,
+    supported,
+    setEnabled,
+    setTodaysTasksEnabled,
+    setTodaysTasksTime,
+  } = notifications;
+
+  if (!supported) {
+    return <div style={styles.body}>Notifications aren't supported in this browser.</div>;
+  }
+
+  return (
+    <>
+      <ToggleSwitch label="Enable Notifications" value={enabled} onValueChange={setEnabled} />
+
+      {permissionDenied && (
+        <div style={styles.body}>
+          Please enable notification permissions for this site in your browser's settings.
+        </div>
+      )}
+
+      {enabled && (
+        <>
+          <ToggleSwitch
+            label="Today's Tasks"
+            value={todaysTasksEnabled}
+            onValueChange={setTodaysTasksEnabled}
+          />
+
+          {todaysTasksEnabled && (
+            <div style={styles.field}>
+              <div style={styles.fieldLabel}>Notification Time</div>
+              <input
+                type="time"
+                style={{ ...styles.timeInput, colorScheme: "dark" }}
+                value={todaysTasksTime}
+                onChange={(e) => setTodaysTasksTime(e.target.value)}
+              />
+            </div>
+          )}
+
+          <div style={{ ...styles.body, ...styles.field }}>
+            Notifications only fire while this tab is open in your browser.
+          </div>
+        </>
+      )}
+    </>
   );
 }
 

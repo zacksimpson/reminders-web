@@ -32,7 +32,13 @@ const ADD_POSITION_LABELS: Record<Settings["addPosition"], string> = {
   bottom: "Bottom of List",
 };
 
-export type SettingKey = "today-view" | "default-list" | "after-quick-add" | "add-position" | "import-backup";
+export type SettingKey =
+  | "today-view"
+  | "default-list"
+  | "after-quick-add"
+  | "add-position"
+  | "notifications"
+  | "import-backup";
 
 export function SettingsPane({
   lists,
@@ -93,6 +99,14 @@ export function SettingsPane({
       >
         <div style={styles.rowLabel}>Add New Tasks</div>
         <div style={styles.rowValue}>{ADD_POSITION_LABELS[settings.addPosition]}</div>
+      </button>
+
+      <button
+        type="button"
+        style={{ ...styles.row, textDecoration: activeSetting === "notifications" ? "underline" : "none" }}
+        onClick={() => onSelectSetting("notifications")}
+      >
+        <div style={styles.rowValue}>Notifications</div>
       </button>
 
       <button

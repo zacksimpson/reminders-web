@@ -18,6 +18,7 @@ import { AccountPane, type AccountKey } from "./AccountPane";
 import { AccountDetailPane } from "./AccountDetailPane";
 import { useLayoutTier } from "./useLayoutTier";
 import { useResizablePanes } from "./useResizablePanes";
+import { useBrowserNotifications } from "./useBrowserNotifications";
 import { PaneResizer } from "./PaneResizer";
 
 export type DetailMode = { kind: "none" } | { kind: "new" } | { kind: "edit"; taskId: string };
@@ -42,6 +43,7 @@ export function AppShell({ user }: { user: User }) {
   const [mobileStage, setMobileStage] = useState<MobileStage>("lists");
   const tier = useLayoutTier();
   const { widths, startDrag } = useResizablePanes();
+  const notifications = useBrowserNotifications(tasks, lists);
 
   useEffect(() => {
     ensureInboxList(user.uid);
@@ -199,6 +201,7 @@ export function AppShell({ user }: { user: User }) {
       lists={lists}
       settings={settings}
       activeSetting={activeSetting}
+      notifications={notifications}
       onBack={detailBack}
     />
   );
