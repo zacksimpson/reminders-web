@@ -11,6 +11,8 @@ const styles = {
     alignItems: "center",
     gap: 12,
     padding: "10px 0",
+    width: "100%",
+    textAlign: "left" as const,
   },
   navLabel: { fontSize: 19 },
   sectionHeader: {
@@ -37,11 +39,15 @@ export function ListsPane({
   lists,
   selectedListId,
   onSelectList,
+  section,
+  onSelectSection,
   uid,
 }: {
   lists: ReminderList[];
   selectedListId: string | null;
   onSelectList: (id: string) => void;
+  section: "lists" | "today" | "settings";
+  onSelectSection: (section: "lists" | "today" | "settings") => void;
   uid: string;
 }) {
   const [adding, setAdding] = useState(false);
@@ -65,20 +71,42 @@ export function ListsPane({
   return (
     <div style={styles.pane}>
       <div style={styles.navGroup}>
-        <div style={styles.navRow}>
+        <button type="button" style={styles.navRow} onClick={() => onSelectSection("lists")}>
           <ListIcon />
-          <span style={{ ...styles.navLabel, textDecoration: "underline", textUnderlineOffset: 3 }}>
+          <span
+            style={{
+              ...styles.navLabel,
+              textDecoration: section === "lists" ? "underline" : "none",
+              textUnderlineOffset: 3,
+            }}
+          >
             Lists
           </span>
-        </div>
-        <div style={styles.navRow}>
+        </button>
+        <button type="button" style={styles.navRow} onClick={() => onSelectSection("today")}>
           <TodayIcon />
-          <span style={styles.navLabel}>Today</span>
-        </div>
-        <div style={styles.navRow}>
+          <span
+            style={{
+              ...styles.navLabel,
+              textDecoration: section === "today" ? "underline" : "none",
+              textUnderlineOffset: 3,
+            }}
+          >
+            Today
+          </span>
+        </button>
+        <button type="button" style={styles.navRow} onClick={() => onSelectSection("settings")}>
           <SettingsIcon />
-          <span style={styles.navLabel}>Settings</span>
-        </div>
+          <span
+            style={{
+              ...styles.navLabel,
+              textDecoration: section === "settings" ? "underline" : "none",
+              textUnderlineOffset: 3,
+            }}
+          >
+            Settings
+          </span>
+        </button>
       </div>
 
       <div style={styles.sectionHeader}>
@@ -99,7 +127,7 @@ export function ListsPane({
           type="button"
           style={{
             ...styles.listRow,
-            textDecoration: list.id === selectedListId ? "underline" : "none",
+            textDecoration: section === "lists" && list.id === selectedListId ? "underline" : "none",
             textUnderlineOffset: 4,
           }}
           onClick={() => onSelectList(list.id)}

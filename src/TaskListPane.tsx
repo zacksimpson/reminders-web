@@ -109,7 +109,7 @@ export function TaskListPane({
   );
 }
 
-function TaskRow({
+export function TaskRow({
   uid,
   task,
   list,

@@ -51,6 +51,7 @@ export function TaskDetailPane({
   detail,
   task,
   defaultListId,
+  defaultDate,
   onTaskCreated,
   onClose,
   onBack,
@@ -61,6 +62,7 @@ export function TaskDetailPane({
   detail: DetailMode;
   task: Task | null;
   defaultListId: string;
+  defaultDate?: string;
   onTaskCreated: (taskId: string) => void;
   onClose: () => void;
   onBack?: () => void;
@@ -75,6 +77,7 @@ export function TaskDetailPane({
         lists={lists}
         settings={settings}
         defaultListId={defaultListId}
+        defaultDate={defaultDate}
         onCreated={onTaskCreated}
         onBack={onBack}
       />
@@ -91,6 +94,7 @@ function NewTaskForm({
   lists,
   settings,
   defaultListId,
+  defaultDate,
   onCreated,
   onBack,
 }: {
@@ -98,6 +102,7 @@ function NewTaskForm({
   lists: ReminderList[];
   settings: Settings;
   defaultListId: string;
+  defaultDate?: string;
   onCreated: (taskId: string) => void;
   onBack?: () => void;
 }) {
@@ -109,6 +114,7 @@ function NewTaskForm({
     const created = await addTask(uid, {
       title: trimmed,
       listId: defaultListId,
+      date: defaultDate,
       addPosition: settings.addPosition,
     });
     onCreated(created.id);

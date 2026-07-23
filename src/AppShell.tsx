@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { User } from "firebase/auth";
 import type { ReminderList, Settings, Task } from "./lib/models";
+import { getTodayStr } from "./lib/dateTime";
 import {
   ensureInboxList,
   subscribeToLists,
@@ -10,11 +11,16 @@ import {
 import { ListsPane } from "./ListsPane";
 import { TaskListPane } from "./TaskListPane";
 import { TaskDetailPane } from "./TaskDetailPane";
+import { TodayPane } from "./TodayPane";
+import { SettingsPane, type SettingKey } from "./SettingsPane";
+import { SettingsDetailPane } from "./SettingsDetailPane";
 import { useIsNarrow } from "./useIsNarrow";
 import { useResizablePanes } from "./useResizablePanes";
 import { PaneResizer } from "./PaneResizer";
 
 export type DetailMode = { kind: "none" } | { kind: "new" } | { kind: "edit"; taskId: string };
+
+type Section = "lists" | "today" | "settings";
 
 // Below the breakpoint, panes stack and are navigated one at a time,
 // mirroring the phone app's own tab-root -> pushed-screen -> pushed-screen model.
@@ -25,6 +31,8 @@ export function AppShell({ user }: { user: User }) {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [settings, setSettings] = useState<Settings | null>(null);
   const [selectedListId, setSelectedListId] = useState<string | null>(null);
+  const [section, setSection] = useState<Section>("lists");
+  const [activeSetting, setActiveSetting] = useState<SettingKey | null>(null);
   const [detail, setDetail] = useState<DetailMode>({ kind: "none" });
   const [mobileStage, setMobileStage] = useState<MobileStage>("lists");
   const isNarrow = useIsNarrow();
@@ -49,12 +57,22 @@ export function AppShell({ user }: { user: User }) {
     return null;
   }
 
+  function selectSection(next: Section) {
+    setSection(next);
+    setDetail({ kind: "none" });
+    setActiveSetting(null);
+    setMobileStage(next === "lists" ? "lists" : "tasks");
+  }
+
   const listsPane = (
     <ListsPane
       lists={lists}
       selectedListId={selectedListId}
+      section={section}
+      onSelectSection={selectSection}
       onSelectList={(id) => {
         setSelectedListId(id);
+        setSection("lists");
         setDetail({ kind: "none" });
         setMobileStage("tasks");
       }}
@@ -80,6 +98,40 @@ export function AppShell({ user }: { user: User }) {
     />
   );
 
+  const todayPane = (
+    <TodayPane
+      uid={user.uid}
+      lists={lists}
+      tasks={tasks}
+      showOverdue={settings.showOverdue}
+      selectedTaskId={detail.kind === "edit" ? detail.taskId : null}
+      onSelectTask={(taskId) => {
+        setDetail({ kind: "edit", taskId });
+        setMobileStage("detail");
+      }}
+      onAddTask={() => {
+        setDetail({ kind: "new" });
+        setMobileStage("detail");
+      }}
+      onBack={isNarrow ? () => setMobileStage("lists") : undefined}
+    />
+  );
+
+  const settingsPane = (
+    <SettingsPane
+      lists={lists}
+      settings={settings}
+      activeSetting={activeSetting}
+      onSelectSetting={(key) => {
+        setActiveSetting(key);
+        setMobileStage("detail");
+      }}
+      onBack={isNarrow ? () => setMobileStage("lists") : undefined}
+    />
+  );
+
+  const middlePane = section === "today" ? todayPane : section === "settings" ? settingsPane : taskListPane;
+
   const taskDetailPane = (
     <TaskDetailPane
       uid={user.uid}
@@ -91,7 +143,8 @@ export function AppShell({ user }: { user: User }) {
           ? tasks.find((t) => t.id === detail.taskId) ?? null
           : null
       }
-      defaultListId={selectedListId ?? lists[0]?.id ?? "inbox"}
+      defaultListId={section === "today" ? settings.defaultListId : selectedListId ?? lists[0]?.id ?? "inbox"}
+      defaultDate={section === "today" ? getTodayStr() : undefined}
       onTaskCreated={(taskId) => setDetail({ kind: "edit", taskId })}
       onClose={() => {
         setDetail({ kind: "none" });
@@ -108,12 +161,24 @@ export function AppShell({ user }: { user: User }) {
     />
   );
 
+  const settingsDetailPane = (
+    <SettingsDetailPane
+      uid={user.uid}
+      lists={lists}
+      settings={settings}
+      activeSetting={activeSetting}
+      onBack={isNarrow ? () => setMobileStage("tasks") : undefined}
+    />
+  );
+
+  const detailPane = section === "settings" ? settingsDetailPane : taskDetailPane;
+
   if (isNarrow) {
     return (
       <div style={{ minHeight: "100vh" }}>
         {mobileStage === "lists" && listsPane}
-        {mobileStage === "tasks" && taskListPane}
-        {mobileStage === "detail" && taskDetailPane}
+        {mobileStage === "tasks" && middlePane}
+        {mobileStage === "detail" && detailPane}
       </div>
     );
   }
@@ -129,8 +194,8 @@ export function AppShell({ user }: { user: User }) {
           }}
         >
           {listsPane}
-          {taskListPane}
-          {taskDetailPane}
+          {middlePane}
+          {detailPane}
         </div>
         <PaneResizer left={widths.lists} onMouseDown={startDrag("lists")} />
         <PaneResizer left={widths.lists + widths.tasks} onMouseDown={startDrag("tasks")} />
