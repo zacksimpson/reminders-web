@@ -110,7 +110,7 @@ export function AppShell({ user }: { user: User }) {
 
   if (isNarrow) {
     return (
-      <div style={{ minHeight: "100vh", paddingTop: 96 }}>
+      <div style={{ minHeight: "100vh" }}>
         {mobileStage === "lists" && listsPane}
         {mobileStage === "tasks" && taskListPane}
         {mobileStage === "detail" && taskDetailPane}
@@ -119,19 +119,12 @@ export function AppShell({ user }: { user: User }) {
   }
 
   return (
-    <div
-      style={{
-        position: "relative",
-        minHeight: "100vh",
-        maxWidth: 1200,
-        margin: "0 auto",
-        paddingTop: 96,
-      }}
-    >
+    <div style={{ position: "relative", minHeight: "100vh" }}>
       <div
         style={{
           display: "grid",
           gridTemplateColumns: `${widths.lists}px ${widths.tasks}px 1fr`,
+          minHeight: "100vh",
         }}
       >
         {listsPane}
