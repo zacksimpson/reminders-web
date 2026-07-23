@@ -8,14 +8,15 @@ import { PlusIcon } from "./icons";
 
 const styles = {
   pane: { padding: "30px 24px" },
-  header: {
-    textAlign: "center" as const,
-    fontSize: 23,
+  backRow: { marginBottom: 20 },
+  headerRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 26,
-    position: "relative" as const,
   },
-  backButton: { position: "absolute" as const, left: 0, top: 3 },
-  addButton: { position: "absolute" as const, right: 0, top: 3 },
+  headerTitle: { fontSize: 32, fontWeight: 400 },
+  addButton: { display: "flex" },
   completedHeader: { fontSize: 17, opacity: 0.5, padding: "18px 0 12px", width: "100%", textAlign: "left" as const },
   empty: { fontSize: 19, marginTop: 40, textAlign: "center" as const },
 };
@@ -66,9 +67,13 @@ export function TodayPane({
 
   return (
     <ScrollPane style={styles.pane}>
-      <div style={styles.header}>
-        {onBack && <BackButton onBack={onBack} style={styles.backButton} />}
-        Today
+      {onBack && (
+        <div style={styles.backRow}>
+          <BackButton onBack={onBack} />
+        </div>
+      )}
+      <div style={styles.headerRow}>
+        <div style={styles.headerTitle}>Today</div>
         <button type="button" style={styles.addButton} aria-label="Add task" onClick={onAddTask}>
           <PlusIcon size={22} />
         </button>

@@ -9,14 +9,15 @@ import { CheckboxIcon, OverdueAsteriskIcon, PlusIcon } from "./icons";
 
 const styles = {
   pane: { padding: "30px 24px" },
-  header: {
-    textAlign: "center" as const,
-    fontSize: 23,
+  backRow: { marginBottom: 20 },
+  headerRow: {
+    display: "flex",
+    justifyContent: "space-between",
+    alignItems: "center",
     marginBottom: 26,
-    position: "relative" as const,
   },
-  backButton: { position: "absolute" as const, left: 0, top: 3 },
-  addButton: { position: "absolute" as const, right: 0, top: 3 },
+  headerTitle: { fontSize: 32, fontWeight: 400 },
+  addButton: { display: "flex" },
   row: {
     display: "flex",
     gap: 12,
@@ -62,9 +63,13 @@ export function TaskListPane({
 
   return (
     <ScrollPane style={styles.pane}>
-      <div style={styles.header}>
-        {onBack && <BackButton onBack={onBack} style={styles.backButton} />}
-        {list.title}
+      {onBack && (
+        <div style={styles.backRow}>
+          <BackButton onBack={onBack} />
+        </div>
+      )}
+      <div style={styles.headerRow}>
+        <div style={styles.headerTitle}>{list.title}</div>
         <button type="button" style={styles.addButton} aria-label="Add task" onClick={onAddTask}>
           <PlusIcon size={22} />
         </button>
