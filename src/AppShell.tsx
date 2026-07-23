@@ -9,6 +9,7 @@ import {
   subscribeToTasks,
 } from "./lib/store";
 import { ListsPane } from "./ListsPane";
+import { AddTaskPane } from "./AddTaskPane";
 import { TaskListPane } from "./TaskListPane";
 import { TaskDetailPane } from "./TaskDetailPane";
 import { TodayPane } from "./TodayPane";
@@ -23,7 +24,7 @@ import { PaneResizer } from "./PaneResizer";
 
 export type DetailMode = { kind: "none" } | { kind: "new" } | { kind: "edit"; taskId: string };
 
-type Section = "lists" | "today" | "settings" | "account";
+type Section = "lists" | "today" | "settings" | "account" | "add";
 
 // Below the desktop breakpoint, panes stack and are navigated one screen at a
 // time, mirroring the phone app's own tab-root -> pushed-screen model. At the
@@ -172,6 +173,25 @@ export function AppShell({ user }: { user: User }) {
     />
   );
 
+  const addTaskPane = (
+    <AddTaskPane
+      uid={user.uid}
+      lists={lists}
+      settings={settings}
+      onBack={middleBack}
+      onCreated={(_taskId, listId) => {
+        setSelectedListId(listId);
+        setSection("lists");
+        setMobileStage("tasks");
+      }}
+      onCancel={() => {
+        setSelectedListId(settings.defaultListId);
+        setSection("lists");
+        setMobileStage("tasks");
+      }}
+    />
+  );
+
   const middlePane =
     section === "today"
       ? todayPane
@@ -179,7 +199,9 @@ export function AppShell({ user }: { user: User }) {
         ? settingsPane
         : section === "account"
           ? accountPane
-          : taskListPane;
+          : section === "add"
+            ? addTaskPane
+            : taskListPane;
 
   const taskDetailPane = (
     <TaskDetailPane
