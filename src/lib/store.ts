@@ -59,6 +59,13 @@ export function subscribeToSettings(
   });
 }
 
+export async function updateSettings(
+  uid: string,
+  updates: Partial<Omit<Settings, "updatedAt">>
+): Promise<void> {
+  await updateDoc(settingsDoc(uid), { ...updates, updatedAt: Date.now() });
+}
+
 /** Creates the seed "Inbox" list the first time a user has none. */
 export async function ensureInboxList(uid: string): Promise<void> {
   const existing = await getDocs(listsCol(uid));
