@@ -189,18 +189,19 @@ export function AppShell({ user }: { user: User }) {
     );
   }
 
+  const outerPadding = { paddingTop: 56, paddingBottom: 56, paddingLeft: 60, paddingRight: 60 };
+
   if (tier === "tablet") {
     if (showingDetail) {
-      return <div style={{ minHeight: "100vh" }}>{detailPane}</div>;
+      return <div style={{ minHeight: "100vh", ...outerPadding }}>{detailPane}</div>;
     }
     return (
-      <div style={{ minHeight: "100vh", paddingLeft: 48, paddingRight: 48 }}>
-        <div style={{ position: "relative", minHeight: "100vh" }}>
+      <div style={{ minHeight: "100vh", ...outerPadding }}>
+        <div style={{ position: "relative", minHeight: "100%" }}>
           <div
             style={{
               display: "grid",
               gridTemplateColumns: `${widths.lists}px 1fr`,
-              minHeight: "100vh",
             }}
           >
             {listsPane}
@@ -213,13 +214,12 @@ export function AppShell({ user }: { user: User }) {
   }
 
   return (
-    <div style={{ minHeight: "100vh", paddingLeft: 48, paddingRight: 48 }}>
-      <div style={{ position: "relative", minHeight: "100vh" }}>
+    <div style={{ minHeight: "100vh", ...outerPadding }}>
+      <div style={{ position: "relative", minHeight: "100%" }}>
         <div
           style={{
             display: "grid",
             gridTemplateColumns: `${widths.lists}px ${widths.tasks}px 1fr`,
-            minHeight: "100vh",
           }}
         >
           {listsPane}
