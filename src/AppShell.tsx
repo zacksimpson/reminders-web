@@ -14,7 +14,7 @@ import { TaskDetailPane } from "./TaskDetailPane";
 import { TodayPane } from "./TodayPane";
 import { SettingsPane, type SettingKey } from "./SettingsPane";
 import { SettingsDetailPane } from "./SettingsDetailPane";
-import { useIsNarrow } from "./useIsNarrow";
+import { useLayoutTier } from "./useLayoutTier";
 import { useResizablePanes } from "./useResizablePanes";
 import { PaneResizer } from "./PaneResizer";
 
@@ -22,8 +22,10 @@ export type DetailMode = { kind: "none" } | { kind: "new" } | { kind: "edit"; ta
 
 type Section = "lists" | "today" | "settings";
 
-// Below the breakpoint, panes stack and are navigated one at a time,
-// mirroring the phone app's own tab-root -> pushed-screen -> pushed-screen model.
+// Below the desktop breakpoint, panes stack and are navigated one screen at a
+// time, mirroring the phone app's own tab-root -> pushed-screen model. At the
+// tablet tier, Lists + middle content stay paired and only the detail pane
+// pushes in as its own screen; at the mobile tier every pane is its own screen.
 type MobileStage = "lists" | "tasks" | "detail";
 
 export function AppShell({ user }: { user: User }) {
@@ -35,7 +37,7 @@ export function AppShell({ user }: { user: User }) {
   const [activeSetting, setActiveSetting] = useState<SettingKey | null>(null);
   const [detail, setDetail] = useState<DetailMode>({ kind: "none" });
   const [mobileStage, setMobileStage] = useState<MobileStage>("lists");
-  const isNarrow = useIsNarrow();
+  const tier = useLayoutTier();
   const { widths, startDrag } = useResizablePanes();
 
   useEffect(() => {
@@ -57,12 +59,26 @@ export function AppShell({ user }: { user: User }) {
     return null;
   }
 
+  const showingDetail = detail.kind !== "none" || (section === "settings" && activeSetting !== null);
+
   function selectSection(next: Section) {
     setSection(next);
     setDetail({ kind: "none" });
     setActiveSetting(null);
     setMobileStage(next === "lists" ? "lists" : "tasks");
   }
+
+  function goBackFromDetail() {
+    setDetail({ kind: "none" });
+    setActiveSetting(null);
+    setMobileStage("tasks");
+  }
+
+  // Lists stays visible alongside the middle content at both desktop and
+  // tablet tiers, so the middle pane's own back arrow is mobile-only.
+  const middleBack = tier === "mobile" ? () => setMobileStage("lists") : undefined;
+  // The detail pane pushes in as its own screen at both tablet and mobile.
+  const detailBack = tier !== "desktop" ? goBackFromDetail : undefined;
 
   const listsPane = (
     <ListsPane
@@ -94,7 +110,7 @@ export function AppShell({ user }: { user: User }) {
         setDetail({ kind: "new" });
         setMobileStage("detail");
       }}
-      onBack={isNarrow ? () => setMobileStage("lists") : undefined}
+      onBack={middleBack}
     />
   );
 
@@ -113,7 +129,7 @@ export function AppShell({ user }: { user: User }) {
         setDetail({ kind: "new" });
         setMobileStage("detail");
       }}
-      onBack={isNarrow ? () => setMobileStage("lists") : undefined}
+      onBack={middleBack}
     />
   );
 
@@ -126,7 +142,7 @@ export function AppShell({ user }: { user: User }) {
         setActiveSetting(key);
         setMobileStage("detail");
       }}
-      onBack={isNarrow ? () => setMobileStage("lists") : undefined}
+      onBack={middleBack}
     />
   );
 
@@ -146,18 +162,8 @@ export function AppShell({ user }: { user: User }) {
       defaultListId={section === "today" ? settings.defaultListId : selectedListId ?? lists[0]?.id ?? "inbox"}
       defaultDate={section === "today" ? getTodayStr() : undefined}
       onTaskCreated={(taskId) => setDetail({ kind: "edit", taskId })}
-      onClose={() => {
-        setDetail({ kind: "none" });
-        setMobileStage("tasks");
-      }}
-      onBack={
-        isNarrow
-          ? () => {
-              setDetail({ kind: "none" });
-              setMobileStage("tasks");
-            }
-          : undefined
-      }
+      onClose={goBackFromDetail}
+      onBack={detailBack}
     />
   );
 
@@ -167,18 +173,41 @@ export function AppShell({ user }: { user: User }) {
       lists={lists}
       settings={settings}
       activeSetting={activeSetting}
-      onBack={isNarrow ? () => setMobileStage("tasks") : undefined}
+      onBack={detailBack}
     />
   );
 
   const detailPane = section === "settings" ? settingsDetailPane : taskDetailPane;
 
-  if (isNarrow) {
+  if (tier === "mobile") {
     return (
       <div style={{ minHeight: "100vh" }}>
         {mobileStage === "lists" && listsPane}
         {mobileStage === "tasks" && middlePane}
         {mobileStage === "detail" && detailPane}
+      </div>
+    );
+  }
+
+  if (tier === "tablet") {
+    if (showingDetail) {
+      return <div style={{ minHeight: "100vh" }}>{detailPane}</div>;
+    }
+    return (
+      <div style={{ minHeight: "100vh", paddingLeft: 48, paddingRight: 48 }}>
+        <div style={{ position: "relative", minHeight: "100vh" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: `${widths.lists}px 1fr`,
+              minHeight: "100vh",
+            }}
+          >
+            {listsPane}
+            {middlePane}
+          </div>
+          <PaneResizer left={widths.lists} onMouseDown={startDrag("lists")} />
+        </div>
       </div>
     );
   }
