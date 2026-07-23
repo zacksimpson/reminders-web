@@ -4,6 +4,7 @@
 
 import {
   collection,
+  deleteDoc,
   deleteField,
   doc,
   getDoc,
@@ -334,4 +335,14 @@ export async function importBackup(
 
 function stripUndefined<T extends object>(obj: T): T {
   return JSON.parse(JSON.stringify(obj));
+}
+
+/** Wipes all Firestore data for a user. Call before deleting their auth account. */
+export async function deleteAllUserData(uid: string): Promise<void> {
+  const [lists, tasks] = await Promise.all([getDocs(listsCol(uid)), getDocs(tasksCol(uid))]);
+  await Promise.all([
+    ...lists.docs.map((d) => deleteDoc(d.ref)),
+    ...tasks.docs.map((d) => deleteDoc(d.ref)),
+    deleteDoc(settingsDoc(uid)),
+  ]);
 }

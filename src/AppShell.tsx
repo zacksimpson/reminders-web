@@ -14,7 +14,8 @@ import { TaskDetailPane } from "./TaskDetailPane";
 import { TodayPane } from "./TodayPane";
 import { SettingsPane, type SettingKey } from "./SettingsPane";
 import { SettingsDetailPane } from "./SettingsDetailPane";
-import { AccountPane } from "./AccountPane";
+import { AccountPane, type AccountKey } from "./AccountPane";
+import { AccountDetailPane } from "./AccountDetailPane";
 import { useLayoutTier } from "./useLayoutTier";
 import { useResizablePanes } from "./useResizablePanes";
 import { PaneResizer } from "./PaneResizer";
@@ -36,6 +37,7 @@ export function AppShell({ user }: { user: User }) {
   const [selectedListId, setSelectedListId] = useState<string | null>(null);
   const [section, setSection] = useState<Section>("lists");
   const [activeSetting, setActiveSetting] = useState<SettingKey | null>(null);
+  const [activeAccountAction, setActiveAccountAction] = useState<AccountKey | null>(null);
   const [detail, setDetail] = useState<DetailMode>({ kind: "none" });
   const [mobileStage, setMobileStage] = useState<MobileStage>("lists");
   const tier = useLayoutTier();
@@ -60,18 +62,23 @@ export function AppShell({ user }: { user: User }) {
     return null;
   }
 
-  const showingDetail = detail.kind !== "none" || (section === "settings" && activeSetting !== null);
+  const showingDetail =
+    detail.kind !== "none" ||
+    (section === "settings" && activeSetting !== null) ||
+    (section === "account" && activeAccountAction !== null);
 
   function selectSection(next: Section) {
     setSection(next);
     setDetail({ kind: "none" });
     setActiveSetting(null);
+    setActiveAccountAction(null);
     setMobileStage(next === "lists" ? "lists" : "tasks");
   }
 
   function goBackFromDetail() {
     setDetail({ kind: "none" });
     setActiveSetting(null);
+    setActiveAccountAction(null);
     setMobileStage("tasks");
   }
 
@@ -147,7 +154,16 @@ export function AppShell({ user }: { user: User }) {
     />
   );
 
-  const accountPane = <AccountPane onBack={middleBack} />;
+  const accountPane = (
+    <AccountPane
+      activeAccountAction={activeAccountAction}
+      onSelectAccountAction={(key) => {
+        setActiveAccountAction(key);
+        setMobileStage("detail");
+      }}
+      onBack={middleBack}
+    />
+  );
 
   const middlePane =
     section === "today"
@@ -187,7 +203,12 @@ export function AppShell({ user }: { user: User }) {
     />
   );
 
-  const detailPane = section === "settings" ? settingsDetailPane : taskDetailPane;
+  const accountDetailPane = (
+    <AccountDetailPane activeAccountAction={activeAccountAction} onBack={detailBack} />
+  );
+
+  const detailPane =
+    section === "settings" ? settingsDetailPane : section === "account" ? accountDetailPane : taskDetailPane;
 
   if (tier === "mobile") {
     return (
