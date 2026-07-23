@@ -14,13 +14,11 @@ const styles = {
   },
   navLabel: { fontSize: 19 },
   sectionHeader: {
-    display: "flex",
-    justifyContent: "space-between",
-    alignItems: "center",
+    position: "relative" as const,
     marginBottom: 16,
   },
   sectionTitle: { fontSize: 15 },
-  addButton: { display: "flex" },
+  addButton: { position: "absolute" as const, left: 88, top: 1, display: "flex" },
   listRow: {
     fontSize: 23,
     padding: "7px 0",
