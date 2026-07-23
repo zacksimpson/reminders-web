@@ -232,6 +232,16 @@ export async function addSubtask(
   });
 }
 
+export async function renameSubtask(
+  uid: string,
+  task: Task,
+  subtaskId: string,
+  title: string
+): Promise<void> {
+  const subtasks = task.subtasks.map((s) => (s.id === subtaskId ? { ...s, title } : s));
+  await updateDoc(doc(tasksCol(uid), task.id), { subtasks, updatedAt: Date.now() });
+}
+
 export async function toggleSubtask(
   uid: string,
   task: Task,

@@ -193,15 +193,16 @@ export function AppShell({ user }: { user: User }) {
 
   if (tier === "tablet") {
     if (showingDetail) {
-      return <div style={{ minHeight: "100vh", ...outerPadding }}>{detailPane}</div>;
+      return <div style={{ height: "100vh", ...outerPadding }}>{detailPane}</div>;
     }
     return (
-      <div style={{ minHeight: "100vh", ...outerPadding }}>
-        <div style={{ position: "relative", minHeight: "100%" }}>
+      <div style={{ height: "100vh", ...outerPadding }}>
+        <div style={{ position: "relative", height: "100%" }}>
           <div
             style={{
               display: "grid",
               gridTemplateColumns: `${widths.lists}px 1fr`,
+              height: "100%",
             }}
           >
             {listsPane}
@@ -214,12 +215,13 @@ export function AppShell({ user }: { user: User }) {
   }
 
   return (
-    <div style={{ minHeight: "100vh", ...outerPadding }}>
-      <div style={{ position: "relative", minHeight: "100%" }}>
+    <div style={{ height: "100vh", ...outerPadding }}>
+      <div style={{ position: "relative", height: "100%" }}>
         <div
           style={{
             display: "grid",
             gridTemplateColumns: `${widths.lists}px ${widths.tasks}px 1fr`,
+            height: "100%",
           }}
         >
           {listsPane}

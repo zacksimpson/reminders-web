@@ -3,6 +3,7 @@ import type { ReminderList, Task } from "./lib/models";
 import { compareTasksByDateThenTime, compareTasksByDateTime, getTodayStr, isOverdue } from "./lib/dateTime";
 import { TaskRow } from "./TaskListPane";
 import { BackButton } from "./BackButton";
+import { ScrollPane } from "./ScrollPane";
 import { PlusIcon } from "./icons";
 
 const styles = {
@@ -64,7 +65,7 @@ export function TodayPane({
   const listById = (id: string) => lists.find((l) => l.id === id);
 
   return (
-    <div style={styles.pane}>
+    <ScrollPane style={styles.pane}>
       <div style={styles.header}>
         {onBack && <BackButton onBack={onBack} style={styles.backButton} />}
         Today
@@ -131,6 +132,6 @@ export function TodayPane({
             })}
         </>
       )}
-    </div>
+    </ScrollPane>
   );
 }

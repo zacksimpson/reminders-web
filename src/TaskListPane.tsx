@@ -4,6 +4,7 @@ import { compareTasksByDateTime, formatDate, formatTime, isOverdue } from "./lib
 import { formatRecurrence } from "./lib/remindersLogic";
 import { toggleTask } from "./lib/store";
 import { BackButton } from "./BackButton";
+import { ScrollPane } from "./ScrollPane";
 import { CheckboxIcon, OverdueAsteriskIcon, PlusIcon } from "./icons";
 
 const styles = {
@@ -60,7 +61,7 @@ export function TaskListPane({
   }
 
   return (
-    <div style={styles.pane}>
+    <ScrollPane style={styles.pane}>
       <div style={styles.header}>
         {onBack && <BackButton onBack={onBack} style={styles.backButton} />}
         {list.title}
@@ -105,7 +106,7 @@ export function TaskListPane({
             ))}
         </>
       )}
-    </div>
+    </ScrollPane>
   );
 }
 
