@@ -252,6 +252,76 @@ export async function deleteSubtask(
   await updateDoc(doc(tasksCol(uid), task.id), { subtasks, updatedAt: Date.now() });
 }
 
+// Matches the phone app's utils/backup.ts export format exactly, so a file
+// exported from the phone (or the old RN app) can be dropped in here.
+type BackupList = Pick<ReminderList, "id" | "title" | "createdAt" | "order">;
+type BackupTask = Pick<
+  Task,
+  | "id"
+  | "title"
+  | "listId"
+  | "date"
+  | "time"
+  | "recurrence"
+  | "subtasks"
+  | "completed"
+  | "completedAt"
+  | "createdAt"
+  | "order"
+>;
+
+export interface BackupData {
+  lists: BackupList[];
+  tasks: BackupTask[];
+}
+
+/** Throws if the file doesn't look like a Reminders backup. */
+export function parseBackupFile(json: string): BackupData {
+  const raw = JSON.parse(json) as { version?: unknown; lists?: unknown; tasks?: unknown };
+  if (typeof raw.version !== "number" || !Array.isArray(raw.lists) || !Array.isArray(raw.tasks)) {
+    throw new Error("That file isn't a valid Reminders backup.");
+  }
+  return { lists: raw.lists as BackupList[], tasks: raw.tasks as BackupTask[] };
+}
+
+/**
+ * Adds lists/tasks from a backup that aren't already present (matched by id).
+ * Mirrors the phone app's restoreBackup: nothing is ever removed or
+ * overwritten, and settings from the file are intentionally not restored.
+ */
+export async function importBackup(
+  uid: string,
+  data: BackupData
+): Promise<{ listsAdded: number; tasksAdded: number }> {
+  const [existingLists, existingTasks] = await Promise.all([
+    getDocs(listsCol(uid)),
+    getDocs(tasksCol(uid)),
+  ]);
+  const existingListIds = new Set(existingLists.docs.map((d) => d.id));
+  const existingTaskIds = new Set(existingTasks.docs.map((d) => d.id));
+
+  const newLists = data.lists.filter((l) => !existingListIds.has(l.id));
+  const newTasks = data.tasks.filter((t) => !existingTaskIds.has(t.id));
+  const now = Date.now();
+
+  await Promise.all([
+    ...newLists.map((l) =>
+      setDoc(
+        doc(listsCol(uid), l.id),
+        stripUndefined({ ...l, updatedAt: now, deleted: false })
+      )
+    ),
+    ...newTasks.map((t) =>
+      setDoc(
+        doc(tasksCol(uid), t.id),
+        stripUndefined({ ...t, subtasks: t.subtasks ?? [], updatedAt: now, deleted: false })
+      )
+    ),
+  ]);
+
+  return { listsAdded: newLists.length, tasksAdded: newTasks.length };
+}
+
 function stripUndefined<T extends object>(obj: T): T {
   return JSON.parse(JSON.stringify(obj));
 }
