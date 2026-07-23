@@ -110,7 +110,7 @@ export function AppShell({ user }: { user: User }) {
 
   if (isNarrow) {
     return (
-      <div style={{ minHeight: "100vh", paddingLeft: 48, paddingRight: 48 }}>
+      <div style={{ minHeight: "100vh" }}>
         {mobileStage === "lists" && listsPane}
         {mobileStage === "tasks" && taskListPane}
         {mobileStage === "detail" && taskDetailPane}
@@ -132,6 +132,26 @@ export function AppShell({ user }: { user: User }) {
           {taskListPane}
           {taskDetailPane}
         </div>
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            left: widths.lists,
+            width: 2,
+            background: "#fff",
+          }}
+        />
+        <div
+          style={{
+            position: "absolute",
+            top: 0,
+            bottom: 0,
+            left: widths.lists + widths.tasks,
+            width: 2,
+            background: "#fff",
+          }}
+        />
         <PaneResizer left={widths.lists} onMouseDown={startDrag("lists")} />
         <PaneResizer left={widths.lists + widths.tasks} onMouseDown={startDrag("tasks")} />
       </div>
