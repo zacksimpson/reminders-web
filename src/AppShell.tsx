@@ -110,7 +110,7 @@ export function AppShell({ user }: { user: User }) {
 
   if (isNarrow) {
     return (
-      <div style={{ minHeight: "100vh" }}>
+      <div style={{ minHeight: "100vh", paddingLeft: 48, paddingRight: 48 }}>
         {mobileStage === "lists" && listsPane}
         {mobileStage === "tasks" && taskListPane}
         {mobileStage === "detail" && taskDetailPane}
@@ -119,20 +119,22 @@ export function AppShell({ user }: { user: User }) {
   }
 
   return (
-    <div style={{ position: "relative", minHeight: "100vh" }}>
-      <div
-        style={{
-          display: "grid",
-          gridTemplateColumns: `${widths.lists}px ${widths.tasks}px 1fr`,
-          minHeight: "100vh",
-        }}
-      >
-        {listsPane}
-        {taskListPane}
-        {taskDetailPane}
+    <div style={{ minHeight: "100vh", paddingLeft: 48, paddingRight: 48 }}>
+      <div style={{ position: "relative", minHeight: "100vh" }}>
+        <div
+          style={{
+            display: "grid",
+            gridTemplateColumns: `${widths.lists}px ${widths.tasks}px 1fr`,
+            minHeight: "100vh",
+          }}
+        >
+          {listsPane}
+          {taskListPane}
+          {taskDetailPane}
+        </div>
+        <PaneResizer left={widths.lists} onMouseDown={startDrag("lists")} />
+        <PaneResizer left={widths.lists + widths.tasks} onMouseDown={startDrag("tasks")} />
       </div>
-      <PaneResizer left={widths.lists} onMouseDown={startDrag("lists")} />
-      <PaneResizer left={widths.lists + widths.tasks} onMouseDown={startDrag("tasks")} />
     </div>
   );
 }

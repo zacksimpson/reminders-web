@@ -6,7 +6,7 @@ const LISTS_MIN = 140;
 const LISTS_MAX = 320;
 const TASKS_MIN = 220;
 const TASKS_MAX = 480;
-const DEFAULTS = { lists: 180, tasks: 300 };
+const DEFAULTS = { lists: 320, tasks: 480 };
 
 type Divider = "lists" | "tasks";
 
