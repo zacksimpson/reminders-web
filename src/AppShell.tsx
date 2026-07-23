@@ -12,7 +12,7 @@ import { ListsPane } from "./ListsPane";
 import { TaskListPane } from "./TaskListPane";
 import { TaskDetailPane } from "./TaskDetailPane";
 import { TodayPane } from "./TodayPane";
-import { SettingsPane, type SettingKey } from "./SettingsPane";
+import { SettingsPane, type SettingKey, type SettingsView } from "./SettingsPane";
 import { SettingsDetailPane } from "./SettingsDetailPane";
 import { AccountPane, type AccountKey } from "./AccountPane";
 import { AccountDetailPane } from "./AccountDetailPane";
@@ -38,6 +38,7 @@ export function AppShell({ user }: { user: User }) {
   const [selectedListId, setSelectedListId] = useState<string | null>(null);
   const [section, setSection] = useState<Section>("lists");
   const [activeSetting, setActiveSetting] = useState<SettingKey | null>(null);
+  const [settingsView, setSettingsView] = useState<SettingsView>("root");
   const [activeAccountAction, setActiveAccountAction] = useState<AccountKey | null>(null);
   const [detail, setDetail] = useState<DetailMode>({ kind: "none" });
   const [mobileStage, setMobileStage] = useState<MobileStage>("lists");
@@ -73,6 +74,7 @@ export function AppShell({ user }: { user: User }) {
     setSection(next);
     setDetail({ kind: "none" });
     setActiveSetting(null);
+    setSettingsView("root");
     setActiveAccountAction(null);
     setMobileStage(next === "lists" ? "lists" : "tasks");
   }
@@ -148,10 +150,13 @@ export function AppShell({ user }: { user: User }) {
       lists={lists}
       settings={settings}
       activeSetting={activeSetting}
+      settingsView={settingsView}
       onSelectSetting={(key) => {
         setActiveSetting(key);
         setMobileStage("detail");
       }}
+      onOpenTaskBehaviors={() => setSettingsView("task-behaviors")}
+      onBackToSettingsRoot={() => setSettingsView("root")}
       onBack={middleBack}
     />
   );
