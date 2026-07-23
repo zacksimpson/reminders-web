@@ -89,7 +89,7 @@ export function ListsPane({
           aria-label="Add list"
           onClick={() => setAdding(true)}
         >
-          <PlusIcon />
+          <PlusIcon size={13} />
         </button>
       </div>
 
