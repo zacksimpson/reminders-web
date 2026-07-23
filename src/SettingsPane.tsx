@@ -40,20 +40,66 @@ export type SettingKey =
   | "notifications"
   | "import-backup";
 
+export type SettingsView = "root" | "task-behaviors";
+
 export function SettingsPane({
   lists,
   settings,
   activeSetting,
+  settingsView,
   onSelectSetting,
+  onOpenTaskBehaviors,
+  onBackToSettingsRoot,
   onBack,
 }: {
   lists: ReminderList[];
   settings: Settings;
   activeSetting: SettingKey | null;
+  settingsView: SettingsView;
   onSelectSetting: (key: SettingKey) => void;
+  onOpenTaskBehaviors: () => void;
+  onBackToSettingsRoot: () => void;
   onBack?: () => void;
 }) {
   const defaultListTitle = lists.find((l) => l.id === settings.defaultListId)?.title ?? "Inbox";
+
+  if (settingsView === "task-behaviors") {
+    return (
+      <ScrollPane style={styles.pane}>
+        <div style={styles.backRow}>
+          <BackButton onBack={onBackToSettingsRoot} />
+        </div>
+        <div style={styles.headerTitle}>Task Behaviors</div>
+
+        <button
+          type="button"
+          style={{ ...styles.row, textDecoration: activeSetting === "default-list" ? "underline" : "none" }}
+          onClick={() => onSelectSetting("default-list")}
+        >
+          <div style={styles.rowLabel}>Default List</div>
+          <div style={styles.rowValue}>{defaultListTitle}</div>
+        </button>
+
+        <button
+          type="button"
+          style={{ ...styles.row, textDecoration: activeSetting === "after-quick-add" ? "underline" : "none" }}
+          onClick={() => onSelectSetting("after-quick-add")}
+        >
+          <div style={styles.rowLabel}>After Quick Add</div>
+          <div style={styles.rowValue}>{AFTER_QUICK_ADD_LABELS[settings.afterAddBehavior]}</div>
+        </button>
+
+        <button
+          type="button"
+          style={{ ...styles.row, textDecoration: activeSetting === "add-position" ? "underline" : "none" }}
+          onClick={() => onSelectSetting("add-position")}
+        >
+          <div style={styles.rowLabel}>Add New Tasks</div>
+          <div style={styles.rowValue}>{ADD_POSITION_LABELS[settings.addPosition]}</div>
+        </button>
+      </ScrollPane>
+    );
+  }
 
   return (
     <ScrollPane style={styles.pane}>
@@ -68,45 +114,22 @@ export function SettingsPane({
 
       <button
         type="button"
-        style={{ ...styles.row, textDecoration: activeSetting === "today-view" ? "underline" : "none" }}
-        onClick={() => onSelectSetting("today-view")}
-      >
-        <div style={styles.rowValue}>Today View</div>
-      </button>
-
-      <button
-        type="button"
-        style={{ ...styles.row, textDecoration: activeSetting === "default-list" ? "underline" : "none" }}
-        onClick={() => onSelectSetting("default-list")}
-      >
-        <div style={styles.rowLabel}>Default List</div>
-        <div style={styles.rowValue}>{defaultListTitle}</div>
-      </button>
-
-      <button
-        type="button"
-        style={{ ...styles.row, textDecoration: activeSetting === "after-quick-add" ? "underline" : "none" }}
-        onClick={() => onSelectSetting("after-quick-add")}
-      >
-        <div style={styles.rowLabel}>After Quick Add</div>
-        <div style={styles.rowValue}>{AFTER_QUICK_ADD_LABELS[settings.afterAddBehavior]}</div>
-      </button>
-
-      <button
-        type="button"
-        style={{ ...styles.row, textDecoration: activeSetting === "add-position" ? "underline" : "none" }}
-        onClick={() => onSelectSetting("add-position")}
-      >
-        <div style={styles.rowLabel}>Add New Tasks</div>
-        <div style={styles.rowValue}>{ADD_POSITION_LABELS[settings.addPosition]}</div>
-      </button>
-
-      <button
-        type="button"
         style={{ ...styles.row, textDecoration: activeSetting === "notifications" ? "underline" : "none" }}
         onClick={() => onSelectSetting("notifications")}
       >
         <div style={styles.rowValue}>Notifications</div>
+      </button>
+
+      <button type="button" style={styles.row} onClick={onOpenTaskBehaviors}>
+        <div style={styles.rowValue}>Task Behaviors</div>
+      </button>
+
+      <button
+        type="button"
+        style={{ ...styles.row, textDecoration: activeSetting === "today-view" ? "underline" : "none" }}
+        onClick={() => onSelectSetting("today-view")}
+      >
+        <div style={styles.rowValue}>Today View</div>
       </button>
 
       <button
