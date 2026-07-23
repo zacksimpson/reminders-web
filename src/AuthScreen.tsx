@@ -4,18 +4,18 @@ import {
 } from "firebase/auth";
 import { type FormEvent, useState } from "react";
 import { auth } from "./firebase";
+import { useLayoutTier } from "./useLayoutTier";
 
 const styles = {
   page: {
     minHeight: "100%",
     display: "flex",
     flexDirection: "column" as const,
-    padding: "48px 22px",
     maxWidth: 420,
   },
   title: {
-    fontSize: 38,
-    margin: "0 0 46px",
+    fontSize: 32,
+    margin: "0 0 26px",
     fontWeight: 400,
   },
   label: {
@@ -23,37 +23,40 @@ const styles = {
     marginBottom: 4,
   },
   field: {
-    marginBottom: 33,
+    marginBottom: 26,
   },
   input: {
     width: "100%",
-    fontSize: 27,
+    fontSize: 23,
     paddingBottom: 8,
     borderBottom: "2px solid #fff",
   },
   action: {
-    fontSize: 25,
+    fontSize: 20,
     fontWeight: 400,
     letterSpacing: "0.15em",
-    marginTop: 8,
     textAlign: "left" as const,
   },
   toggle: {
-    fontSize: 18,
-    marginTop: 32,
+    fontSize: 16,
+    lineHeight: 1.6,
+    marginTop: 30,
   },
   toggleLink: {
     textDecoration: "underline",
     textUnderlineOffset: 3,
   },
   error: {
-    fontSize: 17,
-    marginTop: -12,
-    marginBottom: 24,
+    fontSize: 16,
+    lineHeight: 1.6,
+    marginTop: -10,
+    marginBottom: 26,
   },
 };
 
 export function AuthScreen() {
+  const tier = useLayoutTier();
+  const outerPadding = tier === "mobile" ? "30px 24px" : "56px 60px";
   const [mode, setMode] = useState<"signIn" | "signUp">("signIn");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -79,7 +82,7 @@ export function AuthScreen() {
   }
 
   return (
-    <form style={styles.page} onSubmit={handleSubmit}>
+    <form style={{ ...styles.page, padding: outerPadding }} onSubmit={handleSubmit}>
       <div style={styles.title}>{mode === "signIn" ? "Sign in" : "Create account"}</div>
 
       <div style={styles.field}>
