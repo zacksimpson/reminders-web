@@ -132,26 +132,6 @@ export function AppShell({ user }: { user: User }) {
           {taskListPane}
           {taskDetailPane}
         </div>
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            bottom: 0,
-            left: widths.lists,
-            width: 2,
-            background: "#fff",
-          }}
-        />
-        <div
-          style={{
-            position: "absolute",
-            top: 0,
-            bottom: 0,
-            left: widths.lists + widths.tasks,
-            width: 2,
-            background: "#fff",
-          }}
-        />
         <PaneResizer left={widths.lists} onMouseDown={startDrag("lists")} />
         <PaneResizer left={widths.lists + widths.tasks} onMouseDown={startDrag("tasks")} />
       </div>
