@@ -22,9 +22,20 @@ const styles = {
     fontSize: 37,
     width: "100%",
     borderBottom: "2px solid #fff",
-    paddingBottom: 10,
+    paddingBottom: 6,
     marginBottom: 26,
+    whiteSpace: "nowrap" as const,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
+  // On desktop this input sits beside the middle pane's plain-text header,
+  // but its own font-size/padding/border make its box taller, pushing it
+  // visibly lower even though both start at the same top offset — pulled
+  // back up by half that height difference so the two read as vertically
+  // centered against each other across the pane boundary. Only applies with
+  // no back button (desktop): on tablet/mobile there's no adjacent pane to
+  // align with, and the shift would just crowd the back button above it.
+  titleDesktopAlign: { marginTop: -7.5 },
   field: { padding: "13px 0" },
   fieldRow: {
     display: "flex",
@@ -174,7 +185,7 @@ function NewTaskForm({
         </div>
       )}
       <input
-        style={styles.title}
+        style={onBack ? styles.title : { ...styles.title, ...styles.titleDesktopAlign }}
         autoFocus
         placeholder="Task name"
         value={title}
@@ -268,7 +279,7 @@ function EditTaskForm({
         </div>
       )}
       <input
-        style={styles.title}
+        style={onBack ? styles.title : { ...styles.title, ...styles.titleDesktopAlign }}
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         onBlur={saveTitle}

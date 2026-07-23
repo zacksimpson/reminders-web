@@ -13,8 +13,11 @@ const styles = {
     fontSize: 37,
     width: "100%",
     borderBottom: "2px solid #fff",
-    paddingBottom: 10,
+    paddingBottom: 6,
     marginBottom: 26,
+    whiteSpace: "nowrap" as const,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
   field: { padding: "13px 0" },
   fieldRow: {
