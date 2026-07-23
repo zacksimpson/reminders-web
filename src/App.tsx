@@ -2,12 +2,17 @@ import { onAuthStateChanged, type User } from "firebase/auth";
 import { useEffect, useState } from "react";
 import { AppShell } from "./AppShell";
 import { AuthScreen } from "./AuthScreen";
+import { ConnectBackendPreview } from "./ConnectBackendPreview";
 import { auth } from "./firebase";
 
 function App() {
   const [user, setUser] = useState<User | null | undefined>(undefined);
 
   useEffect(() => onAuthStateChanged(auth, setUser), []);
+
+  if (window.location.pathname === "/connect-preview") {
+    return <ConnectBackendPreview />;
+  }
 
   if (user === undefined) {
     return null;
