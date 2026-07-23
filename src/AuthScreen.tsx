@@ -57,6 +57,7 @@ const styles = {
 export function AuthScreen() {
   const tier = useLayoutTier();
   const outerPadding = tier === "mobile" ? "30px 24px" : "56px 60px";
+  const centered = tier !== "mobile";
   const [mode, setMode] = useState<"signIn" | "signUp">("signIn");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -82,64 +83,76 @@ export function AuthScreen() {
   }
 
   return (
-    <form style={{ ...styles.page, padding: outerPadding }} onSubmit={handleSubmit}>
-      <div style={styles.title}>{mode === "signIn" ? "Sign in" : "Create account"}</div>
+    <div
+      style={{
+        minHeight: "100vh",
+        display: "flex",
+        alignItems: centered ? "center" : "stretch",
+        justifyContent: centered ? "center" : "flex-start",
+      }}
+    >
+      <form
+        style={{ ...styles.page, padding: outerPadding, width: centered ? "auto" : "100%" }}
+        onSubmit={handleSubmit}
+      >
+        <div style={styles.title}>{mode === "signIn" ? "Sign in" : "Create account"}</div>
 
-      <div style={styles.field}>
-        <div style={styles.label}>Email</div>
-        <input
-          style={styles.input}
-          type="email"
-          autoComplete="email"
-          value={email}
-          onChange={(e) => setEmail(e.target.value)}
-          required
-        />
-      </div>
+        <div style={styles.field}>
+          <div style={styles.label}>Email</div>
+          <input
+            style={styles.input}
+            type="email"
+            autoComplete="email"
+            value={email}
+            onChange={(e) => setEmail(e.target.value)}
+            required
+          />
+        </div>
 
-      <div style={styles.field}>
-        <div style={styles.label}>Password</div>
-        <input
-          style={styles.input}
-          type="password"
-          autoComplete={mode === "signIn" ? "current-password" : "new-password"}
-          value={password}
-          onChange={(e) => setPassword(e.target.value)}
-          required
-        />
-      </div>
+        <div style={styles.field}>
+          <div style={styles.label}>Password</div>
+          <input
+            style={styles.input}
+            type="password"
+            autoComplete={mode === "signIn" ? "current-password" : "new-password"}
+            value={password}
+            onChange={(e) => setPassword(e.target.value)}
+            required
+          />
+        </div>
 
-      {error && <div style={styles.error}>{error}</div>}
+        {error && <div style={styles.error}>{error}</div>}
 
-      <button style={styles.action} type="submit" disabled={busy}>
-        {mode === "signIn" ? "SIGN IN" : "CREATE ACCOUNT"}
-      </button>
+        <button style={styles.action} type="submit" disabled={busy}>
+          {mode === "signIn" ? "SIGN IN" : "CREATE ACCOUNT"}
+        </button>
 
-      <div style={styles.toggle}>
-        {mode === "signIn" ? (
-          <>
-            Don't have an account?{" "}
-            <button
-              type="button"
-              style={{ ...styles.toggleLink, fontSize: "inherit" }}
-              onClick={() => setMode("signUp")}
-            >
-              Create one
-            </button>
-          </>
-        ) : (
-          <>
-            Already have an account?{" "}
-            <button
-              type="button"
-              style={{ ...styles.toggleLink, fontSize: "inherit" }}
-              onClick={() => setMode("signIn")}
-            >
-              Sign in
-            </button>
-          </>
-        )}
-      </div>
-    </form>
+        <div style={styles.toggle}>
+          {mode === "signIn" ? (
+            <>
+              Don't have an account?{" "}
+              <button
+                type="button"
+                style={{ ...styles.toggleLink, fontSize: "inherit" }}
+                onClick={() => setMode("signUp")}
+              >
+                Create one
+              </button>
+            </>
+          ) : (
+            <>
+              Already have an account?{" "}
+              <button
+                type="button"
+                style={{ ...styles.toggleLink, fontSize: "inherit" }}
+                onClick={() => setMode("signIn")}
+              >
+                Sign in
+              </button>
+            </>
+          )}
+        </div>
+      </form>
+    </div>
   );
 }
