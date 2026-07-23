@@ -7,9 +7,6 @@
       "hosting": {
         "web": [
           "reminders-tool"
-        ],
-        "legacy": [
-          "reminders-web-zs2026"
         ]
       }
     }

@@ -10,17 +10,6 @@
           "destination": "/index.html"
         }
       ]
-    },
-    {
-      "target": "legacy",
-      "public": "dist",
-      "ignore": ["firebase.json", "**/.*", "**/node_modules/**"],
-      "rewrites": [
-        {
-          "source": "**",
-          "destination": "/index.html"
-        }
-      ]
     }
   ]
 }
