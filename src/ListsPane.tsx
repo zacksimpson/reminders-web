@@ -1,7 +1,7 @@
 import { type KeyboardEvent, useState } from "react";
 import type { ReminderList } from "./lib/models";
 import { addList } from "./lib/store";
-import { AccountIcon, ListIcon, PlusIcon, SettingsIcon, TodayIcon } from "./icons";
+import { AccountIcon, AddTaskIcon, PlusIcon, SettingsIcon, TodayIcon } from "./icons";
 import { ScrollPane } from "./ScrollPane";
 
 const SIDE_PADDING = { paddingLeft: 20, paddingRight: 28 };
@@ -48,7 +48,7 @@ const styles = {
   accountZone: { ...SIDE_PADDING, flexShrink: 0, marginTop: NAV_GAP },
 };
 
-type Section = "lists" | "today" | "settings" | "account";
+type Section = "lists" | "today" | "settings" | "account" | "add";
 
 export function ListsPane({
   lists,
@@ -86,16 +86,16 @@ export function ListsPane({
   return (
     <div style={styles.pane}>
       <div style={styles.navZone}>
-        <button type="button" style={styles.navRow} onClick={() => onSelectSection("lists")}>
-          <ListIcon />
+        <button type="button" style={styles.navRow} onClick={() => onSelectSection("add")}>
+          <AddTaskIcon />
           <span
             style={{
               ...styles.navLabel,
-              textDecoration: section === "lists" ? "underline" : "none",
+              textDecoration: section === "add" ? "underline" : "none",
               textUnderlineOffset: 3,
             }}
           >
-            Lists
+            Add Task
           </span>
         </button>
         <button type="button" style={styles.navRow} onClick={() => onSelectSection("today")}>

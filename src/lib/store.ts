@@ -131,6 +131,7 @@ export async function addTask(
     date?: string;
     time?: string;
     recurrence?: Task["recurrence"];
+    subtasks?: Task["subtasks"];
     addPosition: "top" | "bottom";
   }
 ): Promise<Task> {
@@ -153,7 +154,7 @@ export async function addTask(
     date: input.date,
     time: input.time,
     recurrence: input.recurrence,
-    subtasks: [],
+    subtasks: input.subtasks ?? [],
     completed: false,
     createdAt: now,
     order,
