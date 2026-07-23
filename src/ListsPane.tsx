@@ -38,6 +38,9 @@ const styles = {
     padding: "7px 0",
     width: "100%",
     textAlign: "left" as const,
+    whiteSpace: "nowrap" as const,
+    overflow: "hidden",
+    textOverflow: "ellipsis",
   },
   newListInput: {
     fontSize: 23,

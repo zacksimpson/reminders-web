@@ -16,7 +16,7 @@ const styles = {
     alignItems: "center",
     marginBottom: 26,
   },
-  headerTitle: { fontSize: 32, fontWeight: 400 },
+  headerTitle: { fontSize: 32, fontWeight: 400, textAlign: "left" as const },
   addButton: { display: "flex" },
   // Mobile keeps the phone app's own header shape: centered title, back and
   // add buttons pinned to the corners of the same row.
@@ -26,6 +26,7 @@ const styles = {
     marginBottom: 26,
     position: "relative" as const,
   },
+  headerMobileTitle: { textAlign: "center" as const, fontSize: "inherit" },
   backButtonMobile: { position: "absolute" as const, left: 0, top: 3 },
   addButtonMobile: { position: "absolute" as const, right: 0, top: 3 },
   row: {
@@ -51,6 +52,7 @@ export function TaskListPane({
   selectedTaskId,
   onSelectTask,
   onAddTask,
+  onOpenListOptions,
   onBack,
 }: {
   uid: string;
@@ -59,6 +61,7 @@ export function TaskListPane({
   selectedTaskId: string | null;
   onSelectTask: (id: string) => void;
   onAddTask: () => void;
+  onOpenListOptions: () => void;
   onBack?: () => void;
 }) {
   const [showCompleted, setShowCompleted] = useState(false);
@@ -77,14 +80,18 @@ export function TaskListPane({
       {onBack ? (
         <div style={styles.headerMobile}>
           <BackButton onBack={onBack} style={styles.backButtonMobile} />
-          {list.title}
+          <button type="button" style={styles.headerMobileTitle} onClick={onOpenListOptions}>
+            {list.title}
+          </button>
           <button type="button" style={styles.addButtonMobile} aria-label="Add task" onClick={onAddTask}>
             <PlusIcon size={22} />
           </button>
         </div>
       ) : (
         <div style={styles.headerRow}>
-          <div style={styles.headerTitle}>{list.title}</div>
+          <button type="button" style={styles.headerTitle} onClick={onOpenListOptions}>
+            {list.title}
+          </button>
           <button type="button" style={styles.addButton} aria-label="Add task" onClick={onAddTask}>
             <PlusIcon size={22} />
           </button>

@@ -123,6 +123,15 @@ export async function deleteList(uid: string, id: string): Promise<void> {
   );
 }
 
+/** Soft-deletes every completed task in a list. */
+export async function clearCompletedTasks(uid: string, listId: string): Promise<void> {
+  const affected = await getDocs(
+    query(tasksCol(uid), where("listId", "==", listId), where("completed", "==", true))
+  );
+  const now = Date.now();
+  await Promise.all(affected.docs.map((d) => updateDoc(d.ref, { deleted: true, updatedAt: now })));
+}
+
 export async function addTask(
   uid: string,
   input: {

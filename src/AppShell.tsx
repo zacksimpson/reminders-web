@@ -9,6 +9,7 @@ import {
   subscribeToTasks,
 } from "./lib/store";
 import { ListsPane } from "./ListsPane";
+import { ListOptionsPane } from "./ListOptionsPane";
 import { AddTaskPane } from "./AddTaskPane";
 import { TaskListPane } from "./TaskListPane";
 import { TaskDetailPane } from "./TaskDetailPane";
@@ -22,7 +23,11 @@ import { useResizablePanes } from "./useResizablePanes";
 import { useBrowserNotifications } from "./useBrowserNotifications";
 import { PaneResizer } from "./PaneResizer";
 
-export type DetailMode = { kind: "none" } | { kind: "new" } | { kind: "edit"; taskId: string };
+export type DetailMode =
+  | { kind: "none" }
+  | { kind: "new" }
+  | { kind: "edit"; taskId: string }
+  | { kind: "list-options" };
 
 type Section = "lists" | "today" | "settings" | "account" | "add";
 
@@ -121,6 +126,10 @@ export function AppShell({ user }: { user: User }) {
       }}
       onAddTask={() => {
         setDetail({ kind: "new" });
+        setMobileStage("detail");
+      }}
+      onOpenListOptions={() => {
+        setDetail({ kind: "list-options" });
         setMobileStage("detail");
       }}
       onBack={middleBack}
@@ -237,8 +246,27 @@ export function AppShell({ user }: { user: User }) {
     <AccountDetailPane activeAccountAction={activeAccountAction} onBack={detailBack} />
   );
 
+  const currentList = lists.find((l) => l.id === selectedListId) ?? null;
+  const listOptionsPane = currentList && (
+    <ListOptionsPane
+      uid={user.uid}
+      list={currentList}
+      onBack={detailBack}
+      onDeleted={() => {
+        setSelectedListId(settings.defaultListId);
+        goBackFromDetail();
+      }}
+    />
+  );
+
   const detailPane =
-    section === "settings" ? settingsDetailPane : section === "account" ? accountDetailPane : taskDetailPane;
+    section === "settings"
+      ? settingsDetailPane
+      : section === "account"
+        ? accountDetailPane
+        : section === "lists" && detail.kind === "list-options"
+          ? listOptionsPane
+          : taskDetailPane;
 
   if (tier === "mobile") {
     return (
