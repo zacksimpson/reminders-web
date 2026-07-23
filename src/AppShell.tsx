@@ -14,13 +14,14 @@ import { TaskDetailPane } from "./TaskDetailPane";
 import { TodayPane } from "./TodayPane";
 import { SettingsPane, type SettingKey } from "./SettingsPane";
 import { SettingsDetailPane } from "./SettingsDetailPane";
+import { AccountPane } from "./AccountPane";
 import { useLayoutTier } from "./useLayoutTier";
 import { useResizablePanes } from "./useResizablePanes";
 import { PaneResizer } from "./PaneResizer";
 
 export type DetailMode = { kind: "none" } | { kind: "new" } | { kind: "edit"; taskId: string };
 
-type Section = "lists" | "today" | "settings";
+type Section = "lists" | "today" | "settings" | "account";
 
 // Below the desktop breakpoint, panes stack and are navigated one screen at a
 // time, mirroring the phone app's own tab-root -> pushed-screen model. At the
@@ -146,7 +147,16 @@ export function AppShell({ user }: { user: User }) {
     />
   );
 
-  const middlePane = section === "today" ? todayPane : section === "settings" ? settingsPane : taskListPane;
+  const accountPane = <AccountPane onBack={middleBack} />;
+
+  const middlePane =
+    section === "today"
+      ? todayPane
+      : section === "settings"
+        ? settingsPane
+        : section === "account"
+          ? accountPane
+          : taskListPane;
 
   const taskDetailPane = (
     <TaskDetailPane

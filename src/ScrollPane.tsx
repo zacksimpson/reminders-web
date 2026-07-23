@@ -18,7 +18,15 @@ function computeThumb(el: HTMLDivElement): Thumb | null {
   return { height, top };
 }
 
-export function ScrollPane({ style, children }: { style?: CSSProperties; children: ReactNode }) {
+export function ScrollPane({
+  style,
+  outerStyle,
+  children,
+}: {
+  style?: CSSProperties;
+  outerStyle?: CSSProperties;
+  children: ReactNode;
+}) {
   const ref = useRef<HTMLDivElement>(null);
   const [thumb, setThumb] = useState<Thumb | null>(null);
 
@@ -41,7 +49,7 @@ export function ScrollPane({ style, children }: { style?: CSSProperties; childre
   }
 
   return (
-    <div style={{ position: "relative", height: "100%", minHeight: 0 }}>
+    <div style={{ position: "relative", height: "100%", minHeight: 0, ...outerStyle }}>
       <div
         ref={ref}
         className="scroll-hide"

@@ -44,6 +44,30 @@ export function SettingsIcon({ size = 23 }: { size?: number }) {
   );
 }
 
+/** User-supplied icon (not from the phone app) for the web-only Account nav item. */
+export function AccountIcon({ size = 23 }: { size?: number }) {
+  return (
+    <svg width={size} height={size * (46 / 49)} viewBox="0 0 49 46">
+      <path
+        d="M16.7378 19.6222C14.7799 17.6643 13.68 15.0088 13.68 12.24C13.68 9.47113 14.7799 6.81567 16.7378 4.85779C18.6957 2.89991 21.3511 1.79999 24.12 1.79999C26.8889 1.79999 29.5443 2.89991 31.5022 4.85779C33.4601 6.81567 34.56 9.47113 34.56 12.24C34.56 15.0088 33.4601 17.6643 31.5022 19.6222C29.5443 21.5801 26.8889 22.68 24.12 22.68C21.3511 22.68 18.6957 21.5801 16.7378 19.6222Z"
+        stroke="#fff"
+        strokeWidth="3.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+      <path
+        d="M46.44 33.24V44.04H1.8V33.24C1.8 33.24 21.72 20.76 46.44 33.24Z"
+        stroke="#fff"
+        strokeWidth="3.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </svg>
+  );
+}
+
 export function CheckboxIcon({ checked, size = 20 }: { checked: boolean; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 84 84">
