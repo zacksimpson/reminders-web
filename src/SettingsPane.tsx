@@ -1,5 +1,6 @@
 import type { ReminderList, Settings } from "./lib/models";
 import { BackButton } from "./BackButton";
+import { ScrollPane } from "./ScrollPane";
 
 const styles = {
   pane: { padding: "30px 24px" },
@@ -47,7 +48,7 @@ export function SettingsPane({
   const defaultListTitle = lists.find((l) => l.id === settings.defaultListId)?.title ?? "Inbox";
 
   return (
-    <div style={styles.pane}>
+    <ScrollPane style={styles.pane}>
       <div style={styles.header}>
         {onBack && <BackButton onBack={onBack} style={styles.backButton} />}
         Settings
@@ -95,6 +96,6 @@ export function SettingsPane({
       >
         <div style={styles.rowValue}>Import Backup</div>
       </button>
-    </div>
+    </ScrollPane>
   );
 }

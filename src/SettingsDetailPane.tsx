@@ -3,6 +3,7 @@ import type { ReminderList, Settings } from "./lib/models";
 import { importBackup, parseBackupFile, updateSettings } from "./lib/store";
 import { ToggleSwitch } from "./ToggleSwitch";
 import { BackButton } from "./BackButton";
+import { ScrollPane } from "./ScrollPane";
 import type { SettingKey } from "./SettingsPane";
 
 const styles = {
@@ -61,7 +62,7 @@ export function SettingsDetailPane({
 
   if (activeSetting === "today-view") {
     return (
-      <div style={styles.pane}>
+      <ScrollPane style={styles.pane}>
         {backRow}
         <div style={styles.title}>Today View</div>
         <ToggleSwitch
@@ -70,13 +71,13 @@ export function SettingsDetailPane({
           value={settings.showOverdue}
           onValueChange={(v) => updateSettings(uid, { showOverdue: v })}
         />
-      </div>
+      </ScrollPane>
     );
   }
 
   if (activeSetting === "default-list") {
     return (
-      <div style={styles.pane}>
+      <ScrollPane style={styles.pane}>
         {backRow}
         <div style={styles.title}>Default List</div>
         {lists.map((list) => (
@@ -93,13 +94,13 @@ export function SettingsDetailPane({
             {list.title}
           </button>
         ))}
-      </div>
+      </ScrollPane>
     );
   }
 
   if (activeSetting === "after-quick-add") {
     return (
-      <div style={styles.pane}>
+      <ScrollPane style={styles.pane}>
         {backRow}
         <div style={styles.title}>After Quick Add</div>
         {(
@@ -121,13 +122,13 @@ export function SettingsDetailPane({
             {opt.label}
           </button>
         ))}
-      </div>
+      </ScrollPane>
     );
   }
 
   if (activeSetting === "add-position") {
     return (
-      <div style={styles.pane}>
+      <ScrollPane style={styles.pane}>
         {backRow}
         <div style={styles.title}>Add New Tasks</div>
         {(
@@ -149,16 +150,16 @@ export function SettingsDetailPane({
             {opt.label}
           </button>
         ))}
-      </div>
+      </ScrollPane>
     );
   }
 
   return (
-    <div style={styles.pane}>
+    <ScrollPane style={styles.pane}>
       {backRow}
       <div style={styles.title}>Import Backup</div>
       <ImportBackupSection uid={uid} />
-    </div>
+    </ScrollPane>
   );
 }
 

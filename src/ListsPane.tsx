@@ -2,9 +2,10 @@ import { type KeyboardEvent, useState } from "react";
 import type { ReminderList } from "./lib/models";
 import { addList } from "./lib/store";
 import { ListIcon, PlusIcon, SettingsIcon, TodayIcon } from "./icons";
+import { ScrollPane } from "./ScrollPane";
 
 const styles = {
-  pane: { padding: "30px 20px" },
+  pane: { padding: "30px 28px 30px 20px" },
   navGroup: { marginBottom: 72 },
   navRow: {
     display: "flex",
@@ -69,7 +70,7 @@ export function ListsPane({
   }
 
   return (
-    <div style={styles.pane}>
+    <ScrollPane style={styles.pane}>
       <div style={styles.navGroup}>
         <button type="button" style={styles.navRow} onClick={() => onSelectSection("lists")}>
           <ListIcon />
@@ -149,6 +150,6 @@ export function ListsPane({
           }}
         />
       )}
-    </div>
+    </ScrollPane>
   );
 }

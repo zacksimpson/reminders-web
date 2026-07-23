@@ -7,10 +7,12 @@ import {
   clearTaskField,
   deleteSubtask,
   deleteTask,
+  renameSubtask,
   toggleSubtask,
   updateTask,
 } from "./lib/store";
 import { BackButton } from "./BackButton";
+import { ScrollPane } from "./ScrollPane";
 import { CheckboxIcon, ClearFieldIcon, DeleteIcon, PlusCircleIcon } from "./icons";
 
 const styles = {
@@ -36,12 +38,30 @@ const styles = {
   subtasksHeader: { fontSize: 15, marginTop: 24, marginBottom: 11 },
   subtaskRow: { display: "flex", gap: 12, padding: "9px 0", alignItems: "center" },
   subtaskTitle: { fontSize: 19, flex: 1, textAlign: "left" as const },
+  subtaskTitleInput: { fontSize: 19, flex: 1, textAlign: "left" as const, paddingLeft: 0 },
   addSubtaskInput: { fontSize: 19, borderBottom: "2px solid #fff", flex: 1 },
   deleteTaskAction: {
     fontSize: 18,
     letterSpacing: "0.1em",
     marginTop: 34,
   },
+  confirmPane: { padding: "30px 37px", height: "100%", display: "flex", flexDirection: "column" as const },
+  confirmMessageWrap: {
+    flex: 1,
+    display: "flex",
+    alignItems: "flex-start",
+    justifyContent: "center",
+    paddingTop: 70,
+  },
+  confirmMessage: { fontSize: 24, textAlign: "center" as const, lineHeight: 1.4, maxWidth: 440 },
+  confirmAction: {
+    fontSize: 22,
+    letterSpacing: "0.3em",
+    textAlign: "center" as const,
+    paddingBottom: 12,
+  },
+  toastPane: { height: "100%", display: "flex", alignItems: "center", justifyContent: "center" },
+  toastText: { fontSize: 44 },
 };
 
 export function TaskDetailPane({
@@ -67,6 +87,28 @@ export function TaskDetailPane({
   onClose: () => void;
   onBack?: () => void;
 }) {
+  // Lives here (not in EditTaskForm) because deleting the task makes it
+  // disappear from the `tasks` list, which would otherwise unmount the form
+  // — and the toast with it — well before its 1s timer finishes.
+  const [showDeletedToast, setShowDeletedToast] = useState(false);
+
+  useEffect(() => {
+    if (!showDeletedToast) return;
+    const t = setTimeout(() => {
+      setShowDeletedToast(false);
+      onClose();
+    }, 1000);
+    return () => clearTimeout(t);
+  }, [showDeletedToast, onClose]);
+
+  if (showDeletedToast) {
+    return (
+      <div style={styles.toastPane}>
+        <div style={styles.toastText}>deleted</div>
+      </div>
+    );
+  }
+
   if (detail.kind === "none") {
     return <div style={styles.pane} />;
   }
@@ -86,7 +128,18 @@ export function TaskDetailPane({
   if (!task) {
     return <div style={styles.pane} />;
   }
-  return <EditTaskForm uid={uid} lists={lists} task={task} onDeleted={onClose} onBack={onBack} />;
+  return (
+    <EditTaskForm
+      uid={uid}
+      lists={lists}
+      task={task}
+      onConfirmDelete={async () => {
+        await deleteTask(uid, task.id);
+        setShowDeletedToast(true);
+      }}
+      onBack={onBack}
+    />
+  );
 }
 
 function NewTaskForm({
@@ -121,7 +174,7 @@ function NewTaskForm({
   }
 
   return (
-    <div style={styles.pane}>
+    <ScrollPane style={styles.pane}>
       {onBack && (
         <div style={styles.backRow}>
           <BackButton onBack={onBack} />
@@ -140,7 +193,7 @@ function NewTaskForm({
       />
       <div style={styles.label}>List</div>
       <div style={styles.value}>{lists.find((l) => l.id === defaultListId)?.title}</div>
-    </div>
+    </ScrollPane>
   );
 }
 
@@ -148,18 +201,21 @@ function EditTaskForm({
   uid,
   lists,
   task,
-  onDeleted,
+  onConfirmDelete,
   onBack,
 }: {
   uid: string;
   lists: ReminderList[];
   task: Task;
-  onDeleted: () => void;
+  onConfirmDelete: () => void;
   onBack?: () => void;
 }) {
   const [title, setTitle] = useState(task.title);
   const [newSubtask, setNewSubtask] = useState("");
   const [addingSubtask, setAddingSubtask] = useState(false);
+  const [editingSubtaskId, setEditingSubtaskId] = useState<string | null>(null);
+  const [editingSubtaskTitle, setEditingSubtaskTitle] = useState("");
+  const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   useEffect(() => setTitle(task.title), [task.id, task.title]);
 
@@ -185,8 +241,35 @@ function EditTaskForm({
     setNewSubtask("");
   }
 
+  function commitSubtaskRename(subtaskId: string) {
+    const trimmed = editingSubtaskTitle.trim();
+    setEditingSubtaskId(null);
+    const subtask = task.subtasks.find((s) => s.id === subtaskId);
+    if (!subtask || !trimmed || trimmed === subtask.title) return;
+    renameSubtask(uid, task, subtaskId, trimmed);
+  }
+
+  if (confirmingDelete) {
+    const message = task.recurrence
+      ? "This is a recurring task. Delete all occurrences?"
+      : `Are you sure you want to delete "${task.title}"?`;
+    return (
+      <div style={styles.confirmPane}>
+        <div style={styles.backRow}>
+          <BackButton onBack={() => setConfirmingDelete(false)} />
+        </div>
+        <div style={styles.confirmMessageWrap}>
+          <div style={styles.confirmMessage}>{message}</div>
+        </div>
+        <button type="button" style={styles.confirmAction} onClick={onConfirmDelete}>
+          DELETE
+        </button>
+      </div>
+    );
+  }
+
   return (
-    <div style={styles.pane}>
+    <ScrollPane style={styles.pane}>
       {onBack && (
         <div style={styles.backRow}>
           <BackButton onBack={onBack} />
@@ -344,7 +427,27 @@ function EditTaskForm({
           <button type="button" onClick={() => toggleSubtask(uid, task, s.id)} aria-label="Toggle subtask">
             <CheckboxIcon checked={s.completed} size={17} />
           </button>
-          <div style={{ ...styles.subtaskTitle, opacity: s.completed ? 0.4 : 1 }}>{s.title}</div>
+          {editingSubtaskId === s.id ? (
+            <input
+              autoFocus
+              style={styles.subtaskTitleInput}
+              value={editingSubtaskTitle}
+              onChange={(e) => setEditingSubtaskTitle(e.target.value)}
+              onBlur={() => commitSubtaskRename(s.id)}
+              onKeyDown={(e) => e.key === "Enter" && (e.target as HTMLInputElement).blur()}
+            />
+          ) : (
+            <button
+              type="button"
+              style={{ ...styles.subtaskTitle, opacity: s.completed ? 0.4 : 1 }}
+              onClick={() => {
+                setEditingSubtaskId(s.id);
+                setEditingSubtaskTitle(s.title);
+              }}
+            >
+              {s.title}
+            </button>
+          )}
           <button type="button" onClick={() => deleteSubtask(uid, task, s.id)} aria-label="Delete subtask">
             <DeleteIcon />
           </button>
@@ -375,16 +478,9 @@ function EditTaskForm({
         </div>
       )}
 
-      <button
-        type="button"
-        style={styles.deleteTaskAction}
-        onClick={() => {
-          deleteTask(uid, task.id);
-          onDeleted();
-        }}
-      >
+      <button type="button" style={styles.deleteTaskAction} onClick={() => setConfirmingDelete(true)}>
         DELETE TASK
       </button>
-    </div>
+    </ScrollPane>
   );
 }
