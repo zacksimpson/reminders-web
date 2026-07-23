@@ -45,20 +45,13 @@ const styles = {
     letterSpacing: "0.1em",
     marginTop: 34,
   },
-  confirmPane: { padding: "30px 37px", height: "100%", display: "flex", flexDirection: "column" as const },
-  confirmMessageWrap: {
-    flex: 1,
-    display: "flex",
-    alignItems: "flex-start",
-    justifyContent: "center",
-    paddingTop: 70,
-  },
-  confirmMessage: { fontSize: 24, textAlign: "center" as const, lineHeight: 1.4, maxWidth: 440 },
+  confirmTitle: { fontSize: 32, marginBottom: 26, fontWeight: 400 },
+  confirmBody: { fontSize: 16, lineHeight: 1.6, marginBottom: 30 },
   confirmAction: {
-    fontSize: 22,
-    letterSpacing: "0.3em",
-    textAlign: "center" as const,
-    paddingBottom: 12,
+    fontSize: 20,
+    fontWeight: 400,
+    letterSpacing: "0.15em",
+    textAlign: "left" as const,
   },
   toastPane: { height: "100%", display: "flex", alignItems: "center", justifyContent: "center" },
   toastText: { fontSize: 44 },
@@ -254,17 +247,16 @@ function EditTaskForm({
       ? "This is a recurring task. Delete all occurrences?"
       : `Are you sure you want to delete "${task.title}"?`;
     return (
-      <div style={styles.confirmPane}>
+      <ScrollPane style={styles.pane}>
         <div style={styles.backRow}>
           <BackButton onBack={() => setConfirmingDelete(false)} />
         </div>
-        <div style={styles.confirmMessageWrap}>
-          <div style={styles.confirmMessage}>{message}</div>
-        </div>
+        <div style={styles.confirmTitle}>Delete Task</div>
+        <div style={styles.confirmBody}>{message}</div>
         <button type="button" style={styles.confirmAction} onClick={onConfirmDelete}>
           DELETE
         </button>
-      </div>
+      </ScrollPane>
     );
   }
 

@@ -26,7 +26,8 @@ const styles = {
   backButtonMobile: { position: "absolute" as const, left: 0, top: 3 },
   addButtonMobile: { position: "absolute" as const, right: 0, top: 3 },
   completedHeader: { fontSize: 17, opacity: 0.5, padding: "18px 0 12px", width: "100%", textAlign: "left" as const },
-  empty: { fontSize: 19, marginTop: 40, textAlign: "center" as const },
+  empty: { fontSize: 19, marginTop: 40, textAlign: "left" as const },
+  emptyMobile: { fontSize: 19, marginTop: 40, textAlign: "center" as const },
 };
 
 export function TodayPane({
@@ -93,7 +94,7 @@ export function TodayPane({
       )}
 
       {overdueTasks.length === 0 && activeTasks.length === 0 && completedTasks.length === 0 && (
-        <div style={styles.empty}>no tasks today</div>
+        <div style={onBack ? styles.emptyMobile : styles.empty}>no tasks today</div>
       )}
 
       {overdueTasks.map((task) => {
