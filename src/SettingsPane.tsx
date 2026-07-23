@@ -6,6 +6,13 @@ const styles = {
   pane: { padding: "30px 24px" },
   backRow: { marginBottom: 20 },
   headerTitle: { fontSize: 32, fontWeight: 400, marginBottom: 26 },
+  headerMobile: {
+    textAlign: "center" as const,
+    fontSize: 23,
+    marginBottom: 26,
+    position: "relative" as const,
+  },
+  backButtonMobile: { position: "absolute" as const, left: 0, top: 3 },
   row: {
     width: "100%",
     textAlign: "left" as const,
@@ -44,12 +51,14 @@ export function SettingsPane({
 
   return (
     <ScrollPane style={styles.pane}>
-      {onBack && (
-        <div style={styles.backRow}>
-          <BackButton onBack={onBack} />
+      {onBack ? (
+        <div style={styles.headerMobile}>
+          <BackButton onBack={onBack} style={styles.backButtonMobile} />
+          Settings
         </div>
+      ) : (
+        <div style={styles.headerTitle}>Settings</div>
       )}
-      <div style={styles.headerTitle}>Settings</div>
 
       <button
         type="button"

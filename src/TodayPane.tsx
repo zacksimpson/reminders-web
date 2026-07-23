@@ -17,6 +17,14 @@ const styles = {
   },
   headerTitle: { fontSize: 32, fontWeight: 400 },
   addButton: { display: "flex" },
+  headerMobile: {
+    textAlign: "center" as const,
+    fontSize: 23,
+    marginBottom: 26,
+    position: "relative" as const,
+  },
+  backButtonMobile: { position: "absolute" as const, left: 0, top: 3 },
+  addButtonMobile: { position: "absolute" as const, right: 0, top: 3 },
   completedHeader: { fontSize: 17, opacity: 0.5, padding: "18px 0 12px", width: "100%", textAlign: "left" as const },
   empty: { fontSize: 19, marginTop: 40, textAlign: "center" as const },
 };
@@ -67,17 +75,22 @@ export function TodayPane({
 
   return (
     <ScrollPane style={styles.pane}>
-      {onBack && (
-        <div style={styles.backRow}>
-          <BackButton onBack={onBack} />
+      {onBack ? (
+        <div style={styles.headerMobile}>
+          <BackButton onBack={onBack} style={styles.backButtonMobile} />
+          Today
+          <button type="button" style={styles.addButtonMobile} aria-label="Add task" onClick={onAddTask}>
+            <PlusIcon size={22} />
+          </button>
+        </div>
+      ) : (
+        <div style={styles.headerRow}>
+          <div style={styles.headerTitle}>Today</div>
+          <button type="button" style={styles.addButton} aria-label="Add task" onClick={onAddTask}>
+            <PlusIcon size={22} />
+          </button>
         </div>
       )}
-      <div style={styles.headerRow}>
-        <div style={styles.headerTitle}>Today</div>
-        <button type="button" style={styles.addButton} aria-label="Add task" onClick={onAddTask}>
-          <PlusIcon size={22} />
-        </button>
-      </div>
 
       {overdueTasks.length === 0 && activeTasks.length === 0 && completedTasks.length === 0 && (
         <div style={styles.empty}>no tasks today</div>
