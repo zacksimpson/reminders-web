@@ -2,7 +2,10 @@ import { useEffect, useRef, useState } from "react";
 
 const STORAGE_KEY = "reminders-web:paneWidths";
 
-const LISTS_MIN = 140;
+// Below this, "Add Task" (the widest nav label) wraps to a second line and
+// the SVG nav icons visibly shrink — measured the actual rendered label
+// width and picked the smallest value that never triggers either.
+const LISTS_MIN = 180;
 const LISTS_MAX = 320;
 const TASKS_MIN = 220;
 const TASKS_MAX = 480;
@@ -13,9 +16,13 @@ type Divider = "lists" | "tasks";
 function loadWidths() {
   try {
     const parsed = JSON.parse(localStorage.getItem(STORAGE_KEY) ?? "");
+    const lists = typeof parsed.lists === "number" ? parsed.lists : DEFAULTS.lists;
+    const tasks = typeof parsed.tasks === "number" ? parsed.tasks : DEFAULTS.tasks;
     return {
-      lists: typeof parsed.lists === "number" ? parsed.lists : DEFAULTS.lists,
-      tasks: typeof parsed.tasks === "number" ? parsed.tasks : DEFAULTS.tasks,
+      // Re-clamped on load too, so a width saved before LISTS_MIN/TASKS_MIN
+      // changed (or from a stale/edited localStorage value) can't stick.
+      lists: Math.min(LISTS_MAX, Math.max(LISTS_MIN, lists)),
+      tasks: Math.min(TASKS_MAX, Math.max(TASKS_MIN, tasks)),
     };
   } catch {
     return DEFAULTS;
