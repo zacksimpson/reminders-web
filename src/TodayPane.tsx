@@ -7,7 +7,7 @@ import { ScrollPane } from "./ScrollPane";
 import { PlusIcon } from "./icons";
 
 const styles = {
-  pane: { padding: "30px 24px" },
+  pane: { padding: "30px 32px 30px 24px" },
   backRow: { marginBottom: 20 },
   headerRow: {
     display: "flex",
