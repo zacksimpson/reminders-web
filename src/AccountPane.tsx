@@ -29,7 +29,7 @@ const styles = {
   },
 };
 
-export type AccountKey = "change-password" | "delete-account";
+export type AccountKey = "connect-phone" | "change-password" | "delete-account";
 
 export function AccountPane({
   activeAccountAction,
@@ -55,6 +55,14 @@ export function AccountPane({
 
       <button type="button" style={styles.signOutAction} onClick={() => signOut(auth)}>
         SIGN OUT
+      </button>
+
+      <button
+        type="button"
+        style={{ ...styles.row, textDecoration: activeAccountAction === "connect-phone" ? "underline" : "none" }}
+        onClick={() => onSelectAccountAction("connect-phone")}
+      >
+        Phone Sync
       </button>
 
       <button

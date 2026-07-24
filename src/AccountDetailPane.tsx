@@ -26,6 +26,7 @@ const styles = {
     textAlign: "left" as const,
   },
   status: { fontSize: 16, marginTop: 24 },
+  link: { color: "#fff", textDecoration: "underline", textUnderlineOffset: 3 },
 };
 
 export function AccountDetailPane({
@@ -45,6 +46,16 @@ export function AccountDetailPane({
     </div>
   );
 
+  if (activeAccountAction === "connect-phone") {
+    return (
+      <ScrollPane style={styles.pane}>
+        {backRow}
+        <div style={styles.title}>Phone Sync</div>
+        <ConnectPhoneSection />
+      </ScrollPane>
+    );
+  }
+
   if (activeAccountAction === "change-password") {
     return (
       <ScrollPane style={styles.pane}>
@@ -61,6 +72,35 @@ export function AccountDetailPane({
       <div style={styles.title}>Delete Account</div>
       <DeleteAccountSection />
     </ScrollPane>
+  );
+}
+
+function ConnectPhoneSection() {
+  return (
+    <>
+      <div style={styles.body}>
+        Reminders can sync between this website and the{" "}
+        <a
+          href="https://github.com/zacksimpson/reminders-tool"
+          target="_blank"
+          rel="noopener noreferrer"
+          style={styles.link}
+        >
+          Reminders tool
+        </a>{" "}
+        on your Light Phone.
+      </div>
+      <div style={styles.body}>
+        To get started, open the Reminders tool on your LPIII, go to Settings &rarr;
+        Account, and sign in with the same email and password you use here. Once signed
+        in, your phone keeps itself in sync automatically in the background.
+      </div>
+      <div style={styles.body}>
+        Note: currently, automatic syncing occurs every few minutes (not instantaneously).
+        If you want it to sync right away, open Settings &rarr; Account and tap Last
+        Synced to initiate a manual sync.
+      </div>
+    </>
   );
 }
 
