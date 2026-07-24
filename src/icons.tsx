@@ -147,3 +147,12 @@ export function BackChevronIcon({ size = 22 }: { size?: number }) {
     </svg>
   );
 }
+
+/** MaterialIcons "expand_more" glyph, used as the custom Dropdown's affordance. */
+export function ChevronDownIcon({ size = 14 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24">
+      <path d="M12 15.375L4.5 7.875L6.375 6L12 11.625L17.625 6L19.5 7.875L12 15.375Z" fill="#fff" />
+    </svg>
+  );
+}

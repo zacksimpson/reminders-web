@@ -12,6 +12,7 @@ import {
   updateTask,
 } from "./lib/store";
 import { BackButton } from "./BackButton";
+import { Dropdown } from "./Dropdown";
 import { ScrollPane } from "./ScrollPane";
 import { CheckboxIcon, ClearFieldIcon, DeleteIcon, PlusCircleIcon } from "./icons";
 
@@ -289,17 +290,11 @@ function EditTaskForm({
       <div style={styles.field}>
         <div>
           <div style={styles.label}>List</div>
-          <select
-            style={styles.select}
+          <Dropdown
             value={task.listId}
-            onChange={(e) => updateTask(uid, task.id, { listId: e.target.value })}
-          >
-            {lists.map((l) => (
-              <option key={l.id} value={l.id}>
-                {l.title}
-              </option>
-            ))}
-          </select>
+            options={lists.map((l) => ({ value: l.id, label: l.title }))}
+            onChange={(listId) => updateTask(uid, task.id, { listId })}
+          />
         </div>
       </div>
 
@@ -385,20 +380,20 @@ function EditTaskForm({
                       })
                     }
                   />
-                  <select
-                    style={styles.select}
+                  <Dropdown
                     value={task.recurrence.unit}
-                    onChange={(e) =>
+                    options={[
+                      { value: "day", label: "days" },
+                      { value: "week", label: "weeks" },
+                      { value: "month", label: "months" },
+                      { value: "year", label: "years" },
+                    ]}
+                    onChange={(unit) =>
                       updateTask(uid, task.id, {
-                        recurrence: { ...task.recurrence!, unit: e.target.value as RecurrenceUnit },
+                        recurrence: { ...task.recurrence!, unit: unit as RecurrenceUnit },
                       })
                     }
-                  >
-                    <option value="day">days</option>
-                    <option value="week">weeks</option>
-                    <option value="month">months</option>
-                    <option value="year">years</option>
-                  </select>
+                  />
                 </div>
               ) : (
                 <button

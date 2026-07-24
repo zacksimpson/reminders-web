@@ -3,6 +3,7 @@ import type { ReminderList, RecurrenceUnit, Settings, Subtask } from "./lib/mode
 import { generateId } from "./lib/remindersLogic";
 import { addTask } from "./lib/store";
 import { BackButton } from "./BackButton";
+import { Dropdown } from "./Dropdown";
 import { ScrollPane } from "./ScrollPane";
 import { CheckboxIcon, ClearFieldIcon, DeleteIcon, PlusCircleIcon } from "./icons";
 
@@ -173,13 +174,11 @@ export function AddTaskPane({
         <div style={styles.field}>
           <div>
             <div style={styles.label}>List</div>
-            <select style={styles.select} value={listId} onChange={(e) => setListId(e.target.value)}>
-              {lists.map((l) => (
-                <option key={l.id} value={l.id}>
-                  {l.title}
-                </option>
-              ))}
-            </select>
+            <Dropdown
+              value={listId}
+              options={lists.map((l) => ({ value: l.id, label: l.title }))}
+              onChange={setListId}
+            />
           </div>
         </div>
 
@@ -267,21 +266,21 @@ export function AddTaskPane({
                         setRecurrence((r) => ({ interval: Number(e.target.value) || 1, unit: r?.unit ?? "week" }))
                       }
                     />
-                    <select
-                      style={styles.select}
+                    <Dropdown
                       value={recurrence.unit}
-                      onChange={(e) =>
+                      options={[
+                        { value: "day", label: "days" },
+                        { value: "week", label: "weeks" },
+                        { value: "month", label: "months" },
+                        { value: "year", label: "years" },
+                      ]}
+                      onChange={(unit) =>
                         setRecurrence((r) => ({
                           interval: r?.interval ?? 1,
-                          unit: e.target.value as RecurrenceUnit,
+                          unit: unit as RecurrenceUnit,
                         }))
                       }
-                    >
-                      <option value="day">days</option>
-                      <option value="week">weeks</option>
-                      <option value="month">months</option>
-                      <option value="year">years</option>
-                    </select>
+                    />
                   </div>
                 ) : (
                   <button
