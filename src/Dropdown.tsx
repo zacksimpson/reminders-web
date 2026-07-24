@@ -1,5 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import { ChevronDownIcon } from "./icons";
+import { ScrollPane } from "./ScrollPane";
 
 const styles = {
   wrapper: { position: "relative" as const, display: "inline-block" },
@@ -18,20 +19,19 @@ const styles = {
     top: "100%",
     left: 0,
     marginTop: 10,
-    minWidth: 180,
-    maxHeight: 260,
-    overflowY: "auto" as const,
+    minWidth: 200,
     border: "1px solid #fff",
     background: "#000",
     zIndex: 20,
-    padding: "6px 0",
+    padding: "10px 0",
   },
+  panelScroll: { maxHeight: 260 },
   option: {
     display: "block",
     width: "100%",
     textAlign: "left" as const,
     fontSize: 19,
-    padding: "10px 18px",
+    padding: "10px 32px 10px 18px",
   },
 };
 
@@ -80,23 +80,25 @@ export function Dropdown({
       </button>
       {open && (
         <div style={styles.panel}>
-          {options.map((o) => (
-            <button
-              key={o.value}
-              type="button"
-              style={{
-                ...styles.option,
-                textDecoration: o.value === value ? "underline" : "none",
-                textUnderlineOffset: 3,
-              }}
-              onClick={() => {
-                onChange(o.value);
-                setOpen(false);
-              }}
-            >
-              {o.label}
-            </button>
-          ))}
+          <ScrollPane style={styles.panelScroll}>
+            {options.map((o) => (
+              <button
+                key={o.value}
+                type="button"
+                style={{
+                  ...styles.option,
+                  textDecoration: o.value === value ? "underline" : "none",
+                  textUnderlineOffset: 3,
+                }}
+                onClick={() => {
+                  onChange(o.value);
+                  setOpen(false);
+                }}
+              >
+                {o.label}
+              </button>
+            ))}
+          </ScrollPane>
         </div>
       )}
     </div>
