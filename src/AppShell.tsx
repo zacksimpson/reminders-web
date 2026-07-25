@@ -238,20 +238,29 @@ export function AppShell({ user }: { user: User }) {
 
   return (
     <div style={{ height: "100vh", ...outerPadding }}>
-      <div style={{ position: "relative", height: "100%" }}>
-        <div
-          style={{
-            display: "grid",
-            gridTemplateColumns: `${widths.lists}px ${widths.tasks}px 1fr`,
-            height: "100%",
-          }}
-        >
-          {listsPane}
-          {middlePane}
-          {detailPane}
+      {/* On very wide screens the 1fr detail column would otherwise stretch
+          indefinitely, pinning all three panes to the left with a huge dead
+          gap on the right. Cap the whole layout and center it instead, same
+          fix as any content site uses for ultrawide monitors. 1920 comes from
+          the max pane widths + the detail pane's own 720px content cap + its
+          padding + a bit of intentional breathing room, not an arbitrary round
+          number. */}
+      <div style={{ maxWidth: 1920, height: "100%", margin: "0 auto" }}>
+        <div style={{ position: "relative", height: "100%" }}>
+          <div
+            style={{
+              display: "grid",
+              gridTemplateColumns: `${widths.lists}px ${widths.tasks}px 1fr`,
+              height: "100%",
+            }}
+          >
+            {listsPane}
+            {middlePane}
+            {detailPane}
+          </div>
+          <PaneResizer left={widths.lists} onMouseDown={startDrag("lists")} />
+          <PaneResizer left={widths.lists + widths.tasks} onMouseDown={startDrag("tasks")} />
         </div>
-        <PaneResizer left={widths.lists} onMouseDown={startDrag("lists")} />
-        <PaneResizer left={widths.lists + widths.tasks} onMouseDown={startDrag("tasks")} />
       </div>
     </div>
   );
