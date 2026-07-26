@@ -2,6 +2,12 @@
 
 A standalone browser companion for [Reminders](https://github.com/zacksimpson/reminders-tool) for the Light Phone III. Laid out as a responsive desktop web app with feature parity, and syncs with the phone app.
 
+> [!WARNING]
+> This web app is under development. Feel free to create an account, check it out, and contribute by opening an issue or submitting a PR!
+
+Check out Reminders Web here: https://reminders-tool.web.app
+
+
 ## Connecting your phone
 
 The phone app and this website share the same account and the same lists/tasks. On your Light Phone III, open Reminders, go to Settings → Account, and sign in with the same email and password you use here. See the in-app "Phone Sync" screen (Account tab) for details on how syncing behaves.
@@ -13,7 +19,7 @@ The phone app and this website share the same account and the same lists/tasks. 
 
 ## Running it yourself
 
-This repo doesn't ship with a working backend, so each person who runs it needs their own Firebase project. That way your usage never touches anyone else's quota (and vice versa).
+The idea for this project is to eventually be a bring-your-own-backend, so each person who runs it needs their own Firebase project. That way your usage never touches anyone else's quota (and vice versa).
 
 1. Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com) (Spark/free plan is enough).
 2. Enable **Authentication → Email/Password**.
