@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import type { ReminderList, Task } from "./lib/models";
 import { compareTasksByDateThenTime, compareTasksByDateTime, getTodayStr, isOverdue } from "./lib/dateTime";
+import { isTypingTarget } from "./lib/keyboardUtils";
 import { TaskRow } from "./TaskListPane";
 import { BackButton } from "./BackButton";
 import { ScrollPane } from "./ScrollPane";
@@ -71,6 +72,27 @@ export function TodayPane({
   const completedTasks = tasks
     .filter((t) => t.completed && (t.date === todayStr || (showOverdue && isOverdue(t))))
     .sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
+
+  const navigable = [...overdueTasks, ...activeTasks];
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.metaKey || e.ctrlKey || e.altKey || isTypingTarget(e.target)) return;
+      if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+      if (navigable.length === 0) return;
+      e.preventDefault();
+      const currentIndex = navigable.findIndex((t) => t.id === selectedTaskId);
+      const nextIndex =
+        currentIndex === -1
+          ? 0
+          : e.key === "ArrowDown"
+            ? Math.min(currentIndex + 1, navigable.length - 1)
+            : Math.max(currentIndex - 1, 0);
+      onSelectTask(navigable[nextIndex].id);
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [navigable, selectedTaskId, onSelectTask]);
 
   const listById = (id: string) => lists.find((l) => l.id === id);
 

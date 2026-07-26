@@ -2,6 +2,7 @@ import { useEffect, useReducer, useState } from "react";
 import type { User } from "firebase/auth";
 import type { ReminderList, Settings, Task } from "./lib/models";
 import { getTodayStr } from "./lib/dateTime";
+import { isTypingTarget } from "./lib/keyboardUtils";
 import {
   ensureInboxList,
   subscribeToLists,
@@ -51,11 +52,6 @@ export function AppShell({ user }: { user: User }) {
   }, [user.uid]);
 
   useEffect(() => {
-    function isTypingTarget(el: EventTarget | null) {
-      if (!(el instanceof HTMLElement)) return false;
-      return el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable;
-    }
-
     function onKeyDown(e: KeyboardEvent) {
       if (e.metaKey || e.ctrlKey || e.altKey || isTypingTarget(e.target)) return;
       if (e.key === "1") {

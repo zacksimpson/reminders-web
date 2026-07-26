@@ -9,8 +9,10 @@ import {
   deleteTask,
   renameSubtask,
   toggleSubtask,
+  toggleTask,
   updateTask,
 } from "./lib/store";
+import { isTypingTarget } from "./lib/keyboardUtils";
 import { BackButton } from "./BackButton";
 import { Dropdown } from "./Dropdown";
 import { ScrollPane } from "./ScrollPane";
@@ -223,6 +225,20 @@ function EditTaskForm({
   const [confirmingDelete, setConfirmingDelete] = useState(false);
 
   useEffect(() => setTitle(task.title), [task.id, task.title]);
+
+  useEffect(() => {
+    if (confirmingDelete) return;
+    function onKeyDown(e: globalThis.KeyboardEvent) {
+      if (e.metaKey || e.ctrlKey || e.altKey || isTypingTarget(e.target)) return;
+      if (e.key === "Enter") {
+        toggleTask(uid, task);
+      } else if (e.key === "Delete" || e.key === "Backspace") {
+        setConfirmingDelete(true);
+      }
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [uid, task, confirmingDelete]);
 
   function saveTitle() {
     const trimmed = title.trim();

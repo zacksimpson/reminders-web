@@ -1,6 +1,7 @@
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { ReminderList, Task } from "./lib/models";
 import { compareTasksByDateTime, formatDate, formatTime, isOverdue } from "./lib/dateTime";
+import { isTypingTarget } from "./lib/keyboardUtils";
 import { formatRecurrence } from "./lib/remindersLogic";
 import { toggleTask } from "./lib/store";
 import { BackButton } from "./BackButton";
@@ -70,6 +71,25 @@ export function TaskListPane({
   const completed = tasks
     .filter((t) => t.completed)
     .sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
+
+  useEffect(() => {
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.metaKey || e.ctrlKey || e.altKey || isTypingTarget(e.target)) return;
+      if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
+      if (active.length === 0) return;
+      e.preventDefault();
+      const currentIndex = active.findIndex((t) => t.id === selectedTaskId);
+      const nextIndex =
+        currentIndex === -1
+          ? 0
+          : e.key === "ArrowDown"
+            ? Math.min(currentIndex + 1, active.length - 1)
+            : Math.max(currentIndex - 1, 0);
+      onSelectTask(active[nextIndex].id);
+    }
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, [active, selectedTaskId, onSelectTask]);
 
   if (!list) {
     return <div style={styles.pane} />;
