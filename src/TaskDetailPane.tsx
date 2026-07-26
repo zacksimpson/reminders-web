@@ -14,6 +14,7 @@ import {
 } from "./lib/store";
 import { isTypingTarget } from "./lib/keyboardUtils";
 import { BackButton } from "./BackButton";
+import { DatePicker } from "./DatePicker";
 import { Dropdown } from "./Dropdown";
 import { ScrollPane } from "./ScrollPane";
 import { CheckboxIcon, ClearFieldIcon, DeleteIcon, PlusCircleIcon } from "./icons";
@@ -317,24 +318,7 @@ function EditTaskForm({
       <div style={styles.field}>
         <div style={styles.label}>Date</div>
         <div style={styles.fieldRow}>
-          {task.date ? (
-            <div style={styles.value}>
-              <input
-                type="date"
-                style={{ ...styles.select, colorScheme: "dark" }}
-                value={task.date}
-                onChange={(e) => updateTask(uid, task.id, { date: e.target.value })}
-              />
-            </div>
-          ) : (
-            <button
-              type="button"
-              style={styles.value}
-              onClick={() => updateTask(uid, task.id, { date: new Date().toISOString().slice(0, 10) })}
-            >
-              None
-            </button>
-          )}
+          <DatePicker value={task.date} onChange={(date) => updateTask(uid, task.id, { date })} />
           {task.date && (
             <button
               type="button"

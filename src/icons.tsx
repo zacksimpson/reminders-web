@@ -84,6 +84,22 @@ export function AccountIcon({ size = 23 }: { size?: number }) {
   );
 }
 
+/** User-supplied icon (not from the phone app), styled to match AccountIcon's stroke weight. */
+export function HeartIcon({ size = 23 }: { size?: number }) {
+  return (
+    <svg width={size} height={size} viewBox="0 0 24 24">
+      <path
+        d="M12 20.35l-1.45-1.32C5.4 14.36 2 11.28 2 7.5 2 4.42 4.42 2 7.5 2c1.74 0 3.41.81 4.5 2.09C13.09 2.81 14.76 2 16.5 2 19.58 2 22 4.42 22 7.5c0 3.78-3.4 6.86-8.55 11.54L12 20.35z"
+        stroke="#fff"
+        strokeWidth="1.8"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+        fill="none"
+      />
+    </svg>
+  );
+}
+
 export function CheckboxIcon({ checked, size = 20 }: { checked: boolean; size?: number }) {
   return (
     <svg width={size} height={size} viewBox="0 0 84 84">

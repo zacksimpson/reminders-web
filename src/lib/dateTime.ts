@@ -4,7 +4,7 @@
 // drive RN's custom numpad time picker, which this app doesn't have, we use
 // native <input type="time">, which already gives/takes "HH:MM" directly.
 
-const MONTHS = [
+export const MONTHS = [
   "Jan",
   "Feb",
   "Mar",

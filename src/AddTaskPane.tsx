@@ -3,6 +3,7 @@ import type { ReminderList, RecurrenceUnit, Settings, Subtask } from "./lib/mode
 import { generateId } from "./lib/remindersLogic";
 import { addTask } from "./lib/store";
 import { BackButton } from "./BackButton";
+import { DatePicker } from "./DatePicker";
 import { Dropdown } from "./Dropdown";
 import { ScrollPane } from "./ScrollPane";
 import { CheckboxIcon, ClearFieldIcon, DeleteIcon, PlusCircleIcon } from "./icons";
@@ -185,24 +186,7 @@ export function AddTaskPane({
         <div style={styles.field}>
           <div style={styles.label}>Date</div>
           <div style={styles.fieldRow}>
-            {date ? (
-              <div style={styles.value}>
-                <input
-                  type="date"
-                  style={{ ...styles.select, colorScheme: "dark" }}
-                  value={date}
-                  onChange={(e) => setDate(e.target.value)}
-                />
-              </div>
-            ) : (
-              <button
-                type="button"
-                style={styles.value}
-                onClick={() => setDate(new Date().toISOString().slice(0, 10))}
-              >
-                None
-              </button>
-            )}
+            <DatePicker value={date} onChange={setDate} />
             {date && (
               <button
                 type="button"

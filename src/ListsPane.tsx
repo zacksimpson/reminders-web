@@ -1,7 +1,8 @@
 import { type KeyboardEvent, useState } from "react";
 import type { ReminderList } from "./lib/models";
 import { addList } from "./lib/store";
-import { AccountIcon, AddTaskIcon, PlusIcon, SettingsIcon, TodayIcon } from "./icons";
+import { DonateDialog } from "./DonateDialog";
+import { AccountIcon, AddTaskIcon, HeartIcon, PlusIcon, SettingsIcon, TodayIcon } from "./icons";
 import { ScrollPane } from "./ScrollPane";
 
 const SIDE_PADDING = { paddingLeft: 20, paddingRight: 28 };
@@ -49,6 +50,15 @@ const styles = {
     paddingBottom: 2,
   },
   accountZone: { ...SIDE_PADDING, flexShrink: 0, marginTop: NAV_GAP },
+  donateRow: {
+    display: "flex",
+    alignItems: "center",
+    gap: 12,
+    padding: "10px 0",
+    color: "#fff",
+    textDecoration: "none",
+  },
+  donateLabel: { fontSize: 19 },
 };
 
 type Section = "lists" | "today" | "settings" | "account" | "add";
@@ -73,6 +83,7 @@ export function ListsPane({
 }) {
   const [adding, setAdding] = useState(false);
   const [newTitle, setNewTitle] = useState("");
+  const [showDonateDialog, setShowDonateDialog] = useState(false);
 
   async function submitNewList(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Escape") {
@@ -186,7 +197,13 @@ export function ListsPane({
             Account
           </span>
         </button>
+        <button type="button" style={styles.donateRow} onClick={() => setShowDonateDialog(true)}>
+          <HeartIcon size={20} />
+          <span style={styles.donateLabel}>Donate</span>
+        </button>
       </div>
+
+      {showDonateDialog && <DonateDialog onClose={() => setShowDonateDialog(false)} />}
     </div>
   );
 }
