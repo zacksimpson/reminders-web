@@ -1,6 +1,6 @@
 # Reminders Web
 
-A standalone browser companion for [Reminders](https://github.com/zacksimpson/reminders-tool) for the Light Phone III. Laid out as a responsive desktop web app with feature parity, and syncs with the phone app.
+A standalone browser companion for the [Reminders tool](https://github.com/zacksimpson/reminders-tool) for the Light Phone III. Laid out as a responsive desktop web app with feature parity and phone sync support.*
 
 > [!WARNING]
 > This web app is under development. Feel free to create an account, check it out, and contribute by opening an issue or submitting a PR!
@@ -10,7 +10,7 @@ Check out Reminders Web here: https://reminders-tool.web.app
 
 ## Connecting your phone
 
-The phone app and this website share the same account and the same lists/tasks. On your Light Phone III, open Reminders, go to Settings → Account, and sign in with the same email and password you use here. See the in-app "Phone Sync" screen (Account tab) for details on how syncing behaves.
+Phone syncing requires the [prerelease version]([url](https://github.com/zacksimpson/reminders-tool/releases/tag/v2.0.0-beta.1)) of Reminders for the LPIII. The phone app and this website share the same account and the same lists/tasks. On your Light Phone III, open Reminders, go to Settings → Account, and sign in with the same email and password you use here. See the in-app "Phone Sync" screen (Account tab) for details on how syncing behaves.
 
 ## Stack
 
