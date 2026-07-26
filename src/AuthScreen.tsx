@@ -13,7 +13,7 @@ const styles = {
     minHeight: "100%",
     display: "flex",
     flexDirection: "column" as const,
-    maxWidth: 420,
+    maxWidth: 560,
   },
   title: {
     fontSize: 32,
@@ -125,7 +125,7 @@ export function AuthScreen() {
       }}
     >
       <form
-        style={{ ...styles.page, padding: outerPadding, width: centered ? "auto" : "100%" }}
+        style={{ ...styles.page, padding: outerPadding, width: centered ? styles.page.maxWidth : "100%" }}
         onSubmit={handleSubmit}
       >
         <div style={styles.title}>{title}</div>

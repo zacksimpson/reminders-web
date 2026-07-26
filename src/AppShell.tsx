@@ -50,6 +50,27 @@ export function AppShell({ user }: { user: User }) {
     };
   }, [user.uid]);
 
+  useEffect(() => {
+    function isTypingTarget(el: EventTarget | null) {
+      if (!(el instanceof HTMLElement)) return false;
+      return el.tagName === "INPUT" || el.tagName === "TEXTAREA" || el.tagName === "SELECT" || el.isContentEditable;
+    }
+
+    function onKeyDown(e: KeyboardEvent) {
+      if (e.metaKey || e.ctrlKey || e.altKey || isTypingTarget(e.target)) return;
+      if (e.key === "1") {
+        dispatch({ type: "SELECT_SECTION", section: "add" });
+      } else if (e.key === "2") {
+        dispatch({ type: "SELECT_SECTION", section: "today" });
+      } else if (e.key === "3") {
+        dispatch({ type: "SELECT_SECTION", section: "settings" });
+      }
+    }
+
+    window.addEventListener("keydown", onKeyDown);
+    return () => window.removeEventListener("keydown", onKeyDown);
+  }, []);
+
   if (!settings) {
     return null;
   }
