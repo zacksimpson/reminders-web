@@ -1,8 +1,5 @@
 // Ported near-verbatim from the RN app's utils/dateTime.ts, pure, zero
-// framework dependencies, so no changes needed for the browser. Omitted
-// formatDisplayTime/digitsToTime/timeToDisplayParts: those exist only to
-// drive RN's custom numpad time picker, which this app doesn't have, we use
-// native <input type="time">, which already gives/takes "HH:MM" directly.
+// framework dependencies, so no changes needed for the browser.
 
 export const MONTHS = [
   "Jan",
@@ -54,6 +51,43 @@ export function formatTime(time24: string, use24Hour = false): string {
   const ampm = h >= 12 ? "PM" : "AM";
   const h12 = h % 12 === 0 ? 12 : h % 12;
   return `${h12}:${mStr} ${ampm}`;
+}
+
+/** Digits ("H"+"MM" or "HH"+"MM") + ampm → "HH:MM" 24h for storage. */
+export function digitsToTime(digits: string, ampm: "AM" | "PM"): string {
+  let h: number;
+  let m: string;
+  if (digits.length === 3) {
+    h = Number.parseInt(digits[0], 10);
+    m = digits.slice(1);
+  } else {
+    h = Number.parseInt(digits.slice(0, 2), 10);
+    m = digits.slice(2);
+  }
+  if (ampm === "PM" && h !== 12) {
+    h += 12;
+  }
+  if (ampm === "AM" && h === 12) {
+    h = 0;
+  }
+  return `${String(h).padStart(2, "0")}:${m}`;
+}
+
+/** "HH:MM" 24h → digits + ampm, for seeding a text field from an existing value. */
+export function timeToDisplayParts(time24: string): {
+  digits: string;
+  ampm: "AM" | "PM";
+} {
+  const [hStr, mStr] = time24.split(":");
+  let h = Number.parseInt(hStr, 10);
+  const ampm: "AM" | "PM" = h >= 12 ? "PM" : "AM";
+  if (h > 12) {
+    h -= 12;
+  }
+  if (h === 0) {
+    h = 12;
+  }
+  return { digits: `${String(h).padStart(2, "0")}${mStr}`, ampm };
 }
 
 /** "YYYY-MM-DD" → "Jan 5" */

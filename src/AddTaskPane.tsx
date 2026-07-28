@@ -1,6 +1,7 @@
 import { type FormEvent, type KeyboardEvent, useEffect, useState } from "react";
 import type { ReminderList, RecurrenceUnit, Settings, Subtask } from "./lib/models";
 import { useDragReorder } from "./lib/useDragReorder";
+import { useTimeInput } from "./lib/useTimeInput";
 import { generateId } from "./lib/remindersLogic";
 import { addTask } from "./lib/store";
 import { BackButton } from "./BackButton";
@@ -74,6 +75,7 @@ export function AddTaskPane({
   const [saving, setSaving] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const { getRowProps: getSubtaskRowProps } = useDragReorder(subtasks, (s) => s.id, setSubtasks);
+  const timeFieldProps = useTimeInput(time ?? "09:00", setTime);
 
   useEffect(() => {
     if (!showToast) return;
@@ -212,16 +214,7 @@ export function AddTaskPane({
               <div style={styles.label}>Time</div>
               <div style={styles.fieldRow}>
                 {time ? (
-                  <input
-                    type="time"
-                    style={{ ...styles.select, colorScheme: "dark" }}
-                    value={time}
-                    onChange={(e) => {
-                      if (e.target.value) {
-                        setTime(e.target.value);
-                      }
-                    }}
-                  />
+                  <input type="text" style={styles.select} {...timeFieldProps} />
                 ) : (
                   <button type="button" style={styles.value} onClick={() => setTime("09:00")}>
                     None
@@ -367,9 +360,12 @@ export function AddTaskPane({
             <button type="button" onClick={() => setAddingSubtask(true)} aria-label="Add subtask">
               <PlusCircleIcon size={17} />
             </button>
-            <button type="button" style={styles.subtaskTitle} onClick={() => setAddingSubtask(true)}>
-              Add subtask…
-            </button>
+            <button
+              type="button"
+              style={styles.subtaskTitle}
+              aria-label="Add subtask"
+              onClick={() => setAddingSubtask(true)}
+            />
           </div>
         )}
 

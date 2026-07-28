@@ -1,6 +1,7 @@
 import { type ChangeEvent, useRef, useState } from "react";
 import type { ReminderList, Settings } from "./lib/models";
 import { importBackup, parseBackupFile, updateSettings } from "./lib/store";
+import { useTimeInput } from "./lib/useTimeInput";
 import { ToggleSwitch } from "./ToggleSwitch";
 import { BackButton } from "./BackButton";
 import { ScrollPane } from "./ScrollPane";
@@ -190,6 +191,7 @@ function NotificationsSection({ notifications }: { notifications: BrowserNotific
     setTodaysTasksEnabled,
     setTodaysTasksTime,
   } = notifications;
+  const timeFieldProps = useTimeInput(todaysTasksTime, setTodaysTasksTime);
 
   if (!supported) {
     return <div style={styles.body}>Notifications aren't supported in this browser.</div>;
@@ -216,17 +218,7 @@ function NotificationsSection({ notifications }: { notifications: BrowserNotific
           {todaysTasksEnabled && (
             <div style={styles.field}>
               <div style={styles.fieldLabel}>Notification Time</div>
-              <input
-                type="time"
-                className="time-input-no-icon"
-                style={{ ...styles.timeInput, colorScheme: "dark" }}
-                value={todaysTasksTime}
-                onChange={(e) => {
-                  if (e.target.value) {
-                    setTodaysTasksTime(e.target.value);
-                  }
-                }}
-              />
+              <input type="text" style={styles.timeInput} {...timeFieldProps} />
             </div>
           )}
 
