@@ -349,7 +349,11 @@ function EditTaskForm({
                   type="time"
                   style={{ ...styles.select, colorScheme: "dark" }}
                   value={task.time}
-                  onChange={(e) => updateTask(uid, task.id, { time: e.target.value })}
+                  onChange={(e) => {
+                    if (e.target.value) {
+                      updateTask(uid, task.id, { time: e.target.value });
+                    }
+                  }}
                 />
               ) : (
                 <button type="button" style={styles.value} onClick={() => updateTask(uid, task.id, { time: "09:00" })}>

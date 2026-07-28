@@ -216,7 +216,11 @@ export function AddTaskPane({
                     type="time"
                     style={{ ...styles.select, colorScheme: "dark" }}
                     value={time}
-                    onChange={(e) => setTime(e.target.value)}
+                    onChange={(e) => {
+                      if (e.target.value) {
+                        setTime(e.target.value);
+                      }
+                    }}
                   />
                 ) : (
                   <button type="button" style={styles.value} onClick={() => setTime("09:00")}>

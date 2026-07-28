@@ -221,7 +221,11 @@ function NotificationsSection({ notifications }: { notifications: BrowserNotific
                 className="time-input-no-icon"
                 style={{ ...styles.timeInput, colorScheme: "dark" }}
                 value={todaysTasksTime}
-                onChange={(e) => setTodaysTasksTime(e.target.value)}
+                onChange={(e) => {
+                  if (e.target.value) {
+                    setTodaysTasksTime(e.target.value);
+                  }
+                }}
               />
             </div>
           )}
