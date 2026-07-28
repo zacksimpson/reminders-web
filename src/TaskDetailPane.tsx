@@ -8,11 +8,13 @@ import {
   deleteSubtask,
   deleteTask,
   renameSubtask,
+  reorderSubtasks,
   toggleSubtask,
   toggleTask,
   updateTask,
 } from "./lib/store";
 import { isTypingTarget } from "./lib/keyboardUtils";
+import { useDragReorder } from "./lib/useDragReorder";
 import { BackButton } from "./BackButton";
 import { DatePicker } from "./DatePicker";
 import { Dropdown } from "./Dropdown";
@@ -224,6 +226,11 @@ function EditTaskForm({
   const [editingSubtaskId, setEditingSubtaskId] = useState<string | null>(null);
   const [editingSubtaskTitle, setEditingSubtaskTitle] = useState("");
   const [confirmingDelete, setConfirmingDelete] = useState(false);
+  const { getRowProps: getSubtaskRowProps } = useDragReorder(
+    task.subtasks,
+    (s) => s.id,
+    (reordered) => reorderSubtasks(uid, task, reordered.map((s) => s.id))
+  );
 
   useEffect(() => setTitle(task.title), [task.id, task.title]);
 
@@ -421,7 +428,12 @@ function EditTaskForm({
 
       <div style={styles.subtasksHeader}>Subtasks</div>
       {task.subtasks.map((s) => (
-        <div key={s.id} style={styles.subtaskRow}>
+        <div
+          key={s.id}
+          {...getSubtaskRowProps(s.id)}
+          draggable={editingSubtaskId !== s.id}
+          style={{ ...styles.subtaskRow, ...getSubtaskRowProps(s.id).style }}
+        >
           <button type="button" onClick={() => toggleSubtask(uid, task, s.id)} aria-label="Toggle subtask">
             <CheckboxIcon checked={s.completed} size={17} />
           </button>

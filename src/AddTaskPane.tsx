@@ -1,5 +1,6 @@
 import { type FormEvent, type KeyboardEvent, useEffect, useState } from "react";
 import type { ReminderList, RecurrenceUnit, Settings, Subtask } from "./lib/models";
+import { useDragReorder } from "./lib/useDragReorder";
 import { generateId } from "./lib/remindersLogic";
 import { addTask } from "./lib/store";
 import { BackButton } from "./BackButton";
@@ -72,6 +73,7 @@ export function AddTaskPane({
   const [editingSubtaskTitle, setEditingSubtaskTitle] = useState("");
   const [saving, setSaving] = useState(false);
   const [showToast, setShowToast] = useState(false);
+  const { getRowProps: getSubtaskRowProps } = useDragReorder(subtasks, (s) => s.id, setSubtasks);
 
   useEffect(() => {
     if (!showToast) return;
@@ -292,7 +294,12 @@ export function AddTaskPane({
 
         <div style={styles.subtasksHeader}>Subtasks</div>
         {subtasks.map((s) => (
-          <div key={s.id} style={styles.subtaskRow}>
+          <div
+            key={s.id}
+            {...getSubtaskRowProps(s.id)}
+            draggable={editingSubtaskId !== s.id}
+            style={{ ...styles.subtaskRow, ...getSubtaskRowProps(s.id).style }}
+          >
             <button
               type="button"
               onClick={() =>

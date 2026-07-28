@@ -147,11 +147,6 @@ export function ListOptionsPane({
       >
         Rename
       </button>
-      {/* Reorder Lists is intentionally inert for now — left as a menu item
-          to match the phone app's layout, functionality comes later. */}
-      <button type="button" style={styles.row}>
-        Reorder Lists
-      </button>
       <button type="button" style={styles.row} onClick={() => setView("confirm-clear")}>
         Clear Completed
       </button>

@@ -1,9 +1,10 @@
 import { useEffect, useState } from "react";
 import type { ReminderList, Task } from "./lib/models";
-import { compareTasksByDateTime, formatDate, formatTime, isOverdue } from "./lib/dateTime";
+import { formatDate, formatTime, isOverdue } from "./lib/dateTime";
 import { isTypingTarget } from "./lib/keyboardUtils";
+import { type DragRowProps, useDragReorder } from "./lib/useDragReorder";
 import { formatRecurrence } from "./lib/remindersLogic";
-import { toggleTask } from "./lib/store";
+import { reorderTasks, toggleTask } from "./lib/store";
 import { BackButton } from "./BackButton";
 import { ScrollPane } from "./ScrollPane";
 import { CheckboxIcon, OverdueAsteriskIcon, PlusIcon } from "./icons";
@@ -67,10 +68,16 @@ export function TaskListPane({
 }) {
   const [showCompleted, setShowCompleted] = useState(false);
 
-  const active = tasks.filter((t) => !t.completed).sort(compareTasksByDateTime);
+  const active = tasks.filter((t) => !t.completed).sort((a, b) => a.order - b.order);
   const completed = tasks
     .filter((t) => t.completed)
     .sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
+
+  const { getRowProps, getContainerProps } = useDragReorder(
+    active,
+    (t) => t.id,
+    (reordered) => reorderTasks(uid, reordered.map((t) => t.id))
+  );
 
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
@@ -96,7 +103,7 @@ export function TaskListPane({
   }
 
   return (
-    <ScrollPane style={styles.pane}>
+    <ScrollPane style={styles.pane} dropZoneProps={getContainerProps()}>
       {onBack ? (
         <div style={styles.headerMobile}>
           <BackButton onBack={onBack} style={styles.backButtonMobile} />
@@ -130,6 +137,7 @@ export function TaskListPane({
           list={list}
           selected={task.id === selectedTaskId}
           onSelect={() => onSelectTask(task.id)}
+          dragProps={getRowProps(task.id)}
         />
       ))}
 
@@ -167,6 +175,7 @@ export function TaskRow({
   selected,
   onSelect,
   dimmed,
+  dragProps,
 }: {
   uid: string;
   task: Task;
@@ -174,6 +183,7 @@ export function TaskRow({
   selected: boolean;
   onSelect: () => void;
   dimmed?: boolean;
+  dragProps?: DragRowProps;
 }) {
   const overdue = isOverdue(task) && !task.completed;
   const metaParts = [
@@ -184,7 +194,7 @@ export function TaskRow({
   ].filter(Boolean);
 
   return (
-    <div style={{ ...styles.row, opacity: dimmed ? 0.4 : 1 }}>
+    <div {...dragProps} style={{ ...styles.row, ...dragProps?.style, opacity: dimmed ? 0.4 : 1 }}>
       <button
         type="button"
         style={styles.checkboxButton}

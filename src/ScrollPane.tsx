@@ -1,4 +1,11 @@
-import { type CSSProperties, type ReactNode, useLayoutEffect, useRef, useState } from "react";
+import {
+  type CSSProperties,
+  type DragEvent,
+  type ReactNode,
+  useLayoutEffect,
+  useRef,
+  useState,
+} from "react";
 
 // Matches hooks/useScrollIndicator.ts in the phone app: a thin always-visible
 // track plus a proportionally-sized thumb, replacing the native scrollbar.
@@ -21,10 +28,15 @@ function computeThumb(el: HTMLDivElement): Thumb | null {
 export function ScrollPane({
   style,
   outerStyle,
+  dropZoneProps,
   children,
 }: {
   style?: CSSProperties;
   outerStyle?: CSSProperties;
+  dropZoneProps?: {
+    onDragOver: (e: DragEvent) => void;
+    onDrop: (e: DragEvent) => void;
+  };
   children: ReactNode;
 }) {
   const ref = useRef<HTMLDivElement>(null);
@@ -55,6 +67,7 @@ export function ScrollPane({
         className="scroll-hide"
         style={{ ...style, height: "100%", overflowY: "auto" }}
         onScroll={onScroll}
+        {...dropZoneProps}
       >
         {children}
       </div>

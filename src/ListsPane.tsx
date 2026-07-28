@@ -1,6 +1,7 @@
 import { type KeyboardEvent, useState } from "react";
 import type { ReminderList } from "./lib/models";
-import { addList } from "./lib/store";
+import { addList, reorderLists } from "./lib/store";
+import { useDragReorder } from "./lib/useDragReorder";
 import { DonateDialog } from "./DonateDialog";
 import { AccountIcon, AddTaskIcon, HeartIcon, PlusIcon, SettingsIcon, TodayIcon } from "./icons";
 import { ScrollPane } from "./ScrollPane";
@@ -84,6 +85,11 @@ export function ListsPane({
   const [adding, setAdding] = useState(false);
   const [newTitle, setNewTitle] = useState("");
   const [showDonateDialog, setShowDonateDialog] = useState(false);
+  const { getRowProps, getContainerProps } = useDragReorder(
+    lists,
+    (l) => l.id,
+    (reordered) => reorderLists(uid, reordered.map((l) => l.id))
+  );
 
   async function submitNewList(e: KeyboardEvent<HTMLInputElement>) {
     if (e.key === "Escape") {
@@ -141,7 +147,11 @@ export function ListsPane({
         </button>
       </div>
 
-      <ScrollPane style={styles.scrollZoneInner} outerStyle={styles.scrollZoneOuter}>
+      <ScrollPane
+        style={styles.scrollZoneInner}
+        outerStyle={styles.scrollZoneOuter}
+        dropZoneProps={getContainerProps()}
+      >
         <div style={styles.sectionHeader}>
           <span style={styles.sectionTitle}>Your lists</span>
           <button
@@ -154,20 +164,25 @@ export function ListsPane({
           </button>
         </div>
 
-        {lists.map((list) => (
-          <button
-            key={list.id}
-            type="button"
-            style={{
-              ...styles.listRow,
-              textDecoration: section === "lists" && list.id === selectedListId ? "underline" : "none",
-              textUnderlineOffset: 4,
-            }}
-            onClick={() => onSelectList(list.id)}
-          >
-            {list.title}
-          </button>
-        ))}
+        {lists.map((list) => {
+          const rowProps = getRowProps(list.id);
+          return (
+            <button
+              key={list.id}
+              type="button"
+              {...rowProps}
+              style={{
+                ...styles.listRow,
+                ...rowProps.style,
+                textDecoration: section === "lists" && list.id === selectedListId ? "underline" : "none",
+                textUnderlineOffset: 4,
+              }}
+              onClick={() => onSelectList(list.id)}
+            >
+              {list.title}
+            </button>
+          );
+        })}
 
         {adding && (
           <input
