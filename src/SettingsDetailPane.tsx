@@ -38,7 +38,7 @@ const styles = {
   },
   field: { marginTop: 26 },
   fieldLabel: { fontSize: 15, marginBottom: 4 },
-  timeInput: { fontSize: 23, borderBottom: "2px solid #fff", paddingBottom: 8 },
+  timeInput: { fontSize: 23, background: "none", border: "none" },
 };
 
 export function SettingsDetailPane({
@@ -218,6 +218,7 @@ function NotificationsSection({ notifications }: { notifications: BrowserNotific
               <div style={styles.fieldLabel}>Notification Time</div>
               <input
                 type="time"
+                className="time-input-no-icon"
                 style={{ ...styles.timeInput, colorScheme: "dark" }}
                 value={todaysTasksTime}
                 onChange={(e) => setTodaysTasksTime(e.target.value)}

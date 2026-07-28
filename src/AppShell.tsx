@@ -55,10 +55,13 @@ export function AppShell({ user }: { user: User }) {
     function onKeyDown(e: KeyboardEvent) {
       if (e.metaKey || e.ctrlKey || e.altKey || isTypingTarget(e.target)) return;
       if (e.key === "1") {
+        e.preventDefault();
         dispatch({ type: "SELECT_SECTION", section: "add" });
       } else if (e.key === "2") {
+        e.preventDefault();
         dispatch({ type: "SELECT_SECTION", section: "today" });
       } else if (e.key === "3") {
+        e.preventDefault();
         dispatch({ type: "SELECT_SECTION", section: "settings" });
       }
     }

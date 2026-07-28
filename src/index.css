@@ -51,6 +51,10 @@ input::placeholder {
   opacity: 1;
 }
 
+.time-input-no-icon::-webkit-calendar-picker-indicator {
+  display: none;
+}
+
 /* Native scrollbar hidden — ScrollPane draws the app's own track+thumb instead. */
 .scroll-hide {
   scrollbar-width: none;
