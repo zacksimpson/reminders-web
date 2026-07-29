@@ -10,7 +10,7 @@ Check out Reminders Web here: https://reminders-tool.web.app
 
 ## Connecting your phone
 
-Phone syncing requires the [prerelease version](https://github.com/zacksimpson/reminders-tool/releases/tag/v2.0.0-beta.1) of Reminders for the LPIII. It will not work on the build marked "Latest Release". _Note: the prerelease version is not yet at full feature parity with the latest release build. Read more in the release notes!_
+Phone syncing requires the [prerelease version](https://github.com/zacksimpson/reminders-tool/releases/tag/v2.0.0-beta.2) of Reminders for the LPIII. It will not work on the build marked "Latest Release". _Note: the prerelease version is not yet at full feature parity with the latest release build because it is dependent on the official Light SDK, which is still maturing. Read more in the release notes!_
 
 The phone app and this website share the same account and the same lists/tasks. On your Light Phone III, open Reminders, go to Settings → Account, and sign in with the same email and password you use here. See the in-app "Phone Sync" screen (Account tab) for details on how syncing behaves.
 
@@ -18,9 +18,9 @@ The phone app and this website share the same account and the same lists/tasks. 
 ## Stack
 
 - React + TypeScript + Vite
-- Firebase (Auth + Firestore) on the free Spark plan
+- Firebase (Auth + Firestore)
 
-## Running it yourself
+## Building from Source + Running it yourself
 
 The idea for this project is to optionally be a bring-your-own-backend platform, so each person who runs it can use their own Firebase project. (This can be done completely for free!) That way your usage never touches anyone else's quota (and vice versa), if you wish. 
 <details>
