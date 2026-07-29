@@ -22,7 +22,7 @@ The phone app and this website share the same account and the same lists/tasks. 
 
 ## Running it yourself
 
-The idea for this project is to eventually be a bring-your-own-backend, so each person who runs it needs their own Firebase project. (This can be done completely for free!) That way your usage never touches anyone else's quota (and vice versa). 
+The idea for this project is to optionally be a bring-your-own-backend platform, so each person who runs it can use their own Firebase project. (This can be done completely for free!) That way your usage never touches anyone else's quota (and vice versa), if you wish. 
 <details>
   <summary>Building your backend</summary>
 1. Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com) (Spark/free plan is enough).
@@ -58,4 +58,4 @@ The idea for this project is to eventually be a bring-your-own-backend, so each 
 
 ## Support
 
-Reminders Web, as well as the rest of my LPIII tools, are developed in my free time. If you've found any of it has been useful, I'd love to hear from you! Feel free to reach out [here](mailto:zacksimpson24@gmail.com). Another way to support is to [consider sponsoring](https://github.com/sponsors/zacksimpson). Either way, it means a lot!
+Reminders Web, as well as the rest of my LPIII tools, are developed in my free time. With this project in particular, I am also footing the server bill. If you've found any of it has been useful, I'd love to hear from you! Feel free to reach out [here](mailto:zacksimpson24@gmail.com). Another way to support is to [consider sponsoring](https://github.com/sponsors/zacksimpson). Either way, it means a lot!
