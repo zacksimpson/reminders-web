@@ -98,7 +98,10 @@ export function AuthScreen() {
         try {
           await sendEmailVerification(cred.user);
         } catch {
-          // Ignored — the post-signup verify screen has its own resend action.
+          // This screen unmounts the moment the account is created (auth
+          // state flips before we can show anything here), so a failure here
+          // has to be handed off for the verify screen to surface instead.
+          sessionStorage.setItem("verificationEmailFailed", "1");
         }
       } else {
         await sendPasswordResetEmail(auth, email);

@@ -28,7 +28,13 @@ export function VerifyEmailScreen({ onVerified }: { onVerified: () => void }) {
   const tier = useLayoutTier();
   const outerPadding = tier === "mobile" ? "30px 24px" : "56px 60px";
   const centered = tier !== "mobile";
-  const [status, setStatus] = useState<string | null>(null);
+  const [status, setStatus] = useState<string | null>(() => {
+    if (!sessionStorage.getItem("verificationEmailFailed")) {
+      return null;
+    }
+    sessionStorage.removeItem("verificationEmailFailed");
+    return "We couldn't send the verification email automatically. Tap \"Resend\" below to try again.";
+  });
   const [busy, setBusy] = useState(false);
 
   const email = auth.currentUser?.email ?? "";
@@ -42,7 +48,7 @@ export function VerifyEmailScreen({ onVerified }: { onVerified: () => void }) {
       if (auth.currentUser.emailVerified) {
         onVerified();
       } else {
-        setStatus("Still not verified — check your email, click the link, then try again.");
+        setStatus("Still not verified. Check your email, click the link, then try again.");
       }
     } catch (err) {
       setStatus(err instanceof Error ? err.message : "Something went wrong. Please try again.");
@@ -81,7 +87,7 @@ export function VerifyEmailScreen({ onVerified }: { onVerified: () => void }) {
         {status && <div style={styles.status}>{status}</div>}
 
         <button type="button" style={styles.action} disabled={busy} onClick={handleContinue}>
-          {busy ? "CHECKING…" : "I'VE VERIFIED — CONTINUE"}
+          {busy ? "CHECKING…" : "I'VE VERIFIED, CONTINUE"}
         </button>
 
         <div style={styles.linkRow}>
