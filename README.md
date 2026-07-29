@@ -1,18 +1,30 @@
 # Reminders Web
 
-A standalone browser companion for the [Reminders tool](https://github.com/zacksimpson/reminders-tool) for the Light Phone III. Laid out as a responsive desktop web app with feature parity and phone sync support.
+A browser companion for the [Reminders tool](https://github.com/zacksimpson/reminders-tool) for the Light Phone III. Laid out as a responsive desktop web app with feature parity and optional phone sync support.
 
 > [!WARNING]
-> This web app is under development. Feel free to create an account, check it out, and contribute by opening an issue or submitting a PR!
+> This web app is still under development, but it's ready to check out. Feel free to contribute by opening an issue or submitting a PR!
 
-Check out Reminders Web here: https://reminders-tool.web.app
+To get started, create an account here: https://reminders-tool.web.app
 
+## Features
+* Lists, tasks, and subtasks with due dates and recurring tasks
+* Full feature parity with Reminders for LPIII
+* Automatic account-based syncing
+* Browser-based notifications for tasks
+* Keyboard shortcuts for fast navigation
+* Manually import a backup from the phone tool
+
+(Pro tip: you can add this website to your dock and it works great as a standalone "desktop app", complete with notifications, an icon, and everything!)
 
 ## Connecting your phone
 
-Phone syncing requires the [prerelease version](https://github.com/zacksimpson/reminders-tool/releases/tag/v2.0.0-beta.2) of Reminders for the LPIII. It will not work on the build marked "Latest Release". _Note: the prerelease version is not yet at full feature parity with the latest release build because it is dependent on the official Light SDK, which is still maturing. Read more in the release notes!_
+Phone syncing requires the [prerelease version](https://github.com/zacksimpson/reminders-tool/releases/tag/v2.0.0-beta.2) of Reminders for the LPIII. It will not work on the build marked "Latest Release".
 
-The phone app and this website share the same account and the same lists/tasks. On your Light Phone III, open Reminders, go to Settings → Account, and sign in with the same email and password you use here. See the in-app "Phone Sync" screen (Account tab) for details on how syncing behaves.
+The LPIII tool and this website share the same account and the same lists/tasks. On your Light Phone III, open Reminders, go to Settings → Account, and sign in with the same email and password you use here. See the in-app "Phone Sync" screen (Account tab) for details on how syncing behaves.
+
+_Note: the prerelease version of the LPIII tool is not yet at full feature parity with the React Native-based build, because it is built using the official Light SDK, which is still maturing. Read more in the release notes!_
+
 
 
 ## Stack
