@@ -15,11 +15,11 @@ import {
 } from "./lib/store";
 import { isTypingTarget } from "./lib/keyboardUtils";
 import { useDragReorder } from "./lib/useDragReorder";
-import { useTimeInput } from "./lib/useTimeInput";
 import { BackButton } from "./BackButton";
 import { DatePicker } from "./DatePicker";
 import { Dropdown } from "./Dropdown";
 import { ScrollPane } from "./ScrollPane";
+import { TimeField } from "./TimeField";
 import { CheckboxIcon, ClearFieldIcon, DeleteIcon, PlusCircleIcon } from "./icons";
 
 const styles = {
@@ -232,7 +232,6 @@ function EditTaskForm({
     (s) => s.id,
     (reordered) => reorderSubtasks(uid, task, reordered.map((s) => s.id))
   );
-  const timeFieldProps = useTimeInput(task.time ?? "09:00", (time) => updateTask(uid, task.id, { time }));
 
   useEffect(() => setTitle(task.title), [task.id, task.title]);
 
@@ -347,7 +346,11 @@ function EditTaskForm({
             <div style={styles.label}>Time</div>
             <div style={styles.fieldRow}>
               {task.time ? (
-                <input type="text" style={styles.select} {...timeFieldProps} />
+                <TimeField
+                  key={task.id}
+                  value={task.time}
+                  onChange={(time) => updateTask(uid, task.id, { time })}
+                />
               ) : (
                 <button type="button" style={styles.value} onClick={() => updateTask(uid, task.id, { time: "09:00" })}>
                   None

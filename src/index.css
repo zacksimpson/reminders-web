@@ -51,6 +51,17 @@ input::placeholder {
   opacity: 1;
 }
 
+/* Native text-selection highlight is browser-default blue — replace with the
+   app's own monochrome inverse (white bg, black text) instead. */
+::selection {
+  background: var(--fg);
+  color: var(--bg);
+}
+::-moz-selection {
+  background: var(--fg);
+  color: var(--bg);
+}
+
 /* Native scrollbar hidden — ScrollPane draws the app's own track+thumb instead. */
 .scroll-hide {
   scrollbar-width: none;

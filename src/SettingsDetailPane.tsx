@@ -1,10 +1,10 @@
 import { type ChangeEvent, useRef, useState } from "react";
 import type { ReminderList, Settings } from "./lib/models";
 import { importBackup, parseBackupFile, updateSettings } from "./lib/store";
-import { useTimeInput } from "./lib/useTimeInput";
 import { ToggleSwitch } from "./ToggleSwitch";
 import { BackButton } from "./BackButton";
 import { ScrollPane } from "./ScrollPane";
+import { TimeField } from "./TimeField";
 import type { SettingKey } from "./SettingsPane";
 import type { BrowserNotificationsApi } from "./useBrowserNotifications";
 
@@ -39,7 +39,6 @@ const styles = {
   },
   field: { marginTop: 26 },
   fieldLabel: { fontSize: 15, marginBottom: 4 },
-  timeInput: { fontSize: 23, background: "none", border: "none" },
 };
 
 export function SettingsDetailPane({
@@ -191,7 +190,6 @@ function NotificationsSection({ notifications }: { notifications: BrowserNotific
     setTodaysTasksEnabled,
     setTodaysTasksTime,
   } = notifications;
-  const timeFieldProps = useTimeInput(todaysTasksTime, setTodaysTasksTime);
 
   if (!supported) {
     return <div style={styles.body}>Notifications aren't supported in this browser.</div>;
@@ -218,7 +216,7 @@ function NotificationsSection({ notifications }: { notifications: BrowserNotific
           {todaysTasksEnabled && (
             <div style={styles.field}>
               <div style={styles.fieldLabel}>Notification Time</div>
-              <input type="text" style={styles.timeInput} {...timeFieldProps} />
+              <TimeField value={todaysTasksTime} onChange={setTodaysTasksTime} />
             </div>
           )}
 

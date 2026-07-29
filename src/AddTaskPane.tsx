@@ -1,13 +1,13 @@
 import { type FormEvent, type KeyboardEvent, useEffect, useState } from "react";
 import type { ReminderList, RecurrenceUnit, Settings, Subtask } from "./lib/models";
 import { useDragReorder } from "./lib/useDragReorder";
-import { useTimeInput } from "./lib/useTimeInput";
 import { generateId } from "./lib/remindersLogic";
 import { addTask } from "./lib/store";
 import { BackButton } from "./BackButton";
 import { DatePicker } from "./DatePicker";
 import { Dropdown } from "./Dropdown";
 import { ScrollPane } from "./ScrollPane";
+import { TimeField } from "./TimeField";
 import { CheckboxIcon, ClearFieldIcon, DeleteIcon, PlusCircleIcon } from "./icons";
 
 const styles = {
@@ -75,7 +75,6 @@ export function AddTaskPane({
   const [saving, setSaving] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const { getRowProps: getSubtaskRowProps } = useDragReorder(subtasks, (s) => s.id, setSubtasks);
-  const timeFieldProps = useTimeInput(time ?? "09:00", setTime);
 
   useEffect(() => {
     if (!showToast) return;
@@ -214,7 +213,7 @@ export function AddTaskPane({
               <div style={styles.label}>Time</div>
               <div style={styles.fieldRow}>
                 {time ? (
-                  <input type="text" style={styles.select} {...timeFieldProps} />
+                  <TimeField value={time} onChange={setTime} />
                 ) : (
                   <button type="button" style={styles.value} onClick={() => setTime("09:00")}>
                     None
