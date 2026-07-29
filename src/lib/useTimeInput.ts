@@ -1,4 +1,4 @@
-import { type ChangeEvent, type KeyboardEvent, useRef, useState } from "react";
+import { type ChangeEvent, type FocusEvent, type KeyboardEvent, useRef, useState } from "react";
 import { digitsToTime, formatTime, timeToDisplayParts } from "./dateTime";
 
 /**
@@ -6,8 +6,10 @@ import { digitsToTime, formatTime, timeToDisplayParts } from "./dateTime";
  * (e.g. "145p", "1:45 PM", "1:45pm") instead of using the native
  * `<input type="time">` segmented widget, whose per-segment auto-advance
  * timing makes fast two-digit entry unreliable. Digits are parsed on commit
- * (blur/Enter), not per keystroke, so there's no timing race — nothing here
- * changes how the field looks, only how typing into it behaves.
+ * (blur/Enter), not per keystroke, so there's no timing race. Focusing the
+ * field selects the current value (rather than clearing it) so typing a
+ * fresh time still just types over it, but the existing value stays visible
+ * until you do.
  */
 export function useTimeInput(value: string, onChange: (time24: string) => void) {
   const [editing, setEditing] = useState(false);
@@ -32,10 +34,14 @@ export function useTimeInput(value: string, onChange: (time24: string) => void) 
 
   return {
     value: editing ? raw : formatTime(value),
-    onFocus: () => {
+    onFocus: (e: FocusEvent<HTMLInputElement>) => {
       cancelledRef.current = false;
       setEditing(true);
-      setRaw("");
+      setRaw(formatTime(value));
+      const el = e.target;
+      // Re-rendering with the (unchanged) value resets the cursor to the end,
+      // even though the string is identical — select after that render commits.
+      setTimeout(() => el.select(), 0);
     },
     onChange: (e: ChangeEvent<HTMLInputElement>) => setRaw(e.target.value),
     onBlur: () => {
