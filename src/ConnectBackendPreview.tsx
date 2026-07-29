@@ -1,10 +1,9 @@
 import { useState } from "react";
 import { BackButton } from "./BackButton";
 
-// Design reference only — not wired to real config parsing or Firebase
-// connection logic yet. Parked here (unlinked route) in case bring-your-own-
-// backend gets built out later. See conversation history for the mockup
-// this was translated from.
+// design reference only — not wired to real config parsing or Firebase
+// connection logic yet, parked here (unlinked route) for the bring-your-own-
+// backend feature
 
 const styles = {
   page: {

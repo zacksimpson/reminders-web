@@ -34,17 +34,9 @@ const styles = {
   },
 };
 
-/**
- * Three independently-focusable segments (hour, minute, AM/PM) — visually and
- * behaviorally matching the native `<input type="time">` this replaces, but
- * without its per-segment auto-advance TIMER (the source of the original
- * unreliable-typing bug). Advancing to the next segment is instead decided
- * deterministically: a segment auto-advances the moment its value can no
- * longer be extended (e.g. hour "2".."9" can't become a two-digit hour, so it
- * advances immediately; hour "1" waits for one more keystroke, and if that
- * keystroke can't extend it (3-9), "1" is finalized and the keystroke is
- * routed into the minute segment instead of being dropped).
- */
+// Three segments (hour, minute, AM/PM), each its own input. Auto-advance is
+// based on whether a segment's value could still be extended, not a timer,
+// so a stray keystroke never gets dropped waiting on a clock.
 export function TimeField({
   value,
   onChange,
@@ -86,8 +78,7 @@ export function TimeField({
     if (/^[0-9]$/.test(e.key)) {
       e.preventDefault();
       const d = e.key;
-      // A full segment already shown (idle display, or just-completed) means
-      // the next digit starts a fresh entry rather than extending it.
+      // a full segment means the next digit starts over, not extends
       const current = hour.length === 2 ? "" : hour;
       if (current === "") {
         if (d === "0") {
@@ -184,8 +175,7 @@ export function TimeField({
         value={hour}
         onFocus={(e) => e.target.select()}
         onChange={() => {
-          // Value is fully driven by onKeyDown; ignore native input events
-          // (e.g. autofill) that don't go through it.
+          // onKeyDown handles everything; this is just to silence React's controlled-input warning
         }}
         onKeyDown={onHourKeyDown}
       />
@@ -199,7 +189,7 @@ export function TimeField({
         value={minute}
         onFocus={(e) => e.target.select()}
         onChange={() => {
-          // Value is fully driven by onKeyDown; ignore native input events.
+          // onKeyDown handles everything; this is just to silence React's controlled-input warning
         }}
         onKeyDown={onMinuteKeyDown}
       />

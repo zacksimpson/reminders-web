@@ -88,8 +88,6 @@ export function AppShell({ user }: { user: User }) {
   // The detail pane pushes in as its own screen at both tablet and mobile.
   const detailBack = tier !== "desktop" ? () => dispatch({ type: "GO_BACK_FROM_DETAIL" }) : undefined;
 
-  // Convenience accessors mirroring the old flat variables, derived from the
-  // discriminated screen union so the rest of this render body barely changed.
   const detail =
     screen.section === "lists" || screen.section === "today" ? screen.detail : { kind: "none" as const };
   const activeSetting = screen.section === "settings" ? screen.activeSetting : null;
