@@ -3,6 +3,7 @@ import type { User } from "firebase/auth";
 import type { ReminderList, Settings, Task } from "./lib/models";
 import { getTodayStr } from "./lib/dateTime";
 import { isTypingTarget } from "./lib/keyboardUtils";
+import { applyOrder } from "./lib/ordering";
 import {
   ensureInboxList,
   subscribeToLists,
@@ -74,6 +75,11 @@ export function AppShell({ user }: { user: User }) {
     return null;
   }
 
+  // Lists not yet captured by settings.listOrder (new, or created before this
+  // field existed) fall back to their own legacy `order` field, appended after
+  // the ones settings.listOrder does know about.
+  const orderedLists = applyOrder(lists, (l) => l.id, settings.listOrder, (a, b) => a.order - b.order);
+
   const showingDetail = isShowingDetail(screen);
 
   // Lists stays visible alongside the middle content at both desktop and
@@ -92,7 +98,7 @@ export function AppShell({ user }: { user: User }) {
 
   const listsPane = (
     <ListsPane
-      lists={lists}
+      lists={orderedLists}
       selectedListId={selectedListId}
       section={screen.section}
       onSelectSection={(section) => dispatch({ type: "SELECT_SECTION", section })}
@@ -104,7 +110,7 @@ export function AppShell({ user }: { user: User }) {
   const taskListPane = (
     <TaskListPane
       uid={user.uid}
-      list={lists.find((l) => l.id === selectedListId) ?? null}
+      list={orderedLists.find((l) => l.id === selectedListId) ?? null}
       tasks={tasks.filter((t) => t.listId === selectedListId)}
       selectedTaskId={detail.kind === "edit" ? detail.taskId : null}
       onSelectTask={(taskId) => dispatch({ type: "OPEN_TASK", taskId })}
@@ -117,7 +123,7 @@ export function AppShell({ user }: { user: User }) {
   const todayPane = (
     <TodayPane
       uid={user.uid}
-      lists={lists}
+      lists={orderedLists}
       tasks={tasks}
       showOverdue={settings.showOverdue}
       selectedTaskId={detail.kind === "edit" ? detail.taskId : null}
@@ -129,7 +135,7 @@ export function AppShell({ user }: { user: User }) {
 
   const settingsPane = (
     <SettingsPane
-      lists={lists}
+      lists={orderedLists}
       settings={settings}
       activeSetting={activeSetting}
       settingsView={settingsView}
@@ -151,7 +157,7 @@ export function AppShell({ user }: { user: User }) {
   const addTaskPane = (
     <AddTaskPane
       uid={user.uid}
-      lists={lists}
+      lists={orderedLists}
       settings={settings}
       onBack={middleBack}
       onCreated={(_taskId, listId) => dispatch({ type: "ADD_TASK_SAVED", listId })}
@@ -173,12 +179,14 @@ export function AppShell({ user }: { user: User }) {
   const taskDetailPane = (
     <TaskDetailPane
       uid={user.uid}
-      lists={lists}
+      lists={orderedLists}
       settings={settings}
       detail={detail}
       task={detail.kind === "edit" ? tasks.find((t) => t.id === detail.taskId) ?? null : null}
       defaultListId={
-        screen.section === "today" ? settings.defaultListId : selectedListId ?? lists[0]?.id ?? "inbox"
+        screen.section === "today"
+          ? settings.defaultListId
+          : (selectedListId ?? orderedLists[0]?.id ?? "inbox")
       }
       defaultDate={screen.section === "today" ? getTodayStr() : undefined}
       onTaskCreated={(taskId) => dispatch({ type: "TASK_CREATED", taskId })}
@@ -190,7 +198,7 @@ export function AppShell({ user }: { user: User }) {
   const settingsDetailPane = (
     <SettingsDetailPane
       uid={user.uid}
-      lists={lists}
+      lists={orderedLists}
       settings={settings}
       activeSetting={activeSetting}
       notifications={notifications}
@@ -202,7 +210,7 @@ export function AppShell({ user }: { user: User }) {
     <AccountDetailPane activeAccountAction={activeAccountAction} onBack={detailBack} />
   );
 
-  const currentList = lists.find((l) => l.id === selectedListId) ?? null;
+  const currentList = orderedLists.find((l) => l.id === selectedListId) ?? null;
   const listOptionsPane = currentList && (
     <ListOptionsPane
       uid={user.uid}

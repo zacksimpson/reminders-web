@@ -38,6 +38,11 @@ export interface ReminderList {
   title: string;
   createdAt: number;
   order: number;
+  // Canonical drag-reorder position of this list's active tasks, written in one
+  // shot by reorderTasks. Tasks not yet present here (created before this field
+  // existed, or by a client that doesn't write it) fall back to their own
+  // `order` field — see applyOrder in lib/ordering.ts.
+  taskOrder?: string[];
   updatedAt: number;
   deleted: boolean;
 }
@@ -47,6 +52,10 @@ export interface Settings {
   afterAddBehavior: "toast" | "go-to-list";
   addPosition: "top" | "bottom";
   showOverdue: boolean;
+  // Canonical drag-reorder position of the user's lists, written in one shot by
+  // reorderLists. Lists not yet present here fall back to their own `order`
+  // field — see applyOrder in lib/ordering.ts.
+  listOrder?: string[];
   updatedAt: number;
 }
 

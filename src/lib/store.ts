@@ -105,12 +105,9 @@ export async function renameList(
   await updateDoc(doc(listsCol(uid), id), { title, updatedAt: Date.now() });
 }
 
-/** Persists a drag-reordered list array by writing each list's new index as its order. */
+/** Persists a drag-reordered list array as one field on the settings doc — a single write no matter how many lists there are, mirroring how reorderSubtasks is one field on the parent task. */
 export async function reorderLists(uid: string, orderedIds: string[]): Promise<void> {
-  const now = Date.now();
-  await Promise.all(
-    orderedIds.map((id, index) => updateDoc(doc(listsCol(uid), id), { order: index, updatedAt: now }))
-  );
+  await updateDoc(settingsDoc(uid), { listOrder: orderedIds, updatedAt: Date.now() });
 }
 
 /** Soft-deletes the list and reassigns its tasks to the default list. */
@@ -193,12 +190,9 @@ export async function updateTask(
   );
 }
 
-/** Persists a drag-reordered active-task array by writing each task's new index as its order. */
-export async function reorderTasks(uid: string, orderedIds: string[]): Promise<void> {
-  const now = Date.now();
-  await Promise.all(
-    orderedIds.map((id, index) => updateDoc(doc(tasksCol(uid), id), { order: index, updatedAt: now }))
-  );
+/** Persists a drag-reordered active-task array as one field on the parent list doc — a single write no matter how many tasks there are, mirroring how reorderSubtasks is one field on the parent task. */
+export async function reorderTasks(uid: string, listId: string, orderedIds: string[]): Promise<void> {
+  await updateDoc(doc(listsCol(uid), listId), { taskOrder: orderedIds, updatedAt: Date.now() });
 }
 
 export async function clearTaskField(

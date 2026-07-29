@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { ReminderList, Task } from "./lib/models";
 import { formatDate, formatTime, isOverdue } from "./lib/dateTime";
 import { isTypingTarget } from "./lib/keyboardUtils";
+import { applyOrder } from "./lib/ordering";
 import { type DragRowProps, useDragReorder } from "./lib/useDragReorder";
 import { formatRecurrence } from "./lib/remindersLogic";
 import { reorderTasks, toggleTask } from "./lib/store";
@@ -68,7 +69,12 @@ export function TaskListPane({
 }) {
   const [showCompleted, setShowCompleted] = useState(false);
 
-  const active = tasks.filter((t) => !t.completed).sort((a, b) => a.order - b.order);
+  const active = applyOrder(
+    tasks.filter((t) => !t.completed),
+    (t) => t.id,
+    list?.taskOrder,
+    (a, b) => a.order - b.order
+  );
   const completed = tasks
     .filter((t) => t.completed)
     .sort((a, b) => (b.completedAt ?? 0) - (a.completedAt ?? 0));
@@ -76,7 +82,7 @@ export function TaskListPane({
   const { getRowProps, getContainerProps } = useDragReorder(
     active,
     (t) => t.id,
-    (reordered) => reorderTasks(uid, reordered.map((t) => t.id))
+    (reordered) => list && reorderTasks(uid, list.id, reordered.map((t) => t.id))
   );
 
   useEffect(() => {
