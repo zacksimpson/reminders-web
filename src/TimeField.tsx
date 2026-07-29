@@ -8,7 +8,7 @@ const styles = {
     background: "none",
     border: "none",
     padding: "1px 2px",
-    width: "1.2em",
+    width: "1.5em",
     textAlign: "right" as const,
   },
   minute: {
@@ -16,7 +16,7 @@ const styles = {
     background: "none",
     border: "none",
     padding: "1px 2px",
-    width: "1.2em",
+    width: "1.5em",
     textAlign: "left" as const,
   },
   colon: { fontSize: 23 },
