@@ -7,7 +7,7 @@ const styles = {
     fontSize: 23,
     background: "none",
     border: "none",
-    padding: 0,
+    padding: "1px 2px",
     width: "1.2em",
     textAlign: "right" as const,
   },
@@ -15,7 +15,7 @@ const styles = {
     fontSize: 23,
     background: "none",
     border: "none",
-    padding: 0,
+    padding: "1px 2px",
     width: "1.2em",
     textAlign: "left" as const,
   },
@@ -24,8 +24,13 @@ const styles = {
     fontSize: 23,
     background: "none",
     border: "none",
-    padding: 0,
-    marginLeft: 8,
+    padding: "1px 4px",
+    marginLeft: 6,
+    color: "#fff",
+  },
+  ampmFocused: {
+    background: "#fff",
+    color: "#000",
   },
 };
 
@@ -51,6 +56,7 @@ export function TimeField({
   const [hour, setHour] = useState(initial.digits.slice(0, 2));
   const [minute, setMinute] = useState(initial.digits.slice(2));
   const [ampm, setAmpm] = useState<"AM" | "PM">(initial.ampm);
+  const [ampmFocused, setAmpmFocused] = useState(false);
   const hourRef = useRef<HTMLInputElement>(null);
   const minuteRef = useRef<HTMLInputElement>(null);
   const ampmRef = useRef<HTMLButtonElement>(null);
@@ -201,8 +207,10 @@ export function TimeField({
         ref={ampmRef}
         type="button"
         data-typing-target="true"
-        style={styles.ampm}
+        style={ampmFocused ? { ...styles.ampm, ...styles.ampmFocused } : styles.ampm}
         onClick={() => setAmpmAndCommit(ampm === "AM" ? "PM" : "AM")}
+        onFocus={() => setAmpmFocused(true)}
+        onBlur={() => setAmpmFocused(false)}
         onKeyDown={onAmpmKeyDown}
       >
         {ampm}
