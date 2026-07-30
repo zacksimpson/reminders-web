@@ -37,31 +37,47 @@ _Note: the prerelease version of the LPIII tool is not yet at full feature parit
 ## Building from Source + Running it yourself
 
 The idea for this project is to optionally be a bring-your-own-backend platform, so each person who runs it can use their own Firebase project. (This can be done completely for free!) That way your usage never touches anyone else's quota (and vice versa), if you wish. 
+
 <details>
   <summary>Building your backend</summary>
-1. Create a Firebase project at [console.firebase.google.com](https://console.firebase.google.com) (Spark/free plan is enough).
-2. Enable **Authentication → Email/Password**.
-3. Enable **Firestore**, and set rules so each user can only read/write their own data:
 
-   ```
-   rules_version = '2';
-   service cloud.firestore {
-     match /databases/{database}/documents {
-       match /users/{uid}/{document=**} {
-         allow read, write: if request.auth != null && request.auth.uid == uid;
-       }
-     }
-   }
+1. Install [Node.js](https://nodejs.org) (pick the LTS version), which comes bundled with npm. Everything below runs through your terminal using npm.
+
+2. Install the Firebase CLI and sign in:
+
+   ```bash
+   npm install -g firebase-tools
+   firebase login
    ```
 
-4. In the Firebase console, add a Web App to your project and copy its config values.
-5. Copy `.env.example` to `.env` (gitignored) and fill in those values:
+3. Create a Firebase project (Spark/free plan is enough), then point this checkout at it:
+
+   ```bash
+   firebase projects:create
+   firebase use --add
+   ```
+
+   `firebase use --add` lists your projects, pick the one you just created and give it any alias (e.g. `default`). This just updates a local config file (`.firebaserc`) to point at your project instead of mine, no need to worry about it further.
+
+4. Enable **Authentication → Email/Password** in the [Firebase console](https://console.firebase.google.com): open your project, then on the left click **Security → Authentication → Get started → Sign-in method → Email/Password → Enable**.
+
+5. Enable Firestore, then deploy this repo's already-written security rules (each user can only read/write their own data, see [firestore.rules](firestore.rules)):
+
+   In the console, on the left click **Databases & Storage → Firestore → Create database → Standard edition** (any location, production mode). Once it exists, deploy the rules with:
+
+   ```bash
+   firebase deploy --only firestore:rules
+   ```
+
+6. In the Firebase console, open **Project settings** (gear icon, top left) → **General** → scroll down to **Your apps** → **Add app** → click the web icon (`</>`) to register a new web app. It'll show you a `firebaseConfig` object, keep that tab open, you'll need its values in the next step.
+
+7. Copy `.env.example` to `.env` (gitignored) and fill in the values, matching each `firebaseConfig` field from step 6 to its `VITE_FIREBASE_*` variable by name (e.g. `apiKey` → `VITE_FIREBASE_API_KEY`):
 
    ```bash
    cp .env.example .env
    ```
 
-6. Install and run:
+8. Install and run:
 
    ```bash
    npm install
