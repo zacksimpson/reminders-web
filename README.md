@@ -1,11 +1,8 @@
 # Reminders Web
 
-A browser companion for the [Reminders tool](https://github.com/zacksimpson/reminders-tool) for the Light Phone III. Laid out as a responsive desktop web app with feature parity and optional phone sync support.
+A desktop companion for the [Reminders tool](https://github.com/zacksimpson/reminders-tool) for the Light Phone III. Laid out as a responsive web app with feature parity and optional phone sync support.
 
 ![Reminders screenshots](public/reminders-web.png)
-
-> [!WARNING]
-> This web app is still under development, but it's ready to check out. Feel free to contribute by opening an issue or submitting a PR!
 
 To get started, create an account here: https://reminders-tool.web.app
 
@@ -17,22 +14,18 @@ To get started, create an account here: https://reminders-tool.web.app
 * Keyboard shortcuts for fast navigation
 * Manually import a backup from the phone tool
 
-(Pro tip: you can add this website to your dock and it works great as a standalone "desktop app", complete with notifications, an icon, and everything!)
+_Pro tip: you can add this website to your dock/taskbar and it works great as a standalone "desktop app", complete with notifications, an icon, and everything!_
 
 ## Connecting your phone
 
-Phone syncing requires the [prerelease version](https://github.com/zacksimpson/reminders-tool/releases/tag/v2.0.0-beta.2) of Reminders for the LPIII. It will not work on the build marked "Latest Release".
+Requires the [latest version](https://github.com/zacksimpson/reminders-tool/releases) of Reminders for the LPIII.
 
-The LPIII tool and this website share the same account and the same lists/tasks. On your Light Phone III, open Reminders, go to Settings → Account, and sign in with the same email and password you use here. See the in-app "Phone Sync" screen (Account tab) for details on how syncing behaves.
+1. Create an account on the website.
+2. On your Light Phone III, open Reminders, go to Settings → Account, and sign in with the same account you just created.
+3. You're done! Tasks will automatically sync every few minutes.
 
-_Note: the prerelease version of the LPIII tool is not yet at full feature parity with the React Native-based build, because it is built using the official Light SDK, which is still maturing. Read more in the release notes!_
 
 
-
-## Stack
-
-- React + TypeScript + Vite
-- Firebase (Auth + Firestore)
 
 ## Building from Source + Running it yourself
 
@@ -41,6 +34,12 @@ The idea for this project is to optionally be a bring-your-own-backend platform,
 <details>
   <summary>Building your backend</summary>
 
+## Stack
+
+- React + TypeScript + Vite
+- Firebase (Auth + Firestore)
+
+## Steps
 1. Install [Node.js](https://nodejs.org) (pick the LTS version), which comes bundled with npm. Everything below runs through your terminal using npm.
 
 2. Install the Firebase CLI and sign in:
