@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { MONTHS, formatDisplayDate } from "./lib/dateTime";
+import { MONTHS, formatDisplayDate, getTodayStr } from "./lib/dateTime";
 import { BackChevronIcon, ChevronDownIcon } from "./icons";
 
 const WEEKDAY_LABELS = ["S", "M", "T", "W", "T", "F", "S"];
@@ -41,10 +41,20 @@ const styles = {
   },
   weekdayCell: { fontSize: 12, fontWeight: 700, textAlign: "center" as const, padding: "4px 0" },
   dayCell: {
+    position: "relative" as const,
     fontSize: 15,
     textAlign: "center" as const,
     padding: "8px 0",
     width: "100%",
+  },
+  todayUnderline: {
+    position: "absolute" as const,
+    bottom: 5,
+    left: "50%",
+    transform: "translateX(-50%)",
+    width: 14,
+    height: 2,
+    background: "currentColor",
   },
 };
 
@@ -166,18 +176,11 @@ export function DatePicker({
               }
               const iso = `${viewYear}-${pad2(viewMonth + 1)}-${pad2(day)}`;
               const selected = value === iso;
+              const showUnderline = selected || (!value && iso === getTodayStr());
               return (
-                <button
-                  key={i}
-                  type="button"
-                  style={{
-                    ...styles.dayCell,
-                    textDecoration: selected ? "underline" : "none",
-                    textUnderlineOffset: 3,
-                  }}
-                  onClick={() => selectDay(day)}
-                >
+                <button key={i} type="button" style={styles.dayCell} onClick={() => selectDay(day)}>
                   {day}
+                  {showUnderline && <span style={styles.todayUnderline} />}
                 </button>
               );
             })}
