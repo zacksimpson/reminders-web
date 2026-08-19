@@ -1,4 +1,4 @@
-import { type KeyboardEvent, useEffect, useState } from "react";
+import { type KeyboardEvent, useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { DetailMode } from "./appNav";
 import type { ReminderList, RecurrenceUnit, Settings, Task } from "./lib/models";
 import {
@@ -56,7 +56,16 @@ const styles = {
   subtasksHeader: { fontSize: 15, marginTop: 24, marginBottom: 11 },
   subtaskRow: { display: "flex", gap: 12, padding: "9px 0", alignItems: "center" },
   subtaskTitle: { fontSize: 19, flex: 1, textAlign: "left" as const },
-  subtaskTitleInput: { fontSize: 19, flex: 1, textAlign: "left" as const, paddingLeft: 0 },
+  subtaskTitleInput: {
+    fontSize: 19,
+    flex: 1,
+    textAlign: "left" as const,
+    paddingLeft: 0,
+    width: "100%",
+    resize: "none" as const,
+    overflow: "hidden" as const,
+    display: "block",
+  },
   addSubtaskInput: { fontSize: 19, borderBottom: "2px solid #fff", flex: 1 },
   deleteTaskAction: {
     fontSize: 18,
@@ -74,6 +83,64 @@ const styles = {
   toastPane: { height: "100%", display: "flex", alignItems: "center", justifyContent: "center" },
   toastText: { fontSize: 44 },
 };
+
+function autoResizeTextarea(el: HTMLTextAreaElement) {
+  el.style.height = "auto";
+  el.style.height = `${el.scrollHeight}px`;
+}
+
+// Textareas are replaced elements — the browser won't hand back a text
+// offset for a point inside one. Stand up an invisible clone built from the
+// same box/font metrics so caretRangeFromPoint can hit-test real text nodes,
+// then map that back onto the textarea's selection.
+function placeCaretAtPoint(textarea: HTMLTextAreaElement, clientX: number, clientY: number) {
+  const rect = textarea.getBoundingClientRect();
+  const cs = window.getComputedStyle(textarea);
+  const mirror = document.createElement("div");
+  mirror.textContent = textarea.value;
+  Object.assign(mirror.style, {
+    position: "fixed",
+    left: `${rect.left}px`,
+    top: `${rect.top}px`,
+    width: `${rect.width}px`,
+    height: `${rect.height}px`,
+    margin: "0",
+    padding: cs.padding,
+    border: cs.border,
+    boxSizing: cs.boxSizing,
+    font: cs.font,
+    letterSpacing: cs.letterSpacing,
+    lineHeight: cs.lineHeight,
+    whiteSpace: "pre-wrap",
+    wordWrap: "break-word",
+    overflowWrap: "break-word",
+    overflow: "hidden",
+    zIndex: "9999",
+    opacity: "0.001",
+  });
+  document.body.appendChild(mirror);
+
+  let offset = textarea.value.length;
+  const doc = document as Document & {
+    caretRangeFromPoint?: (x: number, y: number) => Range | null;
+    caretPositionFromPoint?: (x: number, y: number) => { offsetNode: Node; offset: number } | null;
+  };
+  if (doc.caretRangeFromPoint) {
+    const range = doc.caretRangeFromPoint(clientX, clientY);
+    if (range && mirror.contains(range.startContainer)) {
+      offset = range.startContainer.nodeType === Node.TEXT_NODE ? range.startOffset : textarea.value.length;
+    }
+  } else if (doc.caretPositionFromPoint) {
+    const pos = doc.caretPositionFromPoint(clientX, clientY);
+    if (pos && mirror.contains(pos.offsetNode)) {
+      offset = pos.offsetNode.nodeType === Node.TEXT_NODE ? pos.offset : textarea.value.length;
+    }
+  }
+
+  document.body.removeChild(mirror);
+  textarea.focus();
+  textarea.setSelectionRange(offset, offset);
+}
 
 export function TaskDetailPane({
   uid,
@@ -226,6 +293,8 @@ function EditTaskForm({
   const [addingSubtask, setAddingSubtask] = useState(false);
   const [editingSubtaskId, setEditingSubtaskId] = useState<string | null>(null);
   const [editingSubtaskTitle, setEditingSubtaskTitle] = useState("");
+  const [editingSubtaskClick, setEditingSubtaskClick] = useState<{ x: number; y: number } | null>(null);
+  const subtaskTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [confirmingDelete, setConfirmingDelete] = useState(false);
   const { getRowProps: getSubtaskRowProps } = useDragReorder(
     task.subtasks,
@@ -234,6 +303,17 @@ function EditTaskForm({
   );
 
   useEffect(() => setTitle(task.title), [task.id, task.title]);
+
+  useLayoutEffect(() => {
+    const el = subtaskTextareaRef.current;
+    if (!el || !editingSubtaskId) return;
+    autoResizeTextarea(el);
+    if (editingSubtaskClick) {
+      placeCaretAtPoint(el, editingSubtaskClick.x, editingSubtaskClick.y);
+    } else {
+      el.focus();
+    }
+  }, [editingSubtaskId]);
 
   useEffect(() => {
     if (confirmingDelete) return;
@@ -438,21 +518,31 @@ function EditTaskForm({
             <CheckboxIcon checked={s.completed} size={17} />
           </button>
           {editingSubtaskId === s.id ? (
-            <input
-              autoFocus
+            <textarea
+              ref={subtaskTextareaRef}
+              rows={1}
               style={styles.subtaskTitleInput}
               value={editingSubtaskTitle}
-              onChange={(e) => setEditingSubtaskTitle(e.target.value)}
+              onChange={(e) => {
+                setEditingSubtaskTitle(e.target.value);
+                autoResizeTextarea(e.target);
+              }}
               onBlur={() => commitSubtaskRename(s.id)}
-              onKeyDown={(e) => e.key === "Enter" && (e.target as HTMLInputElement).blur()}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  e.preventDefault();
+                  (e.target as HTMLTextAreaElement).blur();
+                }
+              }}
             />
           ) : (
             <button
               type="button"
               style={{ ...styles.subtaskTitle, opacity: s.completed ? 0.4 : 1 }}
-              onClick={() => {
+              onClick={(e) => {
                 setEditingSubtaskId(s.id);
                 setEditingSubtaskTitle(s.title);
+                setEditingSubtaskClick({ x: e.clientX, y: e.clientY });
               }}
             >
               {s.title}
