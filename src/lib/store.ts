@@ -3,6 +3,7 @@
 // collection) since that's the natural Firestore model.
 
 import {
+  arrayUnion,
   collection,
   deleteDoc,
   deleteField,
@@ -247,8 +248,11 @@ export async function addSubtask(
   title: string
 ): Promise<void> {
   const subtask = { id: generateId(), title, completed: false, createdAt: Date.now() };
+  // arrayUnion instead of a read-modify-write spread so back-to-back adds
+  // (e.g. hitting Enter repeatedly to type out several subtasks) can't race
+  // and clobber each other before the previous write's snapshot lands.
   await updateDoc(doc(tasksCol(uid), task.id), {
-    subtasks: [...task.subtasks, subtask],
+    subtasks: arrayUnion(subtask),
     updatedAt: Date.now(),
   });
 }

@@ -78,6 +78,11 @@ export function TodayPane({
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (e.metaKey || e.ctrlKey || e.altKey || isTypingTarget(e.target)) return;
+      if (e.key.toLowerCase() === "n") {
+        e.preventDefault();
+        onAddTask();
+        return;
+      }
       if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
       if (navigable.length === 0) return;
       e.preventDefault();
@@ -92,7 +97,7 @@ export function TodayPane({
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [navigable, selectedTaskId, onSelectTask]);
+  }, [navigable, selectedTaskId, onSelectTask, onAddTask]);
 
   const listById = (id: string) => lists.find((l) => l.id === id);
 

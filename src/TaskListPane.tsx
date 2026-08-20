@@ -88,6 +88,11 @@ export function TaskListPane({
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (e.metaKey || e.ctrlKey || e.altKey || isTypingTarget(e.target)) return;
+      if (e.key.toLowerCase() === "n") {
+        e.preventDefault();
+        onAddTask();
+        return;
+      }
       if (e.key !== "ArrowUp" && e.key !== "ArrowDown") return;
       if (active.length === 0) return;
       e.preventDefault();
@@ -102,7 +107,7 @@ export function TaskListPane({
     }
     window.addEventListener("keydown", onKeyDown);
     return () => window.removeEventListener("keydown", onKeyDown);
-  }, [active, selectedTaskId, onSelectTask]);
+  }, [active, selectedTaskId, onSelectTask, onAddTask]);
 
   if (!list) {
     return <div style={styles.pane} />;

@@ -155,10 +155,11 @@ export function AddTaskPane({
     if (e.key !== "Enter") return;
     e.preventDefault();
     const trimmed = newSubtask.trim();
-    if (trimmed) {
-      setSubtasks((prev) => [...prev, { id: generateId(), title: trimmed, completed: false, createdAt: Date.now() }]);
+    if (!trimmed) {
+      setAddingSubtask(false);
+      return;
     }
-    setAddingSubtask(false);
+    setSubtasks((prev) => [...prev, { id: generateId(), title: trimmed, completed: false, createdAt: Date.now() }]);
     setNewSubtask("");
   }
 

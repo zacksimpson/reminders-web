@@ -288,10 +288,11 @@ function EditTaskForm({
     }
     if (e.key !== "Enter") return;
     const trimmed = newSubtask.trim();
-    if (trimmed) {
-      await addSubtask(uid, task, trimmed);
+    if (!trimmed) {
+      setAddingSubtask(false);
+      return;
     }
-    setAddingSubtask(false);
+    await addSubtask(uid, task, trimmed);
     setNewSubtask("");
   }
 
