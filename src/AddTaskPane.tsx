@@ -1,8 +1,9 @@
-import { type FormEvent, type KeyboardEvent, useEffect, useState } from "react";
+import { type FormEvent, type KeyboardEvent, useEffect, useLayoutEffect, useRef, useState } from "react";
 import type { ReminderList, RecurrenceUnit, Settings, Subtask } from "./lib/models";
 import { useDragReorder } from "./lib/useDragReorder";
 import { generateId } from "./lib/remindersLogic";
 import { addTask } from "./lib/store";
+import { autoResizeTextarea, placeCaretAtPoint } from "./lib/textareaCaret";
 import { BackButton } from "./BackButton";
 import { DatePicker } from "./DatePicker";
 import { Dropdown } from "./Dropdown";
@@ -36,7 +37,17 @@ const styles = {
   subtasksHeader: { fontSize: 15, marginTop: 24, marginBottom: 11 },
   subtaskRow: { display: "flex", gap: 12, padding: "9px 0", alignItems: "center" },
   subtaskTitle: { fontSize: 19, flex: 1, textAlign: "left" as const },
-  subtaskTitleInput: { fontSize: 19, flex: 1, textAlign: "left" as const, paddingLeft: 0 },
+  subtaskTitleInput: {
+    fontSize: 19,
+    flex: 1,
+    textAlign: "left" as const,
+    padding: 0,
+    margin: 0,
+    width: "100%",
+    resize: "none" as const,
+    overflow: "hidden" as const,
+    display: "block",
+  },
   addSubtaskInput: { fontSize: 19, borderBottom: "2px solid #fff", flex: 1 },
   cancelAction: {
     fontSize: 18,
@@ -72,9 +83,22 @@ export function AddTaskPane({
   const [addingSubtask, setAddingSubtask] = useState(false);
   const [editingSubtaskId, setEditingSubtaskId] = useState<string | null>(null);
   const [editingSubtaskTitle, setEditingSubtaskTitle] = useState("");
+  const [editingSubtaskClick, setEditingSubtaskClick] = useState<{ x: number; y: number } | null>(null);
+  const subtaskTextareaRef = useRef<HTMLTextAreaElement | null>(null);
   const [saving, setSaving] = useState(false);
   const [showToast, setShowToast] = useState(false);
   const { getRowProps: getSubtaskRowProps } = useDragReorder(subtasks, (s) => s.id, setSubtasks);
+
+  useLayoutEffect(() => {
+    const el = subtaskTextareaRef.current;
+    if (!el || !editingSubtaskId) return;
+    autoResizeTextarea(el);
+    if (editingSubtaskClick) {
+      placeCaretAtPoint(el, editingSubtaskClick.x, editingSubtaskClick.y);
+    } else {
+      el.focus();
+    }
+  }, [editingSubtaskId]);
 
   useEffect(() => {
     if (!showToast) return;
@@ -306,16 +330,20 @@ export function AddTaskPane({
               <CheckboxIcon checked={s.completed} size={17} />
             </button>
             {editingSubtaskId === s.id ? (
-              <input
-                autoFocus
+              <textarea
+                ref={subtaskTextareaRef}
+                rows={1}
                 style={styles.subtaskTitleInput}
                 value={editingSubtaskTitle}
-                onChange={(e) => setEditingSubtaskTitle(e.target.value)}
+                onChange={(e) => {
+                  setEditingSubtaskTitle(e.target.value);
+                  autoResizeTextarea(e.target);
+                }}
                 onBlur={() => commitSubtaskRename(s.id)}
                 onKeyDown={(e) => {
                   if (e.key === "Enter") {
                     e.preventDefault();
-                    (e.target as HTMLInputElement).blur();
+                    (e.target as HTMLTextAreaElement).blur();
                   }
                 }}
               />
@@ -323,9 +351,10 @@ export function AddTaskPane({
               <button
                 type="button"
                 style={{ ...styles.subtaskTitle, opacity: s.completed ? 0.4 : 1 }}
-                onClick={() => {
+                onClick={(e) => {
                   setEditingSubtaskId(s.id);
                   setEditingSubtaskTitle(s.title);
+                  setEditingSubtaskClick({ x: e.clientX, y: e.clientY });
                 }}
               >
                 {s.title}
