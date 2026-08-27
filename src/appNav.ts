@@ -2,14 +2,14 @@
 // several independent useState calls. The old shape required every handler
 // that changed screens to remember which sibling flags to reset by hand
 // (e.g. clearing activeSetting when switching sections, but NOT
-// settingsView when merely closing a Task Behaviors sub-screen) — a class of
-// bug that already bit the Task Behaviors feature once. Modeling "what
-// screen are we on" as one discriminated union means each action fully
+// activeTaskBehavior when merely closing a Task Behaviors sub-screen) — a
+// class of bug that already bit the Task Behaviors feature once. Modeling
+// "what screen are we on" as one discriminated union means each action fully
 // determines the resulting state in a single place, and the reducer is a
 // pure function that's trivially testable without touching the DOM.
 
 import type { AccountKey } from "./AccountPane";
-import type { SettingKey, SettingsView } from "./SettingsPane";
+import type { SettingKey, TaskBehaviorKey } from "./SettingsPane";
 
 export type DetailMode =
   | { kind: "none" }
@@ -26,7 +26,7 @@ export type MobileStage = "lists" | "tasks" | "detail";
 export type Screen =
   | { section: "lists"; detail: DetailMode }
   | { section: "today"; detail: DetailMode }
-  | { section: "settings"; activeSetting: SettingKey | null; settingsView: SettingsView }
+  | { section: "settings"; activeSetting: SettingKey | null; activeTaskBehavior: TaskBehaviorKey | null }
   | { section: "account"; activeAccountAction: AccountKey | null }
   | { section: "add" };
 
@@ -45,8 +45,7 @@ export type AppNavAction =
   | { type: "OPEN_LIST_OPTIONS" }
   | { type: "LIST_DELETED"; defaultListId: string }
   | { type: "OPEN_SETTING"; key: SettingKey }
-  | { type: "OPEN_TASK_BEHAVIORS" }
-  | { type: "BACK_TO_SETTINGS_ROOT" }
+  | { type: "OPEN_TASK_BEHAVIOR_SETTING"; key: TaskBehaviorKey }
   | { type: "OPEN_ACCOUNT_ACTION"; key: AccountKey }
   | { type: "ADD_TASK_SAVED"; listId: string }
   | { type: "CANCEL_ADD_TASK"; defaultListId: string }
@@ -65,7 +64,7 @@ export function appNavReducer(state: AppNavState, action: AppNavAction): AppNavS
     case "SELECT_SECTION": {
       const screen: Screen =
         action.section === "settings"
-          ? { section: "settings", activeSetting: null, settingsView: "root" }
+          ? { section: "settings", activeSetting: null, activeTaskBehavior: null }
           : action.section === "account"
             ? { section: "account", activeAccountAction: null }
             : action.section === "add"
@@ -122,19 +121,17 @@ export function appNavReducer(state: AppNavState, action: AppNavAction): AppNavS
       if (state.screen.section !== "settings") {
         return state;
       }
-      return { ...state, screen: { ...state.screen, activeSetting: action.key }, mobileStage: "detail" };
+      return {
+        ...state,
+        screen: { ...state.screen, activeSetting: action.key, activeTaskBehavior: null },
+        mobileStage: "detail",
+      };
 
-    case "OPEN_TASK_BEHAVIORS":
-      if (state.screen.section !== "settings") {
+    case "OPEN_TASK_BEHAVIOR_SETTING":
+      if (state.screen.section !== "settings" || state.screen.activeSetting !== "task-behaviors") {
         return state;
       }
-      return { ...state, screen: { ...state.screen, settingsView: "task-behaviors" } };
-
-    case "BACK_TO_SETTINGS_ROOT":
-      if (state.screen.section !== "settings") {
-        return state;
-      }
-      return { ...state, screen: { ...state.screen, settingsView: "root" } };
+      return { ...state, screen: { ...state.screen, activeTaskBehavior: action.key } };
 
     case "OPEN_ACCOUNT_ACTION":
       if (state.screen.section !== "account") {
@@ -168,6 +165,9 @@ export function appNavReducer(state: AppNavState, action: AppNavAction): AppNavS
         return { ...state, screen: { ...screen, detail: { kind: "none" } }, mobileStage: "tasks" };
       }
       if (screen.section === "settings") {
+        if (screen.activeTaskBehavior !== null) {
+          return { ...state, screen: { ...screen, activeTaskBehavior: null } };
+        }
         return { ...state, screen: { ...screen, activeSetting: null }, mobileStage: "tasks" };
       }
       if (screen.section === "account") {

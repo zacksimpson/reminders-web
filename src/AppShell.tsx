@@ -91,7 +91,7 @@ export function AppShell({ user }: { user: User }) {
   const detail =
     screen.section === "lists" || screen.section === "today" ? screen.detail : { kind: "none" as const };
   const activeSetting = screen.section === "settings" ? screen.activeSetting : null;
-  const settingsView = screen.section === "settings" ? screen.settingsView : "root";
+  const activeTaskBehavior = screen.section === "settings" ? screen.activeTaskBehavior : null;
   const activeAccountAction = screen.section === "account" ? screen.activeAccountAction : null;
 
   const listsPane = (
@@ -133,13 +133,8 @@ export function AppShell({ user }: { user: User }) {
 
   const settingsPane = (
     <SettingsPane
-      lists={orderedLists}
-      settings={settings}
       activeSetting={activeSetting}
-      settingsView={settingsView}
       onSelectSetting={(key) => dispatch({ type: "OPEN_SETTING", key })}
-      onOpenTaskBehaviors={() => dispatch({ type: "OPEN_TASK_BEHAVIORS" })}
-      onBackToSettingsRoot={() => dispatch({ type: "BACK_TO_SETTINGS_ROOT" })}
       onBack={middleBack}
     />
   );
@@ -199,7 +194,10 @@ export function AppShell({ user }: { user: User }) {
       lists={orderedLists}
       settings={settings}
       activeSetting={activeSetting}
+      activeTaskBehavior={activeTaskBehavior}
       notifications={notifications}
+      onSelectTaskBehavior={(key) => dispatch({ type: "OPEN_TASK_BEHAVIOR_SETTING", key })}
+      onBackFromTaskBehavior={() => dispatch({ type: "GO_BACK_FROM_DETAIL" })}
       onBack={detailBack}
     />
   );

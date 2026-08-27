@@ -5,8 +5,18 @@ import { ToggleSwitch } from "./ToggleSwitch";
 import { BackButton } from "./BackButton";
 import { ScrollPane } from "./ScrollPane";
 import { TimeField } from "./TimeField";
-import type { SettingKey } from "./SettingsPane";
+import type { SettingKey, TaskBehaviorKey } from "./SettingsPane";
 import type { BrowserNotificationsApi } from "./useBrowserNotifications";
+
+const AFTER_QUICK_ADD_LABELS: Record<Settings["afterAddBehavior"], string> = {
+  toast: "Add Next",
+  "go-to-list": "Go to List",
+};
+
+const ADD_POSITION_LABELS: Record<Settings["addPosition"], string> = {
+  top: "Top of List",
+  bottom: "Bottom of List",
+};
 
 const styles = {
   pane: { padding: "30px 37px", maxWidth: 720 },
@@ -22,6 +32,13 @@ const styles = {
     fontSize: 23,
     padding: "10px 0",
   },
+  row: {
+    width: "100%",
+    textAlign: "left" as const,
+    padding: "13px 0",
+  },
+  rowLabel: { fontSize: 15, marginBottom: 3 },
+  rowValue: { fontSize: 23 },
   body: {
     fontSize: 16,
     lineHeight: 1.6,
@@ -46,14 +63,20 @@ export function SettingsDetailPane({
   lists,
   settings,
   activeSetting,
+  activeTaskBehavior,
   notifications,
+  onSelectTaskBehavior,
+  onBackFromTaskBehavior,
   onBack,
 }: {
   uid: string;
   lists: ReminderList[];
   settings: Settings;
   activeSetting: SettingKey | null;
+  activeTaskBehavior: TaskBehaviorKey | null;
   notifications: BrowserNotificationsApi;
+  onSelectTaskBehavior: (key: TaskBehaviorKey) => void;
+  onBackFromTaskBehavior: () => void;
   onBack?: () => void;
 }) {
   if (activeSetting === null) {
@@ -66,76 +89,93 @@ export function SettingsDetailPane({
     </div>
   );
 
-  if (activeSetting === "today-view") {
-    return (
-      <ScrollPane style={styles.pane}>
-        {backRow}
-        <div style={styles.title}>Today View</div>
-        <ToggleSwitch
-          label="Show Overdue"
-          description="indicated with *"
-          value={settings.showOverdue}
-          onValueChange={(v) => updateSettings(uid, { showOverdue: v })}
-        />
-      </ScrollPane>
-    );
-  }
+  const taskBehaviorBackRow = (
+    <div style={styles.backRow}>
+      <BackButton onBack={onBackFromTaskBehavior} />
+    </div>
+  );
 
-  if (activeSetting === "default-list") {
-    return (
-      <ScrollPane style={styles.pane}>
-        {backRow}
-        <div style={styles.title}>Default List</div>
-        {lists.map((list) => (
-          <button
-            key={list.id}
-            type="button"
-            style={{
-              ...styles.option,
-              textDecoration: list.id === settings.defaultListId ? "underline" : "none",
-              textUnderlineOffset: 4,
-            }}
-            onClick={() => updateSettings(uid, { defaultListId: list.id })}
-          >
-            {list.title}
+  if (activeSetting === "task-behaviors") {
+    const defaultListTitle = lists.find((l) => l.id === settings.defaultListId)?.title ?? "Inbox";
+
+    if (activeTaskBehavior === null) {
+      return (
+        <ScrollPane style={styles.pane}>
+          {backRow}
+          <div style={styles.title}>Task Behaviors</div>
+
+          <button type="button" style={styles.row} onClick={() => onSelectTaskBehavior("default-list")}>
+            <div style={styles.rowLabel}>Default List</div>
+            <div style={styles.rowValue}>{defaultListTitle}</div>
           </button>
-        ))}
-      </ScrollPane>
-    );
-  }
 
-  if (activeSetting === "after-quick-add") {
-    return (
-      <ScrollPane style={styles.pane}>
-        {backRow}
-        <div style={styles.title}>After Quick Add</div>
-        {(
-          [
-            { value: "toast", label: "Add Next" },
-            { value: "go-to-list", label: "Go to List" },
-          ] as const
-        ).map((opt) => (
-          <button
-            key={opt.value}
-            type="button"
-            style={{
-              ...styles.option,
-              textDecoration: opt.value === settings.afterAddBehavior ? "underline" : "none",
-              textUnderlineOffset: 4,
-            }}
-            onClick={() => updateSettings(uid, { afterAddBehavior: opt.value })}
-          >
-            {opt.label}
+          <button type="button" style={styles.row} onClick={() => onSelectTaskBehavior("after-quick-add")}>
+            <div style={styles.rowLabel}>After Quick Add</div>
+            <div style={styles.rowValue}>{AFTER_QUICK_ADD_LABELS[settings.afterAddBehavior]}</div>
           </button>
-        ))}
-      </ScrollPane>
-    );
-  }
 
-  if (activeSetting === "add-position") {
+          <button type="button" style={styles.row} onClick={() => onSelectTaskBehavior("add-position")}>
+            <div style={styles.rowLabel}>Add New Tasks</div>
+            <div style={styles.rowValue}>{ADD_POSITION_LABELS[settings.addPosition]}</div>
+          </button>
+        </ScrollPane>
+      );
+    }
+
+    if (activeTaskBehavior === "default-list") {
+      return (
+        <ScrollPane style={styles.pane}>
+          {taskBehaviorBackRow}
+          <div style={styles.title}>Default List</div>
+          {lists.map((list) => (
+            <button
+              key={list.id}
+              type="button"
+              style={{
+                ...styles.option,
+                textDecoration: list.id === settings.defaultListId ? "underline" : "none",
+                textUnderlineOffset: 4,
+              }}
+              onClick={() => updateSettings(uid, { defaultListId: list.id })}
+            >
+              {list.title}
+            </button>
+          ))}
+        </ScrollPane>
+      );
+    }
+
+    if (activeTaskBehavior === "after-quick-add") {
+      return (
+        <ScrollPane style={styles.pane}>
+          {taskBehaviorBackRow}
+          <div style={styles.title}>After Quick Add</div>
+          {(
+            [
+              { value: "toast", label: "Add Next" },
+              { value: "go-to-list", label: "Go to List" },
+            ] as const
+          ).map((opt) => (
+            <button
+              key={opt.value}
+              type="button"
+              style={{
+                ...styles.option,
+                textDecoration: opt.value === settings.afterAddBehavior ? "underline" : "none",
+                textUnderlineOffset: 4,
+              }}
+              onClick={() => updateSettings(uid, { afterAddBehavior: opt.value })}
+            >
+              {opt.label}
+            </button>
+          ))}
+        </ScrollPane>
+      );
+    }
+
     return (
       <ScrollPane style={styles.pane}>
-        {backRow}
+        {taskBehaviorBackRow}
         <div style={styles.title}>Add New Tasks</div>
         {(
           [
@@ -156,6 +196,21 @@ export function SettingsDetailPane({
             {opt.label}
           </button>
         ))}
+      </ScrollPane>
+    );
+  }
+
+  if (activeSetting === "today-view") {
+    return (
+      <ScrollPane style={styles.pane}>
+        {backRow}
+        <div style={styles.title}>Today View</div>
+        <ToggleSwitch
+          label="Show Overdue"
+          description="indicated with *"
+          value={settings.showOverdue}
+          onValueChange={(v) => updateSettings(uid, { showOverdue: v })}
+        />
       </ScrollPane>
     );
   }

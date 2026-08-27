@@ -1,10 +1,8 @@
-import type { ReminderList, Settings } from "./lib/models";
 import { BackButton } from "./BackButton";
 import { ScrollPane } from "./ScrollPane";
 
 const styles = {
   pane: { padding: "30px 24px" },
-  backRow: { marginBottom: 20 },
   headerTitle: { fontSize: 32, fontWeight: 400, marginBottom: 26 },
   headerMobile: {
     textAlign: "center" as const,
@@ -18,89 +16,22 @@ const styles = {
     textAlign: "left" as const,
     padding: "13px 0",
   },
-  rowLabel: { fontSize: 15, marginBottom: 3 },
   rowValue: { fontSize: 23 },
 };
 
-const AFTER_QUICK_ADD_LABELS: Record<Settings["afterAddBehavior"], string> = {
-  toast: "Add Next",
-  "go-to-list": "Go to List",
-};
+export type SettingKey = "today-view" | "task-behaviors" | "notifications" | "import-backup";
 
-const ADD_POSITION_LABELS: Record<Settings["addPosition"], string> = {
-  top: "Top of List",
-  bottom: "Bottom of List",
-};
-
-export type SettingKey =
-  | "today-view"
-  | "default-list"
-  | "after-quick-add"
-  | "add-position"
-  | "notifications"
-  | "import-backup";
-
-export type SettingsView = "root" | "task-behaviors";
+export type TaskBehaviorKey = "default-list" | "after-quick-add" | "add-position";
 
 export function SettingsPane({
-  lists,
-  settings,
   activeSetting,
-  settingsView,
   onSelectSetting,
-  onOpenTaskBehaviors,
-  onBackToSettingsRoot,
   onBack,
 }: {
-  lists: ReminderList[];
-  settings: Settings;
   activeSetting: SettingKey | null;
-  settingsView: SettingsView;
   onSelectSetting: (key: SettingKey) => void;
-  onOpenTaskBehaviors: () => void;
-  onBackToSettingsRoot: () => void;
   onBack?: () => void;
 }) {
-  const defaultListTitle = lists.find((l) => l.id === settings.defaultListId)?.title ?? "Inbox";
-
-  if (settingsView === "task-behaviors") {
-    return (
-      <ScrollPane style={styles.pane}>
-        <div style={styles.backRow}>
-          <BackButton onBack={onBackToSettingsRoot} />
-        </div>
-        <div style={styles.headerTitle}>Task Behaviors</div>
-
-        <button
-          type="button"
-          style={{ ...styles.row, textDecoration: activeSetting === "default-list" ? "underline" : "none" }}
-          onClick={() => onSelectSetting("default-list")}
-        >
-          <div style={styles.rowLabel}>Default List</div>
-          <div style={styles.rowValue}>{defaultListTitle}</div>
-        </button>
-
-        <button
-          type="button"
-          style={{ ...styles.row, textDecoration: activeSetting === "after-quick-add" ? "underline" : "none" }}
-          onClick={() => onSelectSetting("after-quick-add")}
-        >
-          <div style={styles.rowLabel}>After Quick Add</div>
-          <div style={styles.rowValue}>{AFTER_QUICK_ADD_LABELS[settings.afterAddBehavior]}</div>
-        </button>
-
-        <button
-          type="button"
-          style={{ ...styles.row, textDecoration: activeSetting === "add-position" ? "underline" : "none" }}
-          onClick={() => onSelectSetting("add-position")}
-        >
-          <div style={styles.rowLabel}>Add New Tasks</div>
-          <div style={styles.rowValue}>{ADD_POSITION_LABELS[settings.addPosition]}</div>
-        </button>
-      </ScrollPane>
-    );
-  }
-
   return (
     <ScrollPane style={styles.pane}>
       {onBack ? (
@@ -120,7 +51,11 @@ export function SettingsPane({
         <div style={styles.rowValue}>Notifications</div>
       </button>
 
-      <button type="button" style={styles.row} onClick={onOpenTaskBehaviors}>
+      <button
+        type="button"
+        style={{ ...styles.row, textDecoration: activeSetting === "task-behaviors" ? "underline" : "none" }}
+        onClick={() => onSelectSetting("task-behaviors")}
+      >
         <div style={styles.rowValue}>Task Behaviors</div>
       </button>
 
