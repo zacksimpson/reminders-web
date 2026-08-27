@@ -32,9 +32,9 @@ const styles = {
     borderBottom: "2px solid #fff",
     paddingBottom: 6,
     marginBottom: 26,
-    whiteSpace: "nowrap" as const,
-    overflow: "hidden",
-    textOverflow: "ellipsis",
+    resize: "none" as const,
+    overflow: "hidden" as const,
+    display: "block",
   },
   // On desktop this input sits beside the middle pane's plain-text header,
   // but its own font-size/padding/border make its box taller, pushing it
@@ -182,6 +182,12 @@ function NewTaskForm({
   onBack?: () => void;
 }) {
   const [title, setTitle] = useState("");
+  const titleRef = useRef<HTMLTextAreaElement | null>(null);
+
+  useLayoutEffect(() => {
+    const el = titleRef.current;
+    if (el) autoResizeTextarea(el);
+  }, [title]);
 
   async function submit() {
     const trimmed = title.trim();
@@ -202,14 +208,19 @@ function NewTaskForm({
           <BackButton onBack={onBack} />
         </div>
       )}
-      <input
+      <textarea
+        ref={titleRef}
+        rows={1}
         style={onBack ? styles.title : { ...styles.title, ...styles.titleDesktopAlign }}
         autoFocus
         placeholder="Task name"
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         onKeyDown={(e) => {
-          if (e.key === "Enter") submit();
+          if (e.key === "Enter") {
+            e.preventDefault();
+            submit();
+          }
         }}
         onBlur={submit}
       />
@@ -233,6 +244,7 @@ function EditTaskForm({
   onBack?: () => void;
 }) {
   const [title, setTitle] = useState(task.title);
+  const titleRef = useRef<HTMLTextAreaElement | null>(null);
   const [newSubtask, setNewSubtask] = useState("");
   const [addingSubtask, setAddingSubtask] = useState(false);
   const [editingSubtaskId, setEditingSubtaskId] = useState<string | null>(null);
@@ -247,6 +259,11 @@ function EditTaskForm({
   );
 
   useEffect(() => setTitle(task.title), [task.id, task.title]);
+
+  useLayoutEffect(() => {
+    const el = titleRef.current;
+    if (el) autoResizeTextarea(el);
+  }, [title]);
 
   useLayoutEffect(() => {
     const el = subtaskTextareaRef.current;
@@ -329,12 +346,19 @@ function EditTaskForm({
           <BackButton onBack={onBack} />
         </div>
       )}
-      <input
+      <textarea
+        ref={titleRef}
+        rows={1}
         style={onBack ? styles.title : { ...styles.title, ...styles.titleDesktopAlign }}
         value={title}
         onChange={(e) => setTitle(e.target.value)}
         onBlur={saveTitle}
-        onKeyDown={(e) => e.key === "Enter" && (e.target as HTMLInputElement).blur()}
+        onKeyDown={(e) => {
+          if (e.key === "Enter") {
+            e.preventDefault();
+            (e.target as HTMLTextAreaElement).blur();
+          }
+        }}
       />
 
       <div style={styles.field}>
