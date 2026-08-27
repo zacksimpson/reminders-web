@@ -1,6 +1,7 @@
 import {
   type CSSProperties,
   type DragEvent,
+  type PointerEvent as ReactPointerEvent,
   type ReactNode,
   useLayoutEffect,
   useRef,
@@ -41,6 +42,9 @@ export function ScrollPane({
 }) {
   const ref = useRef<HTMLDivElement>(null);
   const [thumb, setThumb] = useState<Thumb | null>(null);
+  const dragRef = useRef<{ startY: number; startScrollTop: number; maxTop: number } | null>(
+    null
+  );
 
   useLayoutEffect(() => {
     const el = ref.current;
@@ -58,6 +62,34 @@ export function ScrollPane({
     setThumb((prev) =>
       prev?.height === next?.height && prev?.top === next?.top ? prev : next
     );
+  }
+
+  function onThumbPointerDown(e: ReactPointerEvent<HTMLDivElement>) {
+    const el = ref.current;
+    if (!el || !thumb) return;
+    e.preventDefault();
+    e.stopPropagation();
+    e.currentTarget.setPointerCapture(e.pointerId);
+    dragRef.current = {
+      startY: e.clientY,
+      startScrollTop: el.scrollTop,
+      maxTop: el.clientHeight - thumb.height,
+    };
+  }
+
+  function onThumbPointerMove(e: ReactPointerEvent<HTMLDivElement>) {
+    const el = ref.current;
+    const drag = dragRef.current;
+    if (!el || !drag || drag.maxTop <= 0) return;
+    const scrollRange = el.scrollHeight - el.clientHeight;
+    const deltaY = e.clientY - drag.startY;
+    const deltaScroll = (deltaY / drag.maxTop) * scrollRange;
+    el.scrollTop = drag.startScrollTop + deltaScroll;
+  }
+
+  function onThumbPointerUp(e: ReactPointerEvent<HTMLDivElement>) {
+    e.currentTarget.releasePointerCapture(e.pointerId);
+    dragRef.current = null;
   }
 
   return (
@@ -84,13 +116,21 @@ export function ScrollPane({
           }}
         >
           <div
+            onPointerDown={onThumbPointerDown}
+            onPointerMove={onThumbPointerMove}
+            onPointerUp={onThumbPointerUp}
             style={{
               position: "absolute",
               top: thumb.top,
-              right: -2,
-              width: 5,
+              right: -6,
+              width: 13,
               height: thumb.height,
+              padding: "0 4px",
               background: "#fff",
+              backgroundClip: "content-box",
+              pointerEvents: "auto",
+              cursor: "default",
+              touchAction: "none",
             }}
           />
         </div>
