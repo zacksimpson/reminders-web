@@ -64,6 +64,16 @@ input::placeholder {
   color: var(--bg);
 }
 
+/* Delete button only shows on hover or while something in the row has focus,
+   so the subtask list isn't cluttered with an X next to every row. */
+.subtask-delete {
+  opacity: 0;
+}
+.subtask-row:hover .subtask-delete,
+.subtask-row:focus-within .subtask-delete {
+  opacity: 1;
+}
+
 /* Native scrollbar hidden — ScrollPane draws the app's own track+thumb instead. */
 .scroll-hide {
   scrollbar-width: none;

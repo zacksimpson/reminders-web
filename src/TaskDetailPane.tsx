@@ -484,6 +484,7 @@ function EditTaskForm({
       {task.subtasks.map((s) => (
         <div
           key={s.id}
+          className="subtask-row"
           {...getSubtaskRowProps(s.id)}
           draggable={editingSubtaskId !== s.id}
           style={{ ...styles.subtaskRow, ...getSubtaskRowProps(s.id).style }}
@@ -522,7 +523,12 @@ function EditTaskForm({
               {s.title}
             </button>
           )}
-          <button type="button" onClick={() => deleteSubtask(uid, task, s.id)} aria-label="Delete subtask">
+          <button
+            type="button"
+            className="subtask-delete"
+            onClick={() => deleteSubtask(uid, task, s.id)}
+            aria-label="Delete subtask"
+          >
             <DeleteIcon />
           </button>
         </div>
