@@ -56,9 +56,10 @@ const styles = {
   clearButton: { flexShrink: 0 },
   subtasksHeader: { fontSize: 15, marginTop: 24, marginBottom: 11 },
   subtaskRow: { display: "flex", gap: 12, padding: "9px 0", alignItems: "center" },
-  subtaskTitle: { fontSize: 19, flex: 1, textAlign: "left" as const },
+  subtaskTitle: { fontSize: 19, lineHeight: "22px", flex: 1, textAlign: "left" as const },
   subtaskTitleInput: {
     fontSize: 19,
+    lineHeight: "22px",
     flex: 1,
     textAlign: "left" as const,
     padding: 0,
