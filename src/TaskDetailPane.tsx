@@ -297,13 +297,7 @@ function EditTaskForm({
     }
   }
 
-  async function submitNewSubtask(e: KeyboardEvent<HTMLInputElement>) {
-    if (e.key === "Escape") {
-      setAddingSubtask(false);
-      setNewSubtask("");
-      return;
-    }
-    if (e.key !== "Enter") return;
+  async function commitNewSubtask(keepOpen: boolean) {
     const trimmed = newSubtask.trim();
     if (!trimmed) {
       setAddingSubtask(false);
@@ -311,6 +305,17 @@ function EditTaskForm({
     }
     await addSubtask(uid, task, trimmed);
     setNewSubtask("");
+    if (!keepOpen) setAddingSubtask(false);
+  }
+
+  function submitNewSubtask(e: KeyboardEvent<HTMLInputElement>) {
+    if (e.key === "Escape") {
+      setAddingSubtask(false);
+      setNewSubtask("");
+      return;
+    }
+    if (e.key !== "Enter") return;
+    commitNewSubtask(true);
   }
 
   function commitSubtaskRename(subtaskId: string) {
@@ -524,16 +529,14 @@ function EditTaskForm({
       ))}
       {addingSubtask ? (
         <div style={styles.subtaskRow}>
+          <PlusCircleIcon size={17} />
           <input
             style={styles.addSubtaskInput}
             autoFocus
             value={newSubtask}
             onChange={(e) => setNewSubtask(e.target.value)}
             onKeyDown={submitNewSubtask}
-            onBlur={() => {
-              setAddingSubtask(false);
-              setNewSubtask("");
-            }}
+            onBlur={() => commitNewSubtask(false)}
           />
         </div>
       ) : (
