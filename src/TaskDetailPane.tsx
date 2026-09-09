@@ -550,9 +550,9 @@ function EditTaskForm({
           <button type="button" onClick={() => setAddingSubtask(true)} aria-label="Add subtask">
             <PlusCircleIcon size={17} />
           </button>
-          <button
-            type="button"
-            style={{ ...styles.subtaskTitle, alignSelf: "stretch" }}
+          <input
+            readOnly
+            style={{ ...styles.addSubtaskInput, borderBottomColor: "transparent", cursor: "pointer" }}
             aria-label="Add subtask"
             onClick={() => setAddingSubtask(true)}
           />
