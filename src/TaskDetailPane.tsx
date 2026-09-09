@@ -543,7 +543,7 @@ function EditTaskForm({
           </button>
           <button
             type="button"
-            style={styles.subtaskTitle}
+            style={{ ...styles.subtaskTitle, alignSelf: "stretch" }}
             aria-label="Add subtask"
             onClick={() => setAddingSubtask(true)}
           />
