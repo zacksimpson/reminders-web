@@ -56,6 +56,8 @@ const styles = {
   clearButton: { flexShrink: 0 },
   subtasksHeader: { fontSize: 15, marginTop: 24, marginBottom: 11 },
   subtaskRow: { display: "flex", gap: 12, padding: "9px 0", alignItems: "center" },
+  subtaskCheckbox: { marginTop: 2, flexShrink: 0 },
+  subtaskDelete: { marginTop: 2, flexShrink: 0 },
   subtaskTitle: { fontSize: 19, lineHeight: "22px", flex: 1, textAlign: "left" as const },
   subtaskTitleInput: {
     fontSize: 19,
@@ -488,9 +490,14 @@ function EditTaskForm({
           className="subtask-row"
           {...getSubtaskRowProps(s.id)}
           draggable={editingSubtaskId !== s.id}
-          style={{ ...styles.subtaskRow, ...getSubtaskRowProps(s.id).style }}
+          style={{ ...styles.subtaskRow, alignItems: "flex-start", ...getSubtaskRowProps(s.id).style }}
         >
-          <button type="button" onClick={() => toggleSubtask(uid, task, s.id)} aria-label="Toggle subtask">
+          <button
+            type="button"
+            style={styles.subtaskCheckbox}
+            onClick={() => toggleSubtask(uid, task, s.id)}
+            aria-label="Toggle subtask"
+          >
             <CheckboxIcon checked={s.completed} size={17} />
           </button>
           {editingSubtaskId === s.id ? (
@@ -527,6 +534,7 @@ function EditTaskForm({
           <button
             type="button"
             className="subtask-delete"
+            style={styles.subtaskDelete}
             onClick={() => deleteSubtask(uid, task, s.id)}
             aria-label="Delete subtask"
           >
@@ -553,6 +561,7 @@ function EditTaskForm({
           </button>
           <input
             readOnly
+            value=""
             style={{ ...styles.addSubtaskInput, borderBottomColor: "transparent", cursor: "pointer" }}
             aria-label="Add subtask"
             onClick={() => setAddingSubtask(true)}
