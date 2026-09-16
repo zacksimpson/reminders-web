@@ -4,7 +4,7 @@ const URL_PATTERN = /\bhttps?:\/\/[^\s<>"']+/g;
 const TRAILING_PUNCTUATION = /[.,;:!?)\]}'"]+$/;
 
 const styles = {
-  chipRow: { display: "flex", flexWrap: "wrap" as const, gap: 6, marginTop: 4 },
+  chipRow: { display: "flex", flexWrap: "wrap" as const, gap: 6, marginTop: 8 },
   chip: {
     display: "inline-flex",
     alignItems: "center",
