@@ -14,6 +14,7 @@ const styles = {
     fontSize: 15,
     lineHeight: "20px",
     cursor: "pointer",
+    textDecoration: "none",
   },
   icon: { display: "flex", flexShrink: 0 },
 };
