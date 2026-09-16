@@ -14,6 +14,7 @@ import {
   updateTask,
 } from "./lib/store";
 import { isTypingTarget } from "./lib/keyboardUtils";
+import { containsLink } from "./lib/links";
 import { autoResizeTextarea, placeCaretAtPoint } from "./lib/textareaCaret";
 import { useDragReorder } from "./lib/useDragReorder";
 import { BackButton } from "./BackButton";
@@ -249,6 +250,9 @@ function EditTaskForm({
 }) {
   const [title, setTitle] = useState(task.title);
   const titleRef = useRef<HTMLTextAreaElement | null>(null);
+  const [isEditingTitle, setIsEditingTitle] = useState(false);
+  const [titleClick, setTitleClick] = useState<{ x: number; y: number } | null>(null);
+  const titleHasLink = containsLink(title);
   const [newSubtask, setNewSubtask] = useState("");
   const [addingSubtask, setAddingSubtask] = useState(false);
   const [editingSubtaskId, setEditingSubtaskId] = useState<string | null>(null);
@@ -263,11 +267,24 @@ function EditTaskForm({
   );
 
   useEffect(() => setTitle(task.title), [task.id, task.title]);
+  useEffect(() => setIsEditingTitle(false), [task.id]);
 
   useLayoutEffect(() => {
     const el = titleRef.current;
     if (el) autoResizeTextarea(el);
   }, [title]);
+
+  useLayoutEffect(() => {
+    if (!isEditingTitle) return;
+    const el = titleRef.current;
+    if (!el) return;
+    autoResizeTextarea(el);
+    if (titleClick) {
+      placeCaretAtPoint(el, titleClick.x, titleClick.y);
+    } else {
+      el.focus();
+    }
+  }, [isEditingTitle]);
 
   useLayoutEffect(() => {
     const el = subtaskTextareaRef.current;
@@ -295,6 +312,7 @@ function EditTaskForm({
   }, [uid, task, confirmingDelete]);
 
   function saveTitle() {
+    setIsEditingTitle(false);
     const trimmed = title.trim();
     if (trimmed && trimmed !== task.title) {
       updateTask(uid, task.id, { title: trimmed });
@@ -355,20 +373,33 @@ function EditTaskForm({
           <BackButton onBack={onBack} />
         </div>
       )}
-      <textarea
-        ref={titleRef}
-        rows={1}
-        style={onBack ? styles.title : { ...styles.title, ...styles.titleDesktopAlign }}
-        value={title}
-        onChange={(e) => setTitle(e.target.value)}
-        onBlur={saveTitle}
-        onKeyDown={(e) => {
-          if (e.key === "Enter") {
-            e.preventDefault();
-            (e.target as HTMLTextAreaElement).blur();
-          }
-        }}
-      />
+      {!isEditingTitle && titleHasLink ? (
+        <button
+          type="button"
+          style={onBack ? styles.title : { ...styles.title, ...styles.titleDesktopAlign }}
+          onClick={(e) => {
+            setTitleClick({ x: e.clientX, y: e.clientY });
+            setIsEditingTitle(true);
+          }}
+        >
+          <LinkifiedText text={title} />
+        </button>
+      ) : (
+        <textarea
+          ref={titleRef}
+          rows={1}
+          style={onBack ? styles.title : { ...styles.title, ...styles.titleDesktopAlign }}
+          value={title}
+          onChange={(e) => setTitle(e.target.value)}
+          onBlur={saveTitle}
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              e.preventDefault();
+              (e.target as HTMLTextAreaElement).blur();
+            }
+          }}
+        />
+      )}
 
       <div style={styles.field}>
         <div>
