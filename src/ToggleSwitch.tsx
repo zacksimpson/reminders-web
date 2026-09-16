@@ -1,13 +1,14 @@
-// Matches components/ToggleSwitch.tsx in the phone app exactly: two plain
+// Same shape as components/ToggleSwitch.tsx in the phone app: two plain
 // shapes (a line + a circle), not a pill switch. ON renders line-then-filled-
 // circle; OFF renders hollow-circle-then-line — the order flips, it isn't
 // just a fill/stroke swap. Whole row is tappable, optional description
-// subtitle below the label.
+// subtitle below the label. Sized 25% smaller than the phone app's own
+// dimensions, which read too large at desktop viewing distance.
 
-const CIRCLE_DIAMETER = 16;
-const CIRCLE_BORDER = 2;
-const LINE_WIDTH = 24;
-const LINE_HEIGHT = 2;
+const CIRCLE_DIAMETER = 12;
+const CIRCLE_BORDER = 1.5;
+const LINE_WIDTH = 18;
+const LINE_HEIGHT = 1.5;
 
 const styles = {
   row: {
