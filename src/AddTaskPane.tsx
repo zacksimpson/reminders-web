@@ -7,6 +7,7 @@ import { autoResizeTextarea, placeCaretAtPoint } from "./lib/textareaCaret";
 import { BackButton } from "./BackButton";
 import { DatePicker } from "./DatePicker";
 import { Dropdown } from "./Dropdown";
+import { LinkifiedText } from "./LinkifiedText";
 import { ScrollPane } from "./ScrollPane";
 import { TimeField } from "./TimeField";
 import { CheckboxIcon, ClearFieldIcon, DeleteIcon, PlusCircleIcon } from "./icons";
@@ -358,7 +359,7 @@ export function AddTaskPane({
                   setEditingSubtaskClick({ x: e.clientX, y: e.clientY });
                 }}
               >
-                {s.title}
+                <LinkifiedText text={s.title} />
               </button>
             )}
             <button

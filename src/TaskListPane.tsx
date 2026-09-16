@@ -7,6 +7,7 @@ import { type DragRowProps, useDragReorder } from "./lib/useDragReorder";
 import { formatRecurrence } from "./lib/remindersLogic";
 import { reorderTasks, toggleTask } from "./lib/store";
 import { BackButton } from "./BackButton";
+import { LinkifiedText } from "./LinkifiedText";
 import { ScrollPane } from "./ScrollPane";
 import { CheckboxIcon, OverdueAsteriskIcon, PlusIcon } from "./icons";
 
@@ -216,7 +217,7 @@ export function TaskRow({
       </button>
       <button type="button" style={{ flex: 1, textAlign: "left" }} onClick={onSelect}>
         <div style={{ ...styles.title, textDecoration: selected ? "underline" : "none", textUnderlineOffset: 3 }}>
-          {task.title}
+          <LinkifiedText text={task.title} />
         </div>
         <div style={styles.meta}>{metaParts.join(" · ")}</div>
         {task.recurrence && <div style={styles.meta}>{formatRecurrence(task.recurrence)}</div>}
