@@ -4,19 +4,24 @@ const URL_PATTERN = /\bhttps?:\/\/[^\s<>"']+/g;
 const TRAILING_PUNCTUATION = /[.,;:!?)\]}'"]+$/;
 
 const styles = {
-  chipRow: { display: "flex", flexWrap: "wrap" as const, gap: 6, marginTop: 8 },
+  chipRow: { marginTop: 8 },
+  // No flex/inline-flex anywhere in this subtree: some browser builds don't
+  // reliably respect text-decoration: none on a flex item, so an ancestor's
+  // underline can still leak onto the flex item's own text even with none
+  // set here explicitly. Laying out with vertical-align sidesteps that.
   chip: {
-    display: "inline-flex",
-    alignItems: "center",
-    gap: 5,
+    display: "inline-block",
+    verticalAlign: "middle",
     border: "1px solid #fff",
     padding: "1px 8px",
+    marginRight: 6,
+    marginBottom: 6,
     fontSize: 15,
     lineHeight: "20px",
     cursor: "pointer",
     textDecoration: "none",
   },
-  icon: { display: "flex", flexShrink: 0 },
+  icon: { display: "inline-block", verticalAlign: "middle", marginRight: 5 },
 };
 
 function shortenUrl(url: string): string {
