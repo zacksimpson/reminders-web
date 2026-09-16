@@ -376,7 +376,10 @@ function EditTaskForm({
       {!isEditingTitle && titleHasLink ? (
         <button
           type="button"
-          style={onBack ? styles.title : { ...styles.title, ...styles.titleDesktopAlign }}
+          style={{
+            ...(onBack ? styles.title : { ...styles.title, ...styles.titleDesktopAlign }),
+            textAlign: "left",
+          }}
           onClick={(e) => {
             setTitleClick({ x: e.clientX, y: e.clientY });
             setIsEditingTitle(true);
