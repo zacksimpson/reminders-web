@@ -4,7 +4,7 @@ const URL_PATTERN = /\bhttps?:\/\/[^\s<>"']+/g;
 const TRAILING_PUNCTUATION = /[.,;:!?)\]}'"]+$/;
 
 const styles = {
-  chipRow: { marginTop: 8 },
+  chipRow: { marginTop: 4 },
   // No flex/inline-flex anywhere in this subtree: some browser builds don't
   // reliably respect text-decoration: none on a flex item, so an ancestor's
   // underline can still leak onto the flex item's own text even with none
