@@ -2,6 +2,8 @@ import { useEffect, useRef, useState } from "react";
 import { ChevronDownIcon } from "./icons";
 import { ScrollPane } from "./ScrollPane";
 
+const TYPEAHEAD_RESET_MS = 800;
+
 const styles = {
   wrapper: { position: "relative" as const, display: "inline-block" },
   trigger: {
@@ -45,13 +47,30 @@ export function Dropdown({
   onChange: (value: string) => void;
 }) {
   const [open, setOpen] = useState(false);
+  const [highlighted, setHighlighted] = useState(value);
   const wrapperRef = useRef<HTMLDivElement>(null);
+  const optionRefs = useRef(new Map<string, HTMLButtonElement>());
+  const highlightedRef = useRef(value);
+  const optionsRef = useRef(options);
+  const onChangeRef = useRef(onChange);
+  const typeaheadBufferRef = useRef("");
+  const typeaheadTimeoutRef = useRef<ReturnType<typeof setTimeout> | undefined>(undefined);
   const selected = options.find((o) => o.value === value);
 
+  highlightedRef.current = highlighted;
+  optionsRef.current = options;
+  onChangeRef.current = onChange;
+
+  // Rebuilt as a custom-styled panel (not a native <select>), which loses the
+  // browser's own type-to-jump behavior — this restores it: typing jumps the
+  // underline to the first option starting with what's typed, Enter confirms.
   useEffect(() => {
     if (!open) {
       return;
     }
+    setHighlighted(value);
+    typeaheadBufferRef.current = "";
+
     function onPointerDown(e: PointerEvent) {
       if (wrapperRef.current && !wrapperRef.current.contains(e.target as Node)) {
         setOpen(false);
@@ -60,6 +79,27 @@ export function Dropdown({
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === "Escape") {
         setOpen(false);
+        return;
+      }
+      if (e.key === "Enter") {
+        e.preventDefault();
+        onChangeRef.current(highlightedRef.current);
+        setOpen(false);
+        return;
+      }
+      if (e.key.length !== 1 || e.metaKey || e.ctrlKey || e.altKey) {
+        return;
+      }
+      clearTimeout(typeaheadTimeoutRef.current);
+      typeaheadBufferRef.current += e.key.toLowerCase();
+      typeaheadTimeoutRef.current = setTimeout(() => {
+        typeaheadBufferRef.current = "";
+      }, TYPEAHEAD_RESET_MS);
+      const buffer = typeaheadBufferRef.current;
+      const match = optionsRef.current.find((o) => o.label.toLowerCase().startsWith(buffer));
+      if (match) {
+        setHighlighted(match.value);
+        optionRefs.current.get(match.value)?.scrollIntoView({ block: "nearest" });
       }
     }
     document.addEventListener("pointerdown", onPointerDown);
@@ -67,8 +107,9 @@ export function Dropdown({
     return () => {
       document.removeEventListener("pointerdown", onPointerDown);
       document.removeEventListener("keydown", onKeyDown);
+      clearTimeout(typeaheadTimeoutRef.current);
     };
-  }, [open]);
+  }, [open, value]);
 
   return (
     <div ref={wrapperRef} style={styles.wrapper}>
@@ -84,16 +125,24 @@ export function Dropdown({
             {options.map((o) => (
               <button
                 key={o.value}
+                ref={(el) => {
+                  if (el) {
+                    optionRefs.current.set(o.value, el);
+                  } else {
+                    optionRefs.current.delete(o.value);
+                  }
+                }}
                 type="button"
                 style={{
                   ...styles.option,
-                  textDecoration: o.value === value ? "underline" : "none",
+                  textDecoration: o.value === highlighted ? "underline" : "none",
                   textUnderlineOffset: 3,
                 }}
                 onClick={() => {
                   onChange(o.value);
                   setOpen(false);
                 }}
+                onMouseEnter={() => setHighlighted(o.value)}
               >
                 {o.label}
               </button>
