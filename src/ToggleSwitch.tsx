@@ -2,13 +2,16 @@
 // shapes (a line + a circle), not a pill switch. ON renders line-then-filled-
 // circle; OFF renders hollow-circle-then-line — the order flips, it isn't
 // just a fill/stroke swap. Whole row is tappable, optional description
-// subtitle below the label. Sized 25% smaller than the phone app's own
-// dimensions, which read too large at desktop viewing distance.
+// subtitle below the label. Sized well under the phone app's own dimensions,
+// which read too large at desktop viewing distance. graphic's marginTop is
+// tuned to center it on the label's own line, not the label+description
+// block, so re-check it against getBoundingClientRect if these sizes change
+// again.
 
-const CIRCLE_DIAMETER = 12;
-const CIRCLE_BORDER = 1.5;
-const LINE_WIDTH = 18;
-const LINE_HEIGHT = 1.5;
+const CIRCLE_DIAMETER = 9;
+const CIRCLE_BORDER = 1.125;
+const LINE_WIDTH = 13.5;
+const LINE_HEIGHT = 1.125;
 
 const styles = {
   row: {
@@ -19,7 +22,7 @@ const styles = {
     textAlign: "left" as const,
     padding: "10px 0",
   },
-  graphic: { marginTop: 5, flexShrink: 0, display: "flex", alignItems: "center" },
+  graphic: { marginTop: 9, flexShrink: 0, display: "flex", alignItems: "center" },
   line: { width: LINE_WIDTH, height: LINE_HEIGHT, background: "#fff" },
   filledCircle: { width: CIRCLE_DIAMETER, height: CIRCLE_DIAMETER, borderRadius: "50%", background: "#fff" },
   hollowCircle: {
